@@ -1,0 +1,83 @@
+\name{writeHits}
+\alias{writeHits}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Write the hits of sequence search to a file
+}
+\description{
+write the hits of sequence search to a file, internal function used by 
+searchHits
+}
+\usage{
+writeHits(spacer, seqname, matches, strand, file, spacer.size = 20, 
+    PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{spacer}{
+DNAString object with spacer sequence with PAM appended immediately after,e.g.,
+ACGTACGTACGTACTGACGTCGG with 20bp spacer sequence plus 3bp PAM sequence CGG
+}
+  \item{seqname}{
+chromosome name as character, e.g., chr1
+}
+  \item{matches}{
+XStringViews object storing matched chromosome locations
+}
+  \item{strand}{
+strand of the match, + for plus strand and - for minus strand
+}
+  \item{file}{
+file path where the hits is written to
+}
+  \item{spacer.size}{
+spacer size, default 20
+}
+  \item{PAM}{
+PAM as regular expression for filtering the hits, default N[A|G]G$
+}
+  \item{max.mismatch}{
+maximum mismatch allowed within the spacer (excluding PAM portion) for 
+filtering the hits, default 4
+}
+  \item{chrom.len}{
+length of the matched chromosome
+}
+  \item{append}{
+TRUE if append to existing file, false if start a new file
+}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+results are saved in the file specified by file
+}
+\references{
+http://bioconductor.org/packages/2.8/bioc/vignettes/BSgenome/inst/doc/
+GenomeSearching.pdf}
+\author{
+Lihua Julie Zhu
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+offTargetAnalysis
+}
+\examples{
+    spacerPlusPAM <- DNAString("ACGTACGTACGTACTGACGTCGG")
+    x <- DNAString("AAGCGCGATATGACGTACGTACGTACTGACGTCGG")
+    chrom.len <- nchar(as.character(x))
+    m <- matchPattern(spacerPlusPAM, x)
+    names(m) <- "testing"
+    writeHits(spacer = spacerPlusPAM, seqname = "chr1", 
+        matches = m, strand = "+", file = "exampleWriteHits.txt", 
+        chrom.len = chrom.len, append = FALSE)
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ misc }

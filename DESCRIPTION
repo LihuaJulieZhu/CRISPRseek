@@ -1,0 +1,13 @@
+Package: CRISPRseek
+Type: Package
+Title: Design, scoring and annotating spacers for CRISPR-Cas9 system
+Version:  0.99.8
+Date: 2013-12-02
+Author: Lihua Julie Zhu,Michael Brodsky
+Maintainer: Lihua Julie Zhu <julie.zhu@umassmed.edu>
+Depends: R (>= 3.0.1), BiocGenerics, Biostrings, BSgenome
+biocViews: GeneRegulation, SequencingMatching 
+Suggests:  RUnit, BiocStyle, BSgenome.Hsapiens.UCSC.hg19, TxDb.Hsapiens.UCSC.hg19.knownGene
+Description: The package includes functions to find potential spacers for input sequences, optionally filter spacers without restriction enzyme cut site, or without paired spacers, genome-wide search for off-targets, score, rank, fetch flank sequence and indicate whether the spacers and off-targets are located in exon region or not. Potential spacers are annotated with total score of the top5 and topN off-targets, detailed topN mismatch sites, restriction enzyme cut sites, and paired spacers. This package leverages Biostrings and BSgenome packages.
+License: GPL (>= 2)
+LazyLoad: yes 

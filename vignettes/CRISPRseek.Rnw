@@ -1,0 +1,269 @@
+%\VignetteIndexEntry{CRISPRseek Vignette}
+%\VignetteDepends{CRISPRseek}
+%\VignetteKeywords{CRISPRseek-Cas9}
+%\VignettePackage{CRISPRseek}
+\documentclass[12pt]{article}
+
+<<style, eval=TRUE, echo=FALSE, results=tex>>=
+BiocStyle::latex()
+@
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[numbers]{natbib}
+\usepackage{graphicx}
+\usepackage[section]{placeins}
+\bibliographystyle{plainnat}
+
+\author{Lihua Julie Zhu, Michael Brodsky}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\title{CRISPRseek user's guide}
+
+\maketitle
+
+\tableofcontents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+CRISPR-Cas9 nucleases and their derivatives have rapidly become widely used 
+tools for both genome modification and regulation of gene expression. They can 
+create genetic changes with high efficiency in human stem cells, in model 
+organisms such as mice and Drosophila and in a wide variety of other organisms. 
+CRISPR-Cas9 nucleases create double strand DNA breaks that can facilitate a 
+variety of genome modifications including short insertions and/or deletions 
+(indels) or specific sequence changes introduced by homology directed repair 
+with a DNA donor molecule. The high activity and relative ease of construction 
+has made CRISPR-Cas9 nucleases a popular replacement for related technologies 
+such as zinc finger nucleases and TALENs. Derivatives of CRISPR-Cas9 complexes 
+include nickases, which only cleave one DNA strand, and gene expression 
+regulators, which lack any DNA cleavage activity but can increase or decrease 
+gene transcription. CRISPR-Cas9 nucleases are composed of an RNA-protein 
+complex that can target a variable sequence (the "spacer") that is directly 
+adjacent to a constant motif (the "PAM" sequence). In the most widely use 
+version from the species Streptococcus pyogenes, the spacer is composed of a 
+variable region of 20 bases and the preferred PAM sequence is an adjacent 3 
+base sequence of NGG (or NAG with lower activity). One potential limitation 
+for CRISPR-Cas9 nucleases is that they can cleave at some sequences that do 
+not precisely match the sequence targeted by the spacer sequence. Thus, an 
+important consideration for the design and application of CRISPR-Cas9 nucleases 
+is the identification of spacer regions with low rates of off-target cleavage. 
+
+Several computational analyses can assist with the construction and application 
+of CRISPR-Cas9 nucleases with high on-target and low off-target cleavage. 
+First, spacer sequences can be evaluated for possible off-target sequences in 
+the target genome. Second, sequences flanking possible off-target sequences 
+can be reported to assist in the experimental analysis of off-target cleavage 
+and to determine if these sequences are within critical regions for gene 
+function such as exons. Third, specific arrangements of target sequences can 
+be selected; one alternate approach to lower off-target rates is to introduce 
+pairs of CRISPR-Cas9 nickases, which will only create double strand DNA breaks 
+at genomic regions where the two sites have the proper spacing and orientation. 
+Finally, in some applications, it is useful to use restriction enzyme sequences 
+that overlap CRISPR-Cas9 target sites in order to monitor cleavage events.
+We developed \Biocpkg{CRISPRseek} package that identifies candidate CRISPR-Cas9 
+target sequences within a given input sequence using a variety of 
+experimentally useful constraints and also reports and ranks potential 
+off-target sequences for each recovered target sequence. CRISPRseek will 
+automatically find potential target sequences that are/are not present as pairs 
+that can be used as double nickases or that have/don't have overlapping 
+restriction enzyme cut site(s). It will then search genome-wide for off-targets 
+with a user defined maximum number of mismatches, calculate the score of each 
+off-target based on mismatches in the off-target and a penalty weight 
+matrix, filter off-targets with user-defined criteria, and annotate off-targets 
+with flanking sequences, and whether located in exon or not. Several reports 
+are generated including a summary report with spacers ranked by total topN 
+off-target score, restriction enzyme cut sites and  possible paired spacers. 
+Detailed paired spacers information, restriction enzyme cut sites, and 
+off-target sequences and scores are stored in separate files in the output 
+directory specified by the user. In total, four tab delimited files are 
+generated in the output directory: OfftargetAnalysis.xls (off-target details), 
+Summary.xls (spacer summary), REcutDetails.xls (restriction enzyme cut sites 
+of each spacer), and pairedSpacers.xls (potential paired spacers). These 
+reports provide a comprehensive set of information to identify, select and 
+utilize Streptococcus pyogenes CRISPR-Cas9 nucleases and their derivatives. 
+The package can also be readily modified to accept different spacer and PAM 
+sequence requirements for CRISPR-Cas9 complexes from other bacterial species 
+that can be used to target alternative genomic sequences. The package can also 
+be modified to incorporate improved weight matrices for scoring off-target 
+sequences as new experimental and computational results become available for 
+CRISPR-Cas9 nucleases for Streptococcus pyogenes and other species.
+\section{Examples of using CRISPRseek}
+In this guide, we will illustrate five different spacer search scenarios with a 
+human sequence. First load \Biocpkg{CRISPRseek}, 
+\Biocannopkg{BSgenome.Hsapiens.UCSC.hg19} and 
+\Biocannopkg{TxDb.Hsapiens.UCSC.hg19.knownGene}. Then specify the sequence 
+file path as inputFilePath, a fasta/fastq file containing a genomic sequence, 
+restriction enzyme pattern file as REpatternFile and output directory as 
+outputDir. Once the analysis is done, analysis results will be saved in the 
+output directory.
+
+To find BSgenome of other species, please refer to available.genomes in the
+\Biocpkg{BSgenome} package. For example, 
+\Biocannopkg{BSgenome.Hsapiens.UCSC.hg19} for hg19, 
+\Biocannopkg{BSgenome.Mmusculus.UCSC.mm10} for mm10, 
+\Biocannopkg{BSgenome.Celegans.UCSC.ce6} for ce6, 
+\Biocannopkg{BSgenome.Rnorvegicus.UCSC.rn5} for rn5, \linebreak 
+\Biocannopkg{BSgenome.Drerio.UCSC.danRer7} for Zv9, 
+and \Biocannopkg{BSgenome.Dmelanogaster.UCSC.dm3} for dm3
+
+To create and use TranscriptDb objects, please refer to the 
+\Biocpkg{GenomicFeatures} package. For a list of existing TranscriptDb objects, 
+please search for annotation package starting with Txdb at \linebreak 
+http://www.bioconductor.org/packages/release/BiocViews.html, 
+such as \Biocannopkg{TxDb.Rnorvegicus.UCSC.rn5.refGene} for rat, 
+\Biocannopkg{TxDb.Mmusculus.UCSC.mm10.knownGene} for mouse, 
+\Biocannopkg{TxDb.Hsapiens.UCSC.hg19.knownGene} for human, 
+\Biocannopkg{TxDb.Dmelanogaster.UCSC.dm3.ensGene} for Drosophila and 
+\Biocannopkg{TxDb.Celegans.UCSC.ce6.ensGene} for C.elegans
+
+\begin{scriptsize}
+<<>>=
+library(CRISPRseek)
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+outputDir <- getwd()
+inputFilePath <- system.file('extdata', 'inputseq.fa', package = 'CRISPRseek')
+REpatternFile <- system.file('extdata', 'NEBenzymes.fa', package = 'CRISPRseek')
+@
+\end{scriptsize}
+
+
+\subsection{Scenario 1: Finding paired spacers with restriction enzyme cut 
+site(s)}
+Paired spacers in proper spacing and orientation give more specificity and 
+spacers overlap with restriction enzyme cut sites facilitates cleavage 
+monitoring. Calling the function \Rfunction{offTargetAnalysis} with 
+findPairedSpacerOnly=TRUE and findSpacersWithREcutOnly=TRUE results in 
+searching, scoring and annotating spacers that are in paired configuration 
+and at least one of the pairs overlap a restriction enzyme cut site. To be 
+considered as a pair, gap between forward spacer and the corresponding reverse 
+spacer needs to be (min.gap, max.gap) inclusive and the reverse spacer must 
+sit before the forward spacer. The default (min.gap, max.gap) is (0,20). 
+Please note that chromToSearch is set to chrX here for speed purpose, usually 
+you would set it to all, which is the default. In order for a spacer to be 
+considered overlap with restriction enzyme cut site, the enzyme cut pattern 
+must overlap with one of the spacer positions specified in 
+overlap.spacer.positions, default position 17 and 18. Please note that 
+max.mismatch allowed for off-target finding is set to 4 by default, set it 
+to a larger number will significantly slow down the search.  For detailed 
+parameter settings using function \Rfunction{offTargetAnalysis}, please type 
+help(offTargetAnalysis)
+
+\begin{scriptsize}
+<<>>=
+offTargetAnalysis(inputFilePath, findSpacersWithREcutOnly = TRUE, 
+REpatternFile = REpatternFile, findPairedSpacerOnly = TRUE, 
+BSgenomeName = Hsapiens, chromToSearch ="chrX", min.gap = 0, max.gap = 20, 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 0, 
+overlap.spacer.positions = c(17, 18), outputDir = outputDir,
+overwrite = TRUE)
+@
+\end{scriptsize}
+
+\subsection{Scenario 2: Finding paired spacers with/without restriction enzyme 
+cut site(s)}
+Calling the function \Rfunction{offTargetAnalysis} with 
+findPairedSpacerOnly = TRUE and findSpacersWithREcutOnly = FALSE results in 
+searching, scoring and annotating spacers that are in paired configuration 
+without requiring overlap any restriction enzyme cut site. The spacers will 
+be annotated with restriction enzyme cut sites for users to review later.
+
+\begin{scriptsize}
+<<>>=
+offTargetAnalysis(inputFilePath, findSpacersWithREcutOnly = FALSE,
+REpatternFile = REpatternFile,findPairedSpacerOnly = TRUE, 
+BSgenomeName = Hsapiens, chromToSearch = "chrX", 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+
+\subsection{Scenario 3: Finding all spacers with restriction enzyme cut site(s)}
+Calling the function \Rfunction{offTargetAnalysis} with 
+findPairedSpacerOnly=FALSE and findSpacersWithREcutOnly = TRUE results in 
+searching, scoring and annotating all spacers (paired and not paired) overlap 
+restriction enzyme cut site(s) and off-targets. The spacers will be annotated 
+with paired information for users to review later.
+
+\begin{scriptsize}
+<<>>=
+offTargetAnalysis(inputFilePath, findSpacersWithREcutOnly = TRUE,
+REpatternFile = REpatternFile, findPairedSpacerOnly = FALSE, 
+BSgenomeName = Hsapiens, chromToSearch = "chrX", 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+
+\subsection{Scenario 4: Finding all spacers}
+Calling the function \Rfunction{offTargetAnalysis} with 
+findPairedSpacerOnly = FALSE and findSpacersWithREcutOnly = FALSE results in 
+searching, scoring and annotating all spacers and off-targets. The spacers will 
+be annotated with paired information and restriction enzyme cut sites for users 
+to review later.  Please note that this search will be the slowest among all 
+type of searches aforementioned.
+
+\begin{scriptsize}
+<<>>=
+offTargetAnalysis(inputFilePath, findSpacersWithREcutOnly = FALSE,
+REpatternFile = REpatternFile,findPairedSpacerOnly = FALSE, 
+BSgenomeName = Hsapiens, chromToSearch = "chrX", 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+
+\subsection{Scenario 5: Target and off-target analysis for user specified 
+spacers}
+Calling the function \Rfunction{offTargetAnalysis} with findSpacers = FALSE 
+results in target and off-target searching, scoring and annotating for the 
+input spacers. The spacers will be annotated with restriction enzyme cut sites 
+for users to review later. However, paired information will not be available. 
+
+\begin{scriptsize}
+<<>>=
+spacerFilePath <- system.file('extdata', 'testHsap_GATA1_ex2_gRNA1.fa',
+package = 'CRISPRseek')
+offTargetAnalysis(inputFilePath = spacerFilePath, 
+findSpacersWithREcutOnly = TRUE, REpatternFile = REpatternFile,
+findPairedSpacerOnly = FALSE, findSpacers = FALSE,
+BSgenomeName = Hsapiens, chromToSearch = 'chrX', 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+
+\subsection{ Scenario 6. Quick spacer finding  without target or off-target
+analysis}
+Calling the function \Rfunction{offTargetAnalysis} with chromToSearch = "" 
+results in quick spacer search without performing on-target and off-target
+analysis. Parameters findSpacersWithREcutOnly and findPairedSpacerOnly can
+be tuned to indicate whether searching for spacers overlap restriction enzyme
+cut sites or not, and whether searching for spacers in paired configuration
+or not. 
+\begin{scriptsize}
+<<>>=
+offTargetAnalysis(inputFilePath, findSpacersWithREcutOnly = TRUE,
+REpatternFile = REpatternFile,findPairedSpacerOnly = TRUE,
+chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+
+\section{References}
+\begin{thebibliography}{99}
+\bibitem[Mali P. et al., 2013]{Mali et al., 2013} Mali P. et al., CAS9 
+transcriptional activators for target specificity screening and paired nickases 
+for cooperative genome engineering. Nat Biotechnol. 2013. 31(9):833-8
+\bibitem[ Hsu, P.D et al., 2013]{Hsu et al., 2013} Hsu, P.D. et al., DNA 
+targeting specificity of rNA-guided Cas9 nucleases. Nat Biotechnol. 
+2013. 31:827-834. 
+\bibitem[Lihua Julie Zhu, Michael Brodsky]{Zhu and Brodsky}Lihua Julie Zhu 
+and Michael Brodsky. CRISPRseek: A Bioconductor package for designing, 
+scoring and annotating spacers in CRISPR-Cas9 system. (In preparation)
+\end{thebibliography}
+
+\section{Session Info}
+<<>>=
+sessionInfo()
+@
+\end{document}
