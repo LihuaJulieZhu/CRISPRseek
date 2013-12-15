@@ -62,6 +62,12 @@ findSpacers <-
         {
             stop("No paired spacers found in the input sequence!")
         }
+        temp = matrix(nrow =0, ncol=5)
+        colnames(temp)[1:5] <- c( "ReverseSpacerPlusPAM",
+            "ReverseSpacerName", "ForwardSpacerPlusPAM",
+            "ForwardSpacerName", "gap")
+        write.table(temp, file = pairOutputFile, sep = "\t",
+            row.names = FALSE, quote = FALSE)
         if (n.minus.spacers > 0 && n.plus.spacers > 0)
         {
             for (j in 1:n.plus.spacers)
