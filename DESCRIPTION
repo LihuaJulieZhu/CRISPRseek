@@ -1,8 +1,8 @@
 Package: CRISPRseek
 Type: Package
 Title: Design, scoring and annotating spacers for CRISPR-Cas9 system
-Version:  0.99.9
-Date: 2013-12-15
+Version:  0.99.10
+Date: 2013-12-17
 Author: Lihua Julie Zhu,Michael Brodsky
 Maintainer: Lihua Julie Zhu <julie.zhu@umassmed.edu>
 Depends: R (>= 3.0.1), BiocGenerics, Biostrings, BSgenome

@@ -8,7 +8,9 @@ Filter spacers
 Filter spacers containing restriction enzyme cut site
 }
 \usage{
-filterSpacers(all.spacers, pairOutputFile = "", REpatternFile, format = "fasta", 
+filterSpacers(all.spacers, pairOutputFile = "", 
+    findSpacersWithREcutOnly = FALSE,
+    REpatternFile, format = "fasta", 
     minREpatternSize = 6, overlap.spacer.positions = c(17, 18))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -18,6 +20,10 @@ Spacers as DNAStringSet, such as the output from findSpacers
 }
   \item{pairOutputFile}{
 File path with paired spacers
+}
+  \item{findSpacersWithREcutOnly}{
+Indicate whether to find spacers overlap with restriction enzyme recognition 
+pattern
 }
   \item{REpatternFile}{
 File path containing restriction enzyme cut patters

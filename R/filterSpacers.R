@@ -1,5 +1,6 @@
 filterSpacers <-
-    function(all.spacers, pairOutputFile = "", REpatternFile, format = "fasta",
+    function(all.spacers, pairOutputFile = "", 
+        findSpacersWithREcutOnly = FALSE, REpatternFile, format = "fasta",
         minREpatternSize = 6, overlap.spacer.positions = c(17, 18))
 {
     if (missing(REpatternFile)) {
@@ -111,7 +112,7 @@ filterSpacers <-
         withRE <- ann.Spacers[ ! is.na(ann.Spacers$ForwardREname) | 
             ! is.na(ann.Spacers$ReverseREname), ]
         withRE <- unique(cbind(withRE[,1:4]))
-        if (dim(withRE)[1] == 0)
+        if (dim(withRE)[1] == 0 && findSpacersWithREcutOnly)
             stop("No pairs with RE sites!")
         spacers  <- DNAStringSet(c(as.character(withRE$ForwardSpacerPlusPAM),
             as.character(withRE$ReverseSpacerPlusPAM)))
@@ -120,7 +121,7 @@ filterSpacers <-
     }
     else ### from unpaired search
     {
-        if (dim(spacers.RE)[1] == 0)
+        if (dim(spacers.RE)[1] == 0 && findSpacersWithREcutOnly)
             stop("No spacers with RE sites!")
         temp <- unique(cbind(as.character(spacers.RE$SpacerPlusPAM), 
             as.character(spacers.RE$REcutSpacerName)))

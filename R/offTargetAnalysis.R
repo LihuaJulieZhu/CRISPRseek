@@ -55,7 +55,9 @@ offTargetAnalysis <-
 	if (findPairedSpacerOnly)
 	{
 	    spacers.RE <- filterSpacers(potential.spacers, 
-                pairOutputFile = pairOutputFile, REpatternFile = REpatternFile, 
+                pairOutputFile = pairOutputFile, 
+                findSpacersWithREcutOnly = findSpacersWithREcutOnly,
+	        REpatternFile = REpatternFile, 
                 format = format,  minREpatternSize = minREpatternSize, 
                 overlap.spacer.positions = overlap.spacer.positions)
             REcutDetails  <- spacers.RE$spacerREcutDetails
@@ -66,6 +68,7 @@ offTargetAnalysis <-
         else
 	{
             spacers.RE <- filterSpacers(potential.spacers, 
+	        findSpacersWithREcutOnly = findSpacersWithREcutOnly,
                 REpatternFile = REpatternFile, format = format, 
                 minREpatternSize = minREpatternSize, 
                 overlap.spacer.positions = overlap.spacer.positions)
