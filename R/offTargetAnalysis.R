@@ -141,6 +141,12 @@ offTargetAnalysis <-
             annotateExon = annotateExon)
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 
         header = TRUE, stringsAsFactors = FALSE) 
+    for (i in grep("topOfftarget", names(summary)))
+    {
+        y <- as.character(summary[,i])
+        y[is.na(y)] <- ""
+	summary[, i] = y	
+    }
     if (findSpacers)
     {
         PairedSpacerName <- unlist(lapply(1:dim(summary)[1], function(i) {

@@ -104,8 +104,8 @@ filterOffTarget <-
     }
     temp <- cbind(temp, mismatche.distance2PAM)
     colnames(temp)[5] <- "top1Hit(onTarget)MMdistance2PAM"
-    colnames(temp)[3] <- paste("top", min(5, maxN - 1), 
-        "OfftargetTotalScore", sep = "")
+    #colnames(temp)[3] <- paste("top", min(5, maxN - 1), 
+    #    "OfftargetTotalScore", sep = "")
     colnames(temp)[4] <- paste("top", maxN.totalScore - 1, 
         "OfftargetTotalScore", sep = "")
     colnames(temp)[6:15] <- paste("topOfftarget", 1:10, "MMdistance2PAM",
@@ -141,7 +141,7 @@ filterOffTarget <-
         }
         Offtargets <- cbind(Offtargets, flankSequence = seq)
     }
-    write.table(temp, file<-OfftargetSummary, sep = "\t", row.names = FALSE)
+    write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
     Offtargets$inExon[is.na(Offtargets$inExon)] <- ""
     write.table(Offtargets[order(as.character(Offtargets$name), 
         -as.numeric(as.character(Offtargets$score)), 
