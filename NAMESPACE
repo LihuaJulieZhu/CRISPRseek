@@ -3,4 +3,4 @@ import(BSgenome)
 import(BiocGenerics)
 export(offTargetAnalysis,filterOffTarget,filterSpacers, findSpacers, 
     searchHits, writeHits, translatePattern, getOfftargetScore, 
-    buildFeatureVectorForScoring)
+    buildFeatureVectorForScoring, compare2Sequences)
