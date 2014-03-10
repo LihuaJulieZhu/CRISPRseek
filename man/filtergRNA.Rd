@@ -1,28 +1,28 @@
-\name{filterSpacers}
-\alias{filterSpacers}
+\name{filtergRNAs}
+\alias{filtergRNAs}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Filter spacers
+Filter gRNAs
 }
 \description{
-Filter spacers containing restriction enzyme cut site
+Filter gRNAs containing restriction enzyme cut site
 }
 \usage{
-filterSpacers(all.spacers, pairOutputFile = "", 
-    findSpacersWithREcutOnly = FALSE,
+filtergRNAs(all.gRNAs, pairOutputFile = "", 
+    findgRNAsWithREcutOnly = FALSE,
     REpatternFile, format = "fasta", 
-    minREpatternSize = 6, overlap.spacer.positions = c(17, 18))
+    minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{all.spacers}{
-Spacers as DNAStringSet, such as the output from findSpacers
+  \item{all.gRNAs}{
+gRNAs as DNAStringSet, such as the output from findgRNAs
 }
   \item{pairOutputFile}{
-File path with paired spacers
+File path with paired gRNAs
 }
-  \item{findSpacersWithREcutOnly}{
-Indicate whether to find spacers overlap with restriction enzyme recognition 
+  \item{findgRNAsWithREcutOnly}{
+Indicate whether to find gRNAs overlap with restriction enzyme recognition 
 pattern
 }
   \item{REpatternFile}{
@@ -35,8 +35,8 @@ Format of the REpatternFile, default as fasta
 Minimum restriction enzyme recognition pattern length required for the 
 enzyme pattern to be searched for, default 6
 }
-  \item{overlap.spacer.positions}{
-The required overlap positions of spacer and restriction enzyme cut site, 
+  \item{overlap.gRNA.positions}{
+The required overlap positions of gRNA and restriction enzyme cut site, 
 default 17 and 18
 }
 }
@@ -44,8 +44,8 @@ default 17 and 18
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
- \item{spacers.withRE }{spacers as DNAStringSet that passed the filter criteria}
- \item{spacerREcutDetails}{a data frame that contains a set of spacers 
+ \item{gRNAs.withRE }{gRNAs as DNAStringSet that passed the filter criteria}
+ \item{gRNAREcutDetails}{a data frame that contains a set of gRNAs 
  annotated with restriction enzyme cut details}
 }
 \references{
@@ -64,19 +64,19 @@ Lihua Julie Zhu
 offTargetAnalysis
 }
 \examples{
-    all.spacers <- findSpacers(
+    all.gRNAs <- findgRNAs(
         inputFilePath = system.file("extdata", "inputseq.fa", 
         package = "CRISPRseek"),
-        pairOutputFile = "testpairedSpacers.xls",
-        findPairedSpacerOnly = TRUE)
+        pairOutputFile = "testpairedgRNAs.xls",
+        findPairedgRNAOnly = TRUE)
 
-    spacers.RE <- filterSpacers(all.spacers = all.spacers,
-        pairOutputFile = "testpairedSpacers.xls",
+    gRNAs.RE <- filtergRNAs(all.gRNAs = all.gRNAs,
+        pairOutputFile = "testpairedgRNAs.xls",
         REpatternFile = system.file("extdata", "NEBenzymes.fa", 
         package = "CRISPRseek"))
 
-    spacers  <- spacers.RE$spacers.withRE
-    restriction.enzyme.cut.sites <- spacers.RE$spacerREcutDetails
+    gRNAs  <- gRNAs.RE$gRNAs.withRE
+    restriction.enzyme.cut.sites <- gRNAs.RE$gRNAREcutDetails
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -4,14 +4,14 @@ library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 outputDir <- getwd();
 inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
-spacerFilePath <- system.file("extdata", "testHsap_GATA1_ex2_gRNA1.fa",
+gRNAFilePath <- system.file("extdata", "testHsap_GATA1_ex2_gRNA1.fa",
      package = "CRISPRseek")
 REcutDetails.pairedSearchRE <- read.table(system.file("extdata/pairedSearch/withRE", 
     "REcutDetails.xls", package = "CRISPRseek"), sep = "\t", 
     header = TRUE, stringsAsFactors = FALSE)
-pairedSpacers.pairedSearchRE <- read.table(
+pairedgRNAs.pairedSearchRE <- read.table(
     system.file("extdata/pairedSearch/withRE",
-    "pairedSpacers.xls", package = "CRISPRseek"), sep = "\t",
+    "pairedgRNAs.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
 summary.pairedSearchRE <- read.table(
     system.file("extdata/pairedSearch/withRE",
@@ -26,9 +26,9 @@ REcutDetails.pairedSearchNoRE <- read.table(
     system.file("extdata/pairedSearch/withoutRE",
     "REcutDetails.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
-pairedSpacers.pairedSearchNoRE <- read.table(
+pairedgRNAs.pairedSearchNoRE <- read.table(
     system.file("extdata/pairedSearch/withoutRE",
-    "pairedSpacers.xls",package = "CRISPRseek"), sep = "\t",
+    "pairedgRNAs.xls",package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
 summary.pairedSearchNoRE <- read.table(
     system.file("extdata/pairedSearch/withoutRE",
@@ -43,9 +43,9 @@ REcutDetails.unPairedSearchRE <- read.table(
     system.file("extdata/unPairedSearch/withRE",
     "REcutDetails.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
-pairedSpacers.unPairedSearchRE <- read.table(
+pairedgRNAs.unPairedSearchRE <- read.table(
     system.file("extdata/unPairedSearch/withRE",
-    "pairedSpacers.xls", package = "CRISPRseek"), sep = "\t",
+    "pairedgRNAs.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
 summary.unPairedSearchRE <- read.table(
     system.file("extdata/unPairedSearch/withRE",
@@ -60,9 +60,9 @@ REcutDetails.unPairedSearchNoRE <- read.table(
     system.file("extdata/unPairedSearch/withoutRE",
     "REcutDetails.xls", package = "CRISPRseek"), sep = "\t", 
     header = TRUE, stringsAsFactors = FALSE)
-pairedSpacers.unPairedSearchNoRE <- read.table(
+pairedgRNAs.unPairedSearchNoRE <- read.table(
     system.file("extdata/unPairedSearch/withoutRE",
-    "pairedSpacers.xls", package = "CRISPRseek"), sep = "\t",
+    "pairedgRNAs.xls", package = "CRISPRseek"), sep = "\t",
      header = TRUE, stringsAsFactors = FALSE)
 summary.unPairedSearchNoRE <- read.table(
     system.file("extdata/unPairedSearch/withoutRE",
@@ -73,24 +73,24 @@ offtarget.unPairedSearchNoRE  <- read.table(
     "OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
 
-REcutDetails.spacerProvided <- read.table(
-    system.file("extdata/spacerProvidedSearch",
+REcutDetails.gRNAProvided <- read.table(
+    system.file("extdata/gRNAProvidedSearch",
     "REcutDetails.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
-summary.spacerProvided <- read.table(
-    system.file("extdata/spacerProvidedSearch",
+summary.gRNAProvided <- read.table(
+    system.file("extdata/gRNAProvidedSearch",
     "Summary.xls", package = "CRISPRseek"), sep = "\t", header = TRUE,
     stringsAsFactors = FALSE)
-offtarget.spacerProvided  <- read.table(
-    system.file("extdata/spacerProvidedSearch",
+offtarget.gRNAProvided  <- read.table(
+    system.file("extdata/gRNAProvidedSearch",
     "OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
 
 test_offTargetAnalysis <- function() {
-    cat("Testing for findSpacers = FALSE...\n")
-    offTargetAnalysis(inputFilePath = spacerFilePath, findSpacers = FALSE, 
-        findSpacersWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
-        findPairedSpacerOnly = FALSE, BSgenomeName = Hsapiens, 
+    cat("Testing for findgRNAs = FALSE...\n")
+    offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
+        findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
+        findPairedgRNAOnly = FALSE, BSgenomeName = Hsapiens, 
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 3, 
         outputDir = outputDir, overwrite = TRUE)
     REcutDetails <- read.table("REcutDetails.xls", sep = "\t", header = TRUE, 
@@ -99,30 +99,30 @@ test_offTargetAnalysis <- function() {
         stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
-    if (checkEquals(REcutDetails.spacerProvided, REcutDetails ))
-        cat("REcutDetails passed test for spacer provided\n")
+    if (checkEquals(REcutDetails.gRNAProvided, REcutDetails ))
+        cat("REcutDetails passed test for gRNA provided\n")
     else
-        cat("REcutDetails failed for spacer provided\n")
-    if (checkEquals(summary.spacerProvided, summary, tolerance = 0.01))
-        cat("Summary passed test for spacer provided\n")
+        cat("REcutDetails failed for gRNA provided\n")
+    if (checkEquals(summary.gRNAProvided, summary, tolerance = 0.01))
+        cat("Summary passed test for gRNA provided\n")
     else
-        cat("Summary failed for spacer provided\n")
-    if (checkEquals(offtarget.spacerProvided, offtarget,tolerance = 0.001))
-        cat("off target analysis details passed test for spacer provided\n")
+        cat("Summary failed for gRNA provided\n")
+    if (checkEquals(offtarget.gRNAProvided, offtarget,tolerance = 0.001))
+        cat("off target analysis details passed test for gRNA provided\n")
     else
-        cat("off target anlalysis details failed for spacer provided\n")
+        cat("off target anlalysis details failed for gRNA provided\n")
     for (isPaired in c(TRUE, FALSE))
     {	
         for (isRE in c(TRUE, FALSE))
         {
             offTargetAnalysis(inputFilePath = inputFilePath, 
-                findSpacersWithREcutOnly = isRE, REpatternFile = REpatternFile,
-                findPairedSpacerOnly = isPaired, BSgenomeName = Hsapiens, 
+                findgRNAsWithREcutOnly = isRE, REpatternFile = REpatternFile,
+                findPairedgRNAOnly = isPaired, BSgenomeName = Hsapiens, 
                 txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 3, 
                 outputDir= outputDir, overwrite = TRUE)
             REcutDetails <- read.table("REcutDetails.xls", sep = "\t", 
                 header = TRUE, stringsAsFactors = FALSE)
-            pairedSpacers <- read.table("pairedSpacers.xls", sep = "\t", 
+            pairedgRNAs <- read.table("pairedgRNAs.xls", sep = "\t", 
                 header = TRUE, stringsAsFactors = FALSE)
             summary <- read.table("Summary.xls", sep = "\t", header = TRUE, 
                 stringsAsFactors = FALSE)
@@ -135,10 +135,10 @@ test_offTargetAnalysis <- function() {
                     cat("REcutDetails passed test for paired with RE sites\n")
                 else
                     cat("REcutDetails failed for paired with RE sites\n")
-                if (checkEquals(pairedSpacers.pairedSearchRE, pairedSpacers))
-                    cat("pairedSpacers passed test for paired with RE sites\n")
+                if (checkEquals(pairedgRNAs.pairedSearchRE, pairedgRNAs))
+                    cat("pairedgRNAs passed test for paired with RE sites\n")
                 else
-                    cat("pairedSpacers failed for paired with RE sites\n")	
+                    cat("pairedgRNAs failed for paired with RE sites\n")	
                 if (checkEquals(
                     summary.pairedSearchRE, summary, tolerance = 0.01))
                     cat("Summary passed test for paired with RE sites\n")
@@ -160,11 +160,11 @@ test_offTargetAnalysis <- function() {
                 else
                     cat("REcutDetails failed for paired with or without RE 
                         sites\n")
-                if (checkEquals(pairedSpacers.pairedSearchNoRE, pairedSpacers))
-                    cat("pairedSpacers passed test for paired with or without 
+                if (checkEquals(pairedgRNAs.pairedSearchNoRE, pairedgRNAs))
+                    cat("pairedgRNAs passed test for paired with or without 
                         RE sites\n")
                 else
-                    cat("pairedSpacers failed for paired with or without RE 
+                    cat("pairedgRNAs failed for paired with or without RE 
                         sites\n")
                 if (checkEquals(
                     summary.pairedSearchNoRE, summary, tolerance = 0.01))
@@ -187,10 +187,10 @@ test_offTargetAnalysis <- function() {
                     cat("REcutDetails passed test for unPaired with RE sites\n")
                 else
                     cat("REcutDetails failed for unPaired with RE sites\n")
-                if (checkEquals(pairedSpacers.unPairedSearchRE, pairedSpacers))
-                    cat("pairedSpacers passed test for unPaired with RE sites\n")
+                if (checkEquals(pairedgRNAs.unPairedSearchRE, pairedgRNAs))
+                    cat("pairedgRNAs passed test for unPaired with RE sites\n")
                 else
-                    cat("pairedSpacers failed for unPaired with RE sites\n")
+                    cat("pairedgRNAs failed for unPaired with RE sites\n")
                 if (checkEquals(
                     summary.unPairedSearchRE, summary, tolerance = 0.01))
                     cat("Summary passed test for unPaired with RE sites\n")
@@ -214,11 +214,11 @@ test_offTargetAnalysis <- function() {
                     cat("REcutDetails failed unPaired with or without RE 
                         sites\n")
                 if (checkEquals(
-                    pairedSpacers.unPairedSearchNoRE, pairedSpacers))
-                    cat("pairedSpacers passed test unPaired with or without RE 
+                    pairedgRNAs.unPairedSearchNoRE, pairedgRNAs))
+                    cat("pairedgRNAs passed test unPaired with or without RE 
                         sites\n")
                 else
-                    cat("pairedSpacers failed unPaired with or without RE 
+                    cat("pairedgRNAs failed unPaired with or without RE 
                         sites\n")
                 if (checkEquals(
                     summary.unPairedSearchNoRE, summary, tolerance = 0.01))

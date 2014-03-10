@@ -2,20 +2,22 @@
 \alias{offTargetAnalysis}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Target and off target analysis for CRISPR-Cas9 system in one function
+Design of target-specific guide RNAs for CRISPR-Cas9 system in one function
 }
 \description{
-Target and off target analysis for CRISPR-Cas9 system by automatically 
-calling findSpacers, filterSpacers, searchHits, buildFeatureVectorForScoring, 
+Design of target-specific guide RNAs (gRNAs) for CRISPR-Cas9 system by automatically 
+calling findgRNAs, filtergRNAs, searchHits, buildFeatureVectorForScoring, 
 getOfftargetScore, filterOfftarget and generate reports.
 }
 \usage{
-offTargetAnalysis(inputFilePath, format = "fasta", findSpacers = TRUE, 
-    findSpacersWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6, 
-    overlap.spacer.positions = c(17, 18), findPairedSpacerOnly = TRUE, 
-    min.gap = 0, max.gap = 20, spacer.name.prefix = "gRNA", PAM.size = 3, 
-    spacer.size = 20, PAM = "NGG", BSgenomeName, chromToSearch = "all", 
-    max.mismatch = 4, PAM.pattern = "N[A|G]G$", min.score = 0.5, topN = 100, 
+offTargetAnalysis(inputFilePath, format = "fasta", findgRNAs = TRUE,
+    exportAllgRNAs = c("no", "fasta", "genbank", "all"),
+    findgRNAsWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6, 
+    overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = TRUE, 
+    min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
+    gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
+    max.mismatch = 4, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
+    min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 
@@ -26,18 +28,22 @@ offTargetAnalysis(inputFilePath, format = "fasta", findSpacers = TRUE,
 \arguments{
   \item{inputFilePath}{
 Sequence input file path that contains sequences to be searched for potential 
-spacers
+gRNAs
 }
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta
 }
-  \item{findSpacers}{
-Indicate whether to find spacers from the sequences in the input file or skip 
-the step of finding spacers, default TRUE. Set it to FALSE if the input file 
-contains user selected spacers plus PAM already. 
+  \item{findgRNAs}{
+Indicate whether to find gRNAs from the sequences in the input file or skip 
+the step of finding gRNAs, default TRUE. Set it to FALSE if the input file 
+contains user selected gRNAs plus PAM already. 
 }
-  \item{findSpacersWithREcutOnly}{
-Indicate whether to find spacers overlap with restriction enzyme recognition 
+\item{exportAllgRNAs}{
+Indicate whether to output all potential gRNAs to a file in fasta format,
+genbank format or both.
+}
+  \item{findgRNAsWithREcutOnly}{
+Indicate whether to find gRNAs overlap with restriction enzyme recognition 
 pattern
 }
   \item{REpatternFile}{
@@ -47,35 +53,35 @@ File path containing restriction enzyme cut patters
 Minimum restriction enzyme recognition pattern length required for the enzyme 
 pattern to be searched for, default 6
 }
-  \item{overlap.spacer.positions}{
-The required overlap positions of spacer and restriction enzyme cut site, 
+  \item{overlap.gRNA.positions}{
+The required overlap positions of gRNA and restriction enzyme cut site, 
 default 17 and 18
 }
-  \item{findPairedSpacerOnly}{
-Choose whether to only search for paired spacers in such an orientation that 
-the first one is on minus strand called reverse spacer and the second one is 
-on plus strand called forward spacer. TRUE or FALSE, default FALSE
+  \item{findPairedgRNAOnly}{
+Choose whether to only search for paired gRNAs in such an orientation that 
+the first one is on minus strand called reverse gRNA and the second one is 
+on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 }
   \item{min.gap}{
-Minimum distance between two oppositely oriented spacers to be valid paired 
-spacers. Default 0
+Minimum distance between two oppositely oriented gRNAs to be valid paired 
+gRNAs. Default 0
 }
   \item{max.gap}{
-Maximum distance between two oppositely oriented spacers to be valid paired 
-spacers. Default 20
+Maximum distance between two oppositely oriented gRNAs to be valid paired 
+gRNAs. Default 20
 }
-  \item{spacer.name.prefix}{
-The prefix used when assign name to found spacers, default gRNA, short for 
+  \item{gRNA.name.prefix}{
+The prefix used when assign name to found gRNAs, default gRNA, short for 
 guided RNA.
 }
   \item{PAM.size}{
 PAM length, default 3
 }
-  \item{spacer.size}{
-The size of the spacer, default 20
+  \item{gRNA.size}{
+The size of the gRNA, default 20
 }
   \item{PAM}{
-PAM sequence after the spacer, default NGG
+PAM sequence after the gRNA, default NGG
 }
   \item{BSgenomeName}{
 BSgenome object. Please refer to available.genomes in BSgenome package. For 
@@ -94,7 +100,13 @@ Maximum mismatch allowed in off target search, default 4. Warning: will be
 considerably slower if set >4
 }
   \item{PAM.pattern}{
-Regular expression of PAM, default N[A|G]G$
+Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$
+}
+\item{gRNA.pattern}{
+Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 
+pattern, default is no restriction. To specify that the gRNA must start 
+with GG for example, then set it to ^GG. Please see help(translatePattern) for
+a list of IUPAC Extended Genetic Alphabet.
 }
   \item{min.score}{
 minimum score of an off target to included in the final output, default 0.5
@@ -134,7 +146,7 @@ upstream offset from the off target start, default 200
 downstream offset from the off target end, default 200
 }
   \item{weights}{
-a numeric vector size of spacer length, default c(0, 0, 0.014, 0, 0, 0.395, 
+a numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395, 
 0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 
 0.804, 0.685, 0.583) which is used in Hsu et al., 2013 cited in the reference 
 section
@@ -149,9 +161,9 @@ section
 \value{
 Four tab delimited files are generated in the output directory: 
 OfftargetAnalysis.xls (detailed information of off targets), 
-Summary.xls (summary of the spacers), REcutDetails.xls 
-(restriction enzyme cut sites of each spacer), and pairedSpacers.xls 
-(potential paired spacers)
+Summary.xls (summary of the gRNAs), REcutDetails.xls 
+(restriction enzyme cut sites of each gRNA), and pairedgRNAs.xls 
+(potential paired gRNAs)
 }
 \references{
 Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran, Silvana 
@@ -181,8 +193,8 @@ CRISPRseek
             package = "CRISPRseek")
 	REpatternFile <- system.file("extdata", "NEBenzymes.fa", 
             package = "CRISPRseek")
-	offTargetAnalysis(inputFilePath, findSpacersWithREcutOnly = TRUE, 
-            REpatternFile = REpatternFile, findPairedSpacerOnly = FALSE, 
+	offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
+            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 1, 
             outputDir = outputDir, overwrite = TRUE)

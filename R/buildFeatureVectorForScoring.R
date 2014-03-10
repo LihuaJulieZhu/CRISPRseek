@@ -1,5 +1,5 @@
 buildFeatureVectorForScoring <-
-    function(hits, spacer.size = 20, canonical.PAM = "NGG")
+    function(hits, gRNA.size = 20, canonical.PAM = "NGG")
 {
     #hits = read.table(hitsFile, sep = "\t", header=TRUE,
     # stringsAsFactors = FALSE)
@@ -8,16 +8,16 @@ buildFeatureVectorForScoring <-
         stop("Empty hits!")
     }
     subject <- DNAStringSet(as.character(hits$OffTargetSequence))
-    pattern <- DNAString(as.character(hits$spacerPlusPAM[1]))
+    pattern <- DNAString(as.character(hits$gRNAPlusPAM[1]))
     isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject, 
-        at = (spacer.size + 1), fixed = FALSE))
-    #type.mismatch = matrix(nrow=dim(hits)[1], ncol=spacer.size)
+        at = (gRNA.size + 1), fixed = FALSE))
+    #type.mismatch = matrix(nrow=dim(hits)[1], ncol=gRNA.size)
     mismatch.pos = hits[, grep("IsMismatch.pos", colnames(hits))]
     mismatch.distance2PAM <- apply(mismatch.pos, 1, function(i) { 
-        paste(spacer.size + 1 - which(i == 1), collapse = ",")
+        paste(gRNA.size + 1 - which(i == 1), collapse = ",")
     })
     alignment <- unlist(lapply(1:dim(mismatch.pos)[1], function(i) {
-        temp <- rep(".", spacer.size)
+        temp <- rep(".", gRNA.size)
         ind <- which(mismatch.pos[i,] == 1)
         for (j in ind)
             temp[j] = as.character(subseq(subject[i], start = j, width = 1))
@@ -31,7 +31,7 @@ buildFeatureVectorForScoring <-
         if (n.mismatch > 1)
             mean(positions[2:n.mismatch] - positions[1:(n.mismatch-1)])
         else
-            spacer.size
+            gRNA.size
     }))
     features <- cbind(mismatch.distance2PAM, alignment, isCanonical.PAM,
         mean.neighbor.distance.mismatch)

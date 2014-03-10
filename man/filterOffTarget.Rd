@@ -13,7 +13,7 @@ filter off targets and generate reports.
 \usage{
 filterOffTarget(scores, min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10,
-    annotateExon = TRUE, txdb, outputDir, oneFilePerSpacer = FALSE, 
+    annotateExon = TRUE, txdb, outputDir, oneFilePergRNA = FALSE, 
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,16 +22,16 @@ filterOffTarget(scores, min.score = 0.5, topN = 100,
 a data frame output from getOfftargetScore. It contains strand (strand of the 
 off target, + for plus and - for minus strand), chrom (chromosome of the off 
 target), chromStart (start position of the off target), chromEnd (end position 
-of the off target),name (spacer name),spacerPlusPAM (spacer sequence with PAM 
+of the off target),name (gRNA name),gRNAPlusPAM (gRNA sequence with PAM 
 sequence concatenated), OffTargetSequence (the genomic sequence of the off 
 target), n.mismatch (number of mismatches between the off target and the 
-spacer), forViewInUCSC (string for viewing in UCSC genome browser, e.g., 
+gRNA), forViewInUCSC (string for viewing in UCSC genome browser, e.g., 
 chr14:31665685-31665707), score (score of the off target), 
 mismatche.distance2PAM (a comma separated distances of all mismatches to 
 PAM, e.g., 14,11 means one mismatch is 14 bp away from PAM and the other 
-mismatch is 11 bp away from PAM), alignment (alignment between spacer and off 
+mismatch is 11 bp away from PAM), alignment (alignment between gRNA and off 
 target, e.g., ......G..C.......... means that this off target aligns with 
-spacer except that G and C are mismatches),NGG (this off target contains 
+gRNA except that G and C are mismatches),NGG (this off target contains 
 canonical PAM or not, 1 for yes and 0 for no)  mean.neighbor.distance.mismatch 
 (mean distance between neighboring mismatches)
 }
@@ -62,8 +62,8 @@ TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to
 }
-  \item{oneFilePerSpacer}{
-write to one file for each spacer or not, default to FALSE
+  \item{oneFilePergRNA}{
+write to one file for each gRNA or not, default to FALSE
 }
   \item{fetchSequence}{
 Fetch flank sequence of off target or not, default TRUE

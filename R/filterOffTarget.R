@@ -1,6 +1,6 @@
 filterOffTarget <-
     function(scores, min.score = 0.5, topN = 100, topN.OfftargetTotalScore = 10,
-    annotateExon = TRUE, txdb, outputDir, oneFilePerSpacer = FALSE,
+    annotateExon = TRUE, txdb, outputDir, oneFilePergRNA = FALSE,
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName)
 {
     if (fetchSequence && (missing(BSgenomeName) || 
@@ -17,17 +17,17 @@ filterOffTarget <-
     }
     OfftargetFile <-paste(outputDir, "OfftargetAnalysis.xls", sep = "")
     OfftargetSummary <-paste(outputDir, "Summary.xls", sep = "")
-    spacersPlusPAM<- unique(scores$spacerPlusPAM)
-    names <- spacersPlusPAM
+    gRNAsPlusPAM<- unique(scores$gRNAPlusPAM)
+    names <- gRNAsPlusPAM
     top5OfftargetTotalScore <- numeric(length(names))
     topNOfftargetTotalScore <- top5OfftargetTotalScore
-    temp <- cbind(names, spacersPlusPAM, top5OfftargetTotalScore, 
+    temp <- cbind(names, gRNAsPlusPAM, top5OfftargetTotalScore, 
         topNOfftargetTotalScore)
     mismatche.distance2PAM <- matrix(ncol = 11, nrow = length(names))
     append <- FALSE
-    for (i in 1:length(spacersPlusPAM))
+    for (i in 1:length(gRNAsPlusPAM))
     {
-        this.score <- scores[scores$spacerPlusPAM == spacersPlusPAM[i],]
+        this.score <- scores[scores$gRNAPlusPAM == gRNAsPlusPAM[i],]
         this.score <- this.score[order(this.score$score, decreasing = TRUE),]
         maxN <- min(topN, dim(this.score)[1])
         this.score <- this.score[1:maxN,]
@@ -55,7 +55,7 @@ filterOffTarget <-
             inExon[inExon[,2] == FALSE, 2] <- ""
             this.score <- merge(this.score,inExon)
             this.score <- cbind(name = this.score$name,
-                spacerPlusPAM = this.score$spacerPlusPAM,
+                gRNAPlusPAM = this.score$gRNAPlusPAM,
                 OffTargetSequence = this.score$OffTargetSequence,
                 inExon = as.character(this.score$inExon),
                 score = this.score$score, n.mismatch = this.score$n.mismatch, 
@@ -70,7 +70,7 @@ filterOffTarget <-
         }
         else
             this.score <- cbind(name = this.score$name, 
-                spacerPlusPAM = this.score$spacerPlusPAM,
+                gRNAPlusPAM = this.score$gRNAPlusPAM,
                 OffTargetSequence = this.score$OffTargetSequence,
                 score = this.score$score, n.mismatch = this.score$n.mismatch, 
                 mismatche.distance2PAM = 
@@ -81,7 +81,7 @@ filterOffTarget <-
                 strand = this.score$strand, 
                 chrom = this.score$chrom, chromStart = this.score$chromStart,
                 chromEnd = this.score$chromEnd)
-        if (oneFilePerSpacer & dim(this.score)[1] > 0)
+        if (oneFilePergRNA & dim(this.score)[1] > 0)
             write.table(this.score[!is.na(this.score[,grep("score", 
                 colnames(this.score))]),], 
                 file = paste( outputDir, "OfftargetAnalysis-", 

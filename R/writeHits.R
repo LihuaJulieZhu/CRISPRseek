@@ -1,9 +1,9 @@
 writeHits <-
-    function (spacer, seqname, matches, strand, file, spacer.size = 20, 
+    function (gRNA, seqname, matches, strand, file, gRNA.size = 20, 
         PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE) 
 {
-    if (missing(spacer) || class(spacer) != "DNAString") {
-        stop("spacer is required as a DNAString object!")
+    if (missing(gRNA) || class(gRNA) != "DNAString") {
+        stop("gRNA is required as a DNAString object!")
     }	
     if (missing(seqname)) {
         stop("seqname is required as character!")
@@ -19,22 +19,22 @@ writeHits <-
             " will be overwritten with 'append = FALSE'")
     if (!file.exists(file) && append)
         append <- FALSE
-    Lmismatch  <- ( ! hasLetterAt(as(matches, "DNAStringSet"), spacer, 
-        seq(nchar(spacer))))
+    Lmismatch  <- ( ! hasLetterAt(as(matches, "DNAStringSet"), gRNA, 
+        seq(nchar(gRNA))))
     Lmismatch[!Lmismatch] <- 0
     if (length(dim(Lmismatch)) == 0)
     {
         Lmismatch <- as.data.frame(t(Lmismatch))
     }
     #print(max.mismatch)
-    Lmismatch <- Lmismatch[, 1:spacer.size]
+    Lmismatch <- Lmismatch[, 1:gRNA.size]
     n.mismatch <- apply(Lmismatch, 1, sum)
-    colnames(Lmismatch) <- paste("IsMismatch.pos", 1:spacer.size, sep = "")
+    colnames(Lmismatch) <- paste("IsMismatch.pos", 1:gRNA.size, sep = "")
     hits <- data.frame(strand = rep.int(strand, length(matches)),
         chrom = rep.int(seqname, length(matches)), 
         chromStart = start(matches), chromEnd = end(matches), 
         name = names(matches),  
-        spacerPlusPAM = rep(as.character(spacer), length(matches)),
+        gRNAPlusPAM = rep(as.character(gRNA), length(matches)),
         OffTargetSequence = unlist(strsplit(toString(matches), ", ")), 
         n.mismatch = n.mismatch,
         chrom.len = rep(chrom.len, length(matches))

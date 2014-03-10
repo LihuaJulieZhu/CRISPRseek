@@ -1,7 +1,7 @@
-filterSpacers <-
-    function(all.spacers, pairOutputFile = "", 
-        findSpacersWithREcutOnly = FALSE, REpatternFile, format = "fasta",
-        minREpatternSize = 6, overlap.spacer.positions = c(17, 18))
+filtergRNAs <-
+    function(all.gRNAs, pairOutputFile = "", 
+        findgRNAsWithREcutOnly = FALSE, REpatternFile, format = "fasta",
+        minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
 {
     if (missing(REpatternFile)) {
         stop("REpatternFile containing the restriction enzyme cut pattern 
@@ -28,11 +28,11 @@ filterSpacers <-
         print(unique(names(duplicateRE)))
     }
     patterns <- singleRE
-    seqs <- as.character(all.spacers)
-    seq.names <- names(all.spacers)
-    min.pStart.plus <- overlap.spacer.positions[1] - width(patterns) + 1
-    max.pStart.plus <- overlap.spacer.positions[2] + width(patterns) - 1
-    spacers.RE <- data.frame(SpacerPlusPAM = "", REcutSpacerName = "", 
+    seqs <- as.character(all.gRNAs)
+    seq.names <- names(all.gRNAs)
+    min.pStart.plus <- overlap.gRNA.positions[1] - width(patterns) + 1
+    max.pStart.plus <- overlap.gRNA.positions[2] + width(patterns) - 1
+    gRNAs.RE <- data.frame(gRNAPlusPAM = "", REcutgRNAName = "", 
         REname = "", REpattern = "", REcutStart = "", REcutEnd = "")
     for (j in 1:length(patterns))
     {
@@ -42,7 +42,7 @@ filterSpacers <-
         if (revpattern != pattern)
         {
             revpattern <- translatePattern(revpattern)
-            minus.spacers <- do.call(rbind, lapply(1:length(all.spacers), 
+            minus.gRNAs <- do.call(rbind, lapply(1:length(all.gRNAs), 
                 function(i){
                     res1  <- as.numeric(gregexpr(revpattern, seqs[i],
                         perl = TRUE,fixed = FALSE,ignore.case = TRUE)[[1]])
@@ -55,19 +55,19 @@ filterSpacers <-
                    }))
                 }
             ))
-            if (length(minus.spacers) >1)
+            if (length(minus.gRNAs) >1)
             {
-                #print(minus.spacers)
+                #print(minus.gRNAs)
                 # print(j)
-                # print(dim(minus.spacers))
-                colnames(minus.spacers) <- c("SpacerPlusPAM", 
-                    "REcutSpacerName", "REname", "REpattern",
+                # print(dim(minus.gRNAs))
+                colnames(minus.gRNAs) <- c("gRNAPlusPAM", 
+                    "REcutgRNAName", "REname", "REpattern",
                     "REcutStart","REcutEnd")
-                spacers.RE <- rbind(spacers.RE,  minus.spacers)	
+                gRNAs.RE <- rbind(gRNAs.RE,  minus.gRNAs)	
             }
         }		 
         pattern <- translatePattern(pattern)
-        pos.spacers <- do.call(rbind, lapply(1:length(all.spacers), 
+        pos.gRNAs <- do.call(rbind, lapply(1:length(all.gRNAs), 
             function(i){
                 res1  <- as.numeric(gregexpr(pattern, seqs[i], perl = TRUE,
                     fixed = FALSE, ignore.case = TRUE)[[1]])
@@ -80,54 +80,54 @@ filterSpacers <-
                 }))
             }
         ))
-        if (length(pos.spacers) > 0)
+        if (length(pos.gRNAs) > 0)
         {
-            #print("pos.spacers")
+            #print("pos.gRNAs")
             #print(j)
-            #print(pos.spacers)
-            colnames(pos.spacers) <- c("SpacerPlusPAM", "REcutSpacerName", 
+            #print(pos.gRNAs)
+            colnames(pos.gRNAs) <- c("gRNAPlusPAM", "REcutgRNAName", 
                 "REname", "REpattern", "REcutStart", "REcutEnd")
-            spacers.RE <- rbind(spacers.RE,  pos.spacers)	
+            gRNAs.RE <- rbind(gRNAs.RE,  pos.gRNAs)	
         }
     }
-    spacers.RE <- spacers.RE[spacers.RE[,1] != "", ]
+    gRNAs.RE <- gRNAs.RE[gRNAs.RE[,1] != "", ]
     if (! missing(pairOutputFile) && file.exists(pairOutputFile)) {
-        spacers.RE.plus <- spacers.RE
-        spacers.RE.minus <- spacers.RE
-        colnames(spacers.RE.plus) <- paste("Forward", 
-            colnames(spacers.RE.plus), sep = "")
-        colnames(spacers.RE.minus) <- paste("Reverse", 
-            colnames(spacers.RE.minus), sep = "")
-        pairSpacers <- read.table(pairOutputFile, sep = "\t", header = TRUE,
+        gRNAs.RE.plus <- gRNAs.RE
+        gRNAs.RE.minus <- gRNAs.RE
+        colnames(gRNAs.RE.plus) <- paste("Forward", 
+            colnames(gRNAs.RE.plus), sep = "")
+        colnames(gRNAs.RE.minus) <- paste("Reverse", 
+            colnames(gRNAs.RE.minus), sep = "")
+        pairgRNAs <- read.table(pairOutputFile, sep = "\t", header = TRUE,
             stringsAsFactors = FALSE)
-        ann.Spacers <- merge(pairSpacers, spacers.RE.plus, 
-            by = "ForwardSpacerPlusPAM", all.x = TRUE)
-        ann.Spacers <- merge(ann.Spacers, spacers.RE.minus, 
-            by = "ReverseSpacerPlusPAM", all.x = TRUE)
-        ann.Spacers <- cbind(ann.Spacers[,1], ann.Spacers[,3], ann.Spacers[,2],
-            ann.Spacers[,4:dim(ann.Spacers)[2]])
-        colnames(ann.Spacers)[1:3] <- c("ReverseSpacerPlusPAM", 
-            "ReverseSpacerName", "ForwardSpacerPlusPAM")
-        ann.Spacers <- ann.Spacers[order(ann.Spacers[,1]), ]
-        withRE <- ann.Spacers[ ! is.na(ann.Spacers$ForwardREname) | 
-            ! is.na(ann.Spacers$ReverseREname), ]
+        ann.gRNAs <- merge(pairgRNAs, gRNAs.RE.plus, 
+            by = "ForwardgRNAPlusPAM", all.x = TRUE)
+        ann.gRNAs <- merge(ann.gRNAs, gRNAs.RE.minus, 
+            by = "ReversegRNAPlusPAM", all.x = TRUE)
+        ann.gRNAs <- cbind(ann.gRNAs[,1], ann.gRNAs[,3], ann.gRNAs[,2],
+            ann.gRNAs[,4:dim(ann.gRNAs)[2]])
+        colnames(ann.gRNAs)[1:3] <- c("ReversegRNAPlusPAM", 
+            "ReversegRNAName", "ForwardgRNAPlusPAM")
+        ann.gRNAs <- ann.gRNAs[order(ann.gRNAs[,1]), ]
+        withRE <- ann.gRNAs[ ! is.na(ann.gRNAs$ForwardREname) | 
+            ! is.na(ann.gRNAs$ReverseREname), ]
         withRE <- unique(cbind(withRE[,1:4]))
-        if (dim(withRE)[1] == 0 && findSpacersWithREcutOnly)
+        if (dim(withRE)[1] == 0 && findgRNAsWithREcutOnly)
             stop("No pairs with RE sites!")
-        spacers  <- DNAStringSet(c(as.character(withRE$ForwardSpacerPlusPAM),
-            as.character(withRE$ReverseSpacerPlusPAM)))
-        names(spacers) <- c(as.character(withRE$ForwardSpacerName),
-            as.character(withRE$ReverseSpacerName))
+        gRNAs  <- DNAStringSet(c(as.character(withRE$ForwardgRNAPlusPAM),
+            as.character(withRE$ReversegRNAPlusPAM)))
+        names(gRNAs) <- c(as.character(withRE$ForwardgRNAName),
+            as.character(withRE$ReversegRNAName))
     }
     else ### from unpaired search
     {
-        if (dim(spacers.RE)[1] == 0 && findSpacersWithREcutOnly)
-            stop("No spacers with RE sites!")
-        temp <- unique(cbind(as.character(spacers.RE$SpacerPlusPAM), 
-            as.character(spacers.RE$REcutSpacerName)))
-        spacers <- DNAStringSet(temp[, 1])
-        names(spacers) <- temp[, 2]
-        ann.Spacers <- spacers.RE
+        if (dim(gRNAs.RE)[1] == 0 && findgRNAsWithREcutOnly)
+            stop("No gRNAs with RE sites!")
+        temp <- unique(cbind(as.character(gRNAs.RE$gRNAPlusPAM), 
+            as.character(gRNAs.RE$REcutgRNAName)))
+        gRNAs <- DNAStringSet(temp[, 1])
+        names(gRNAs) <- temp[, 2]
+        ann.gRNAs <- gRNAs.RE
     }
-    list(spacers.withRE = unique(spacers), spacerREcutDetails = ann.Spacers)
+    list(gRNAs.withRE = unique(gRNAs), gRNAREcutDetails = ann.gRNAs)
 }

@@ -1,11 +1,13 @@
 offTargetAnalysis <-
-    function(inputFilePath, format = "fasta", findSpacers = TRUE, 
-        findSpacersWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6,
-	overlap.spacer.positions = c(17, 18), findPairedSpacerOnly = TRUE, 
-        min.gap = 0, max.gap = 20, spacer.name.prefix = "gRNA",
-	PAM.size = 3, spacer.size = 20, PAM = "NGG", BSgenomeName, 
+    function(inputFilePath, format = "fasta", findgRNAs = TRUE,
+		exportAllgRNAs = c("no", "fasta", "genbank", "all"),
+        findgRNAsWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6,
+	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = TRUE, 
+        min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA",
+	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
         chromToSearch = "all", max.mismatch = 4, PAM.pattern = "N[A|G]G$",
-        min.score = 0.5, topN = 100, topN.OfftargetTotalScore = 10, 
+       gRNA.pattern = "", min.score = 0.5, topN = 100, 
+	    topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, outputDir,
         fetchSequence = TRUE, upstream = 200, downstream = 200,
         weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 
@@ -13,7 +15,7 @@ offTargetAnalysis <-
         overwrite = FALSE)
 {
     cat("Validating input ...\n")
-    if(findSpacersWithREcutOnly && !file.exists(REpatternFile))
+    if(findgRNAsWithREcutOnly && !file.exists(REpatternFile))
     {
         stop("Please specify an REpattern file as fasta file with 
             restriction enzyme recognition sequences!")
@@ -42,78 +44,87 @@ offTargetAnalysis <-
     {
         dir.create(outputDir)
     }
-    pairOutputFile <- paste(outputDir, "pairedSpacers.xls", sep = "")
+    pairOutputFile <- paste(outputDir, "pairedgRNAs.xls", sep = "")
     REcutDetailFile <- paste(outputDir, "REcutDetails.xls", sep = "")
-    if (findSpacers)
+    if (findgRNAs)
     {
-        cat("Searching for spacers ...\n")
-	potential.spacers <- findSpacers(inputFilePath, 
-            findPairedSpacerOnly = findPairedSpacerOnly,
-            pairOutputFile = pairOutputFile, PAM = PAM, 
-            PAM.size = PAM.size, spacer.size = spacer.size, min.gap = min.gap, 
-            max.gap = max.gap, name.prefix = spacer.name.prefix)
-	if (findPairedSpacerOnly)
+        cat("Searching for gRNAs ...\n")
+	potential.gRNAs <- findgRNAs(inputFilePath, 
+            findPairedgRNAOnly = findPairedgRNAOnly,
+            pairOutputFile = pairOutputFile, PAM = PAM,
+	        gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
+            gRNA.size = gRNA.size, min.gap = min.gap, 
+            max.gap = max.gap, name.prefix = gRNA.name.prefix)
+		if (exportAllgRNAs == "fasta" || exportAllgRNAs == "all")
+		{
+			writeXStringSet(potential.gRNAs, filepath="allgRNAs.fa")
+		}
+		if (exportAllgRNAs == "genbank" || exportAllgRNAs == "all")
+		{
+#### write to genbank format
+		}		
+	if (findPairedgRNAOnly)
 	{
-	    spacers.RE <- filterSpacers(potential.spacers, 
+	    gRNAs.RE <- filtergRNAs(potential.gRNAs, 
                 pairOutputFile = pairOutputFile, 
-                findSpacersWithREcutOnly = findSpacersWithREcutOnly,
+                findgRNAsWithREcutOnly = findgRNAsWithREcutOnly,
 	        REpatternFile = REpatternFile, 
                 format = format,  minREpatternSize = minREpatternSize, 
-                overlap.spacer.positions = overlap.spacer.positions)
-            REcutDetails  <- spacers.RE$spacerREcutDetails
+                overlap.gRNA.positions = overlap.gRNA.positions)
+            REcutDetails  <- gRNAs.RE$gRNAREcutDetails
 	    write.table(REcutDetails[order(as.character(
-                REcutDetails$ForwardSpacerName)), ], file = REcutDetailFile, 
+                REcutDetails$ForwardgRNAName)), ], file = REcutDetailFile, 
                 sep = "\t", row.names = FALSE)		
         }
         else
 	{
-            spacers.RE <- filterSpacers(potential.spacers, 
-	        findSpacersWithREcutOnly = findSpacersWithREcutOnly,
+            gRNAs.RE <- filtergRNAs(potential.gRNAs, 
+	        findgRNAsWithREcutOnly = findgRNAsWithREcutOnly,
                 REpatternFile = REpatternFile, format = format, 
                 minREpatternSize = minREpatternSize, 
-                overlap.spacer.positions = overlap.spacer.positions)
-	    REcutDetails  <- spacers.RE$spacerREcutDetails
+                overlap.gRNA.positions = overlap.gRNA.positions)
+	    REcutDetails  <- gRNAs.RE$gRNAREcutDetails
 	    write.table(REcutDetails[order(as.character(
-                REcutDetails$REcutSpacerName)), ], file = REcutDetailFile, 
+                REcutDetails$REcutgRNAName)), ], file = REcutDetailFile, 
                 sep = "\t", row.names = FALSE)
 	}
-	if (findSpacersWithREcutOnly)
+	if (findgRNAsWithREcutOnly)
 	{
-	    spacers  <- spacers.RE$spacers
+	    gRNAs  <- gRNAs.RE$gRNAs
         }
 	else
 	{
-	    spacers <- potential.spacers
+	    gRNAs <- potential.gRNAs
 	}
 	pairedInformation <- read.table(pairOutputFile, sep = "\t", 
             header = TRUE, stringsAsFactors = FALSE)
     }
     else
     {
-        potential.spacers <- readDNAStringSet(inputFilePath, format, 
+        potential.gRNAs <- readDNAStringSet(inputFilePath, format, 
             use.names = TRUE)
-	spacers.RE <- filterSpacers(potential.spacers, 
+	gRNAs.RE <- filtergRNAs(potential.gRNAs, 
             REpatternFile = REpatternFile, format = format, 
             minREpatternSize = minREpatternSize, 
-            overlap.spacer.positions = overlap.spacer.positions)
-	REcutDetails  <- spacers.RE$spacerREcutDetails
+            overlap.gRNA.positions = overlap.gRNA.positions)
+	REcutDetails  <- gRNAs.RE$gRNAREcutDetails
 	write.table(
-            REcutDetails[order(as.character(REcutDetails$REcutSpacerName)), ], 
+            REcutDetails[order(as.character(REcutDetails$REcutgRNAName)), ], 
             file = REcutDetailFile, sep = "\t", row.names = FALSE)
-	if (findSpacersWithREcutOnly)
+	if (findgRNAsWithREcutOnly)
 	{
-	    spacers  <- spacers.RE$spacers
+	    gRNAs  <- gRNAs.RE$gRNAs
 	}
 	else
 	{
-	    spacers <- potential.spacers
+	    gRNAs <- potential.gRNAs
 	}
 	pairedInformation <- ""
     }
     if (chromToSearch == "")
     {
 	cat("Done. Please check output files in directory ", outputDir, "\n")
-        return(spacers)	
+        return(gRNAs)	
     }
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
         stop("BSgenomeName is required as BSgenome object!")
@@ -123,13 +134,13 @@ offTargetAnalysis <-
         stop("To indicate whether an offtarget is inside an exon, txdb is
             required as TranscriptDb object!")
     }
-    hits <- searchHits(spacers = spacers, PAM = PAM.pattern, 
+    hits <- searchHits(gRNAs = gRNAs, PAM = PAM.pattern, 
         BSgenomeName = BSgenomeName, chromToSearch = chromToSearch, 
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
-        spacer.size = spacer.size) 
+        gRNA.size = gRNA.size) 
     cat("Building feature vectors for scoring ...\n")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
-        canonical.PAM = PAM, spacer.size = spacer.size)
+        canonical.PAM = PAM, gRNA.size = gRNA.size)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
     cat("Annotating, filtering and generating reports ...\n")
@@ -147,38 +158,38 @@ offTargetAnalysis <-
         y[is.na(y)] <- ""
 	summary[, i] = y	
     }
-    if (findSpacers)
+    if (findgRNAs)
     {
-        PairedSpacerName <- unlist(lapply(1:dim(summary)[1], function(i) {
+        PairedgRNAName <- unlist(lapply(1:dim(summary)[1], function(i) {
             as.character(gsub("^\\s+|\\s+$", "", 
                 paste(unique(pairedInformation[as.character(
-                pairedInformation$ForwardSpacerName) == as.character(
-                summary$names[i]),]$ReverseSpacerName),
+                pairedInformation$ForwardgRNAName) == as.character(
+                summary$names[i]),]$ReversegRNAName),
                 unique(pairedInformation[as.character(
-                pairedInformation$ReverseSpacerName) == as.character(
-                summary$names[i]),]$ForwardSpacerName),
+                pairedInformation$ReversegRNAName) == as.character(
+                summary$names[i]),]$ForwardgRNAName),
                 collapse = " ")))
         }))
     }
-    if (findPairedSpacerOnly && findSpacers)
+    if (findPairedgRNAOnly && findgRNAs)
     {
         REname <- unlist(lapply(1:dim(summary)[1], function(i) {
             gsub("^\\s+|\\s+$", "", gsub("NA", "", 
                 paste(unique(REcutDetails[as.character(
-                REcutDetails$ForwardREcutSpacerName) == as.character(
+                REcutDetails$ForwardREcutgRNAName) == as.character(
                 summary$names[i]),]$ForwardREname),
                 unique(REcutDetails[as.character(
-                REcutDetails$ReverseREcutSpacerName) == 
+                REcutDetails$ReverseREcutgRNAName) == 
                 as.character(summary$names[i]), ]$ReverseREname), 
                 collapse = " ")))
        }))
-       summary <- cbind(summary, PairedSpacerName, REname)
+       summary <- cbind(summary, PairedgRNAName, REname)
     }
     else
     {
         REname <- unlist(lapply(1:dim(summary)[1], function(i) {
             gsub("^\\s+|\\s+$", "", gsub("NA", "", paste(unique(
-                REcutDetails[as.character(REcutDetails$REcutSpacerName) == 
+                REcutDetails[as.character(REcutDetails$REcutgRNAName) == 
                 as.character(summary$names[i]), ]$REname), collapse = " ")))
         }))
         summary <- cbind(summary, REname)

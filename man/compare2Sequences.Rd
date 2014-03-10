@@ -2,18 +2,18 @@
 \alias{compare2Sequences}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Compare 2 input sequences for possible spacers 
+Compare 2 input sequences for possible guide RNAs (gRNAs)
 }
 \description{
-Generate all possible spacers for two input sequences and generate 
+Generate all possible guide RNAs (gRNAs) for two input sequences and generate 
     scores for potential off-targets in the other sequence.
 }
 \usage{
 compare2Sequences(inputFile1Path, inputFile2Path, format = "fasta", 
-    findSpacersWithREcutOnly = FALSE, REpatternFile, minREpatternSize = 6,
-    overlap.spacer.positions = c(17, 18), findPairedSpacerOnly = FALSE, 
-    min.gap = 0, max.gap = 20, spacer.name.prefix = "gRNA", PAM.size = 3, 
-    spacer.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", outputDir, 
+    findgRNAsWithREcutOnly = FALSE, REpatternFile, minREpatternSize = 6,
+    overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
+    min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
+    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", outputDir, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
     overwrite = FALSE)
@@ -22,17 +22,17 @@ compare2Sequences(inputFile1Path, inputFile2Path, format = "fasta",
 \arguments{
   \item{inputFile1Path}{
 Sequence input file 1 path that contains one of the 
-two sequences to be searched for potential spacers 
+two sequences to be searched for potential gRNAs 
 }
   \item{inputFile2Path}{
 Sequence input file 2 path that contains one of the
-two sequences to be searched for potential spacers 
+two sequences to be searched for potential gRNAs 
 }
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta
 }
-  \item{findSpacersWithREcutOnly}{
-Indicate whether to find spacers overlap with restriction enzyme recognition 
+  \item{findgRNAsWithREcutOnly}{
+Indicate whether to find gRNAs overlap with restriction enzyme recognition 
 pattern
 }
   \item{REpatternFile}{
@@ -42,35 +42,35 @@ File path containing restriction enzyme cut patters
 Minimum restriction enzyme recognition pattern length required for the enzyme 
 pattern to be searched for, default 6
 }
-  \item{overlap.spacer.positions}{
-The required overlap positions of spacer and restriction enzyme cut site, 
+  \item{overlap.gRNA.positions}{
+The required overlap positions of gRNA and restriction enzyme cut site, 
 default 17 and 18
 }
-  \item{findPairedSpacerOnly}{
-Choose whether to only search for paired spacers in such an orientation that 
-the first one is on minus strand called reverse spacer and the second one is 
-on plus strand called forward spacer. TRUE or FALSE, default FALSE
+  \item{findPairedgRNAOnly}{
+Choose whether to only search for paired gRNAs in such an orientation that 
+the first one is on minus strand called reverse gRNA and the second one is 
+on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 }
   \item{min.gap}{
-Minimum distance between two oppositely oriented spacers to be valid paired 
-spacers. Default 0
+Minimum distance between two oppositely oriented gRNAs to be valid paired 
+gRNAs. Default 0
 }
   \item{max.gap}{
-Maximum distance between two oppositely oriented spacers to be valid paired 
-spacers. Default 20
+Maximum distance between two oppositely oriented gRNAs to be valid paired 
+gRNAs. Default 20
 }
-  \item{spacer.name.prefix}{
-The prefix used when assign name to found spacers, default gRNA, short for 
+  \item{gRNA.name.prefix}{
+The prefix used when assign name to found gRNAs, default gRNA, short for 
 guided RNA.
 }
   \item{PAM.size}{
 PAM length, default 3
 }
-  \item{spacer.size}{
-The size of the spacer, default 20
+  \item{gRNA.size}{
+The size of the gRNA, default 20
 }
   \item{PAM}{
-PAM sequence after the spacer, default NGG
+PAM sequence after the gRNA, default NGG
 }
   \item{PAM.pattern}{
 Regular expression of PAM, default N[A|G]G$
@@ -79,7 +79,7 @@ Regular expression of PAM, default N[A|G]G$
 the directory where the sequence comparison results will be written to
 }
   \item{weights}{
- numeric vector size of spacer length, default c(0, 0, 0.014, 0, 0, 0.395, 
+ numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395, 
 0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 
 0.804, 0.685, 0.583) which is used in Hsu et al., 2013 cited in the reference 
 section
@@ -92,11 +92,11 @@ overwrite the existing files in the output directory or not, default TRUE
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-Return a data frame with all potential spacers from both sequences.
+Return a data frame with all potential gRNAs from both sequences.
 In addition, a tab delimited file scoresFor2InputSequences.xls is also 
 saved in the outputDir, sorted by scoreDiff descending.
-\item{name}{name of the spacer}
-\item{spacerPlusPAM}{spacer plus PAM sequence}
+\item{name}{name of the gRNA}
+\item{gRNAPlusPAM}{gRNA plus PAM sequence}
 \item{targetInSeq1}{target/off-target sequence in the 1st input sequence file}
 \item{targetInSeq2}{target/off-target sequence in the 2nd input sequence file}
 \item{scoreForSeq1}{score for the target sequence in the 1st input 
@@ -105,7 +105,7 @@ saved in the outputDir, sorted by scoreDiff descending.
     sequence file}
 \item{mismatch.distance2PAM}{distances of mismatch to PAM, e.g.,
  14 means the mismatch is 14 bp away from PAM}
-\item{n.mismatch}{number of mismatches between the off-target and the spacer}
+\item{n.mismatch}{number of mismatches between the off-target and the gRNA}
 \item{scoreDiff}{scoreForSeq1 - scoreForSeq2}
 \item{targetSeqName}{the name of the input sequence where the target
     sequence is located}

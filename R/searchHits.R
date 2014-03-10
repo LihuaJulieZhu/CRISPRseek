@@ -1,8 +1,8 @@
 searchHits <-
-    function (spacers, BSgenomeName, chromToSearch = "all", max.mismatch = 4, 
-        PAM.size = 3, spacer.size = 20, PAM = "N[A|G]G$") 
+    function (gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 4, 
+        PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$") 
 {
-    if (missing(spacers) || class(spacers) != "DNAStringSet") {
+    if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("dictO is required as a DNAStringSet object!")
     }
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
@@ -19,12 +19,12 @@ searchHits <-
         revsubject <- reverseComplement(subject)
         chrom.len <- length(subject)
         cat(">>> Finding all hits in sequences", seqname, "...\n")
-        for (i in seq_len(length(spacers))) {
-            patternID <- gsub("'", "", names(spacers)[i])
+        for (i in seq_len(length(gRNAs))) {
+            patternID <- gsub("'", "", names(gRNAs)[i])
             if (length(patternID) < 1) {
                 patternID <- paste("pattern", i, sep = "")
             }
-            pattern <- DNAString(toupper(spacers[[i]]))
+            pattern <- DNAString(toupper(gRNAs[[i]]))
             ### by default PAM is NGG or NAG
             plus_matches <- matchPattern(pattern, subject,
                 max.mismatch = max.mismatch, min.mismatch = 0, 
@@ -32,7 +32,7 @@ searchHits <-
             if (length(plus_matches) > 0) {
                 names(plus_matches) <- rep.int(patternID, length(plus_matches))
                 writeHits(pattern, seqname, plus_matches, strand = "+", 
-                    file = outfile, spacer.size = spacer.size,
+                    file = outfile, gRNA.size = gRNA.size,
                     PAM = PAM, max.mismatch = max.mismatch - 2,
                     chrom.len = chrom.len, append = append)
                 append <- TRUE
@@ -45,7 +45,7 @@ searchHits <-
                     names(minus_matches) <- rep.int(patternID,
                         length(minus_matches))
                     writeHits(pattern, seqname, minus_matches, strand = "-", 
-                        file = outfile, spacer.size = spacer.size, PAM = PAM,
+                        file = outfile, gRNA.size = gRNA.size, PAM = PAM,
                         max.mismatch = max.mismatch - 2, 
                         chrom.len = chrom.len, append = append)
                     append <- TRUE

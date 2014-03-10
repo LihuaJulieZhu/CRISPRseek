@@ -9,14 +9,14 @@ write the hits of sequence search to a file, internal function used by
 searchHits
 }
 \usage{
-writeHits(spacer, seqname, matches, strand, file, spacer.size = 20, 
+writeHits(gRNA, seqname, matches, strand, file, gRNA.size = 20, 
     PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{spacer}{
-DNAString object with spacer sequence with PAM appended immediately after,e.g.,
-ACGTACGTACGTACTGACGTCGG with 20bp spacer sequence plus 3bp PAM sequence CGG
+  \item{gRNA}{
+DNAString object with gRNA sequence with PAM appended immediately after,e.g.,
+ACGTACGTACGTACTGACGTCGG with 20bp gRNA sequence plus 3bp PAM sequence CGG
 }
   \item{seqname}{
 chromosome name as character, e.g., chr1
@@ -30,14 +30,14 @@ strand of the match, + for plus strand and - for minus strand
   \item{file}{
 file path where the hits is written to
 }
-  \item{spacer.size}{
-spacer size, default 20
+  \item{gRNA.size}{
+gRNA size, default 20
 }
   \item{PAM}{
 PAM as regular expression for filtering the hits, default N[A|G]G$
 }
   \item{max.mismatch}{
-maximum mismatch allowed within the spacer (excluding PAM portion) for 
+maximum mismatch allowed within the gRNA (excluding PAM portion) for 
 filtering the hits, default 4
 }
   \item{chrom.len}{
@@ -69,12 +69,12 @@ Lihua Julie Zhu
 offTargetAnalysis
 }
 \examples{
-    spacerPlusPAM <- DNAString("ACGTACGTACGTACTGACGTCGG")
+    gRNAPlusPAM <- DNAString("ACGTACGTACGTACTGACGTCGG")
     x <- DNAString("AAGCGCGATATGACGTACGTACGTACTGACGTCGG")
     chrom.len <- nchar(as.character(x))
-    m <- matchPattern(spacerPlusPAM, x)
+    m <- matchPattern(gRNAPlusPAM, x)
     names(m) <- "testing"
-    writeHits(spacer = spacerPlusPAM, seqname = "chr1", 
+    writeHits(gRNA = gRNAPlusPAM, seqname = "chr1", 
         matches = m, strand = "+", file = "exampleWriteHits.txt", 
         chrom.len = chrom.len, append = FALSE)
 }
