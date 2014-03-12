@@ -54,15 +54,92 @@ offTargetAnalysis <-
             pairOutputFile = pairOutputFile, PAM = PAM,
 	        gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
             gRNA.size = gRNA.size, min.gap = min.gap, 
-            max.gap = max.gap, name.prefix = gRNA.name.prefix)
+            max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
 		if (exportAllgRNAs == "fasta" || exportAllgRNAs == "all")
 		{
 			writeXStringSet(potential.gRNAs, filepath="allgRNAs.fa")
 		}
 		if (exportAllgRNAs == "genbank" || exportAllgRNAs == "all")
 		{
-#### write to genbank format
-		}		
+			subjects <- readDNAStringSet(inputFilePath, format=format,
+				use.names = TRUE)
+   		    locuses <- names(subjects)
+			names.gRNA <- names(potential.gRNAs)
+			for (i in 1:length(locuses))
+			{
+				thisLocus <- gsub("'", "", locuses[i])
+        		thisLocus <- gsub(" ", "", thisLocus)
+				thisSeq <- tolower(as.character(subjects[[i]]))
+				n.bp <- nchar(thisSeq)
+				temp <- strsplit(names.gRNA, split=paste("_", 
+					thisLocus,"Start",sep=""))
+				locus <- paste("LOCUS       ", thisLocus,
+                    "                     ", n.bp,
+					" bp    dna     linear   UNK", sep="")
+				definition <- paste("DEFINITION  CRISPRseek output for ",
+				    basename(inputFilePath), " sequence", sep = "")
+				accession <- "ACCESSION   unknown"
+				features <- "FEATURES             Location/Qualifiers"
+				header = rbind(locus, definition, accession, features)
+				found.gRNA <- 0
+				for (j in 1:length(temp))
+				{
+					if (length(temp[[j]]) >1){
+						found.gRNA <- found.gRNA + 1
+						if (found.gRNA == 1)
+						{
+						    thisFile <- paste(thisLocus, "gbk", sep=".")
+                            write(header, thisFile)
+						}
+						feature <- temp[[j]][1]
+						location <- strsplit(temp[[j]][2], split="End")
+                        Start <- min(as.numeric(location[[1]]))
+						End <- max(as.numeric(location[[1]]))
+						if (Start == as.numeric(location[[1]])[2])
+							write(paste("     misc_bind       complement(", 
+								(Start + PAM.size), "..", End, ")", sep = ""), 
+							    append = TRUE, sep="\n", file = thisFile)
+						else	
+							 write(paste("     misc_bind       ", Start, "..",
+								(End - PAM.size), sep = ""), append = TRUE, sep="\n",
+                                file = thisFile)
+						write(paste("                     /note=\"", feature, 
+                            "\"", sep = ""), append = TRUE, sep="\n", 
+                            file = thisFile)
+					}
+				}
+				if (found.gRNA > 0){
+					write("ORIGIN", append = TRUE, sep="\n", file = thisFile)
+                    seq.lines <- floor(nchar(thisSeq) / 60) + 1
+                    for (k in 1:seq.lines) {
+                        line.start <- (k - 1) * 60 + 1
+                        line.end <- min(line.start + 59, nchar(thisSeq))
+                        n.leading.spaces <- 9 - nchar(line.start)
+                        leading.spaces <- paste(rep(" ", n.leading.spaces), 
+                            collapse = "")
+                        seq.thisLine <- substr(thisSeq, line.start, line.end)
+                        len.thisLine <- nchar(seq.thisLine)
+                        n.seg <- floor(len.thisLine /10) + 1
+                        for (l in 1:n.seg) {
+                            seg.start <- (l -1) * 10 + 1
+                            seg.end <- min(seg.start + 9, len.thisLine)
+                            if (l == 1)
+                                seq.thisLine.formatted <- substr(seq.thisLine,
+                                    seg.start, seg.end)
+                            else
+                                seq.thisLine.formatted <- paste(
+                                    seq.thisLine.formatted,
+                                    substr(seq.thisLine, seg.start, seg.end),
+                                    sep = " ")
+                        }
+                        write(paste(leading.spaces, line.start, " ", 
+                            seq.thisLine.formatted, sep = ""),
+                            append = TRUE, sep="\n", file = thisFile)
+                    }
+					write("//", append = TRUE, sep="\n", file = thisFile)
+				}
+			}
+		}
 	if (findPairedgRNAOnly)
 	{
 	    gRNAs.RE <- filtergRNAs(potential.gRNAs, 

@@ -262,7 +262,7 @@ seqs <- compare2Sequences(inputFile1Path, inputFile2Path,
 seqs
 @
 \end{scriptsize}
-XXX.fa and YYY.fa are the names of the two input files. The output file will list all of the possible gRNA sequences for each of the two input sequences and provide a cleavage score for each of the two input sequences. To preferentially target one allele, select gRNA sequences that have the lowest score for the other allele. Selected gRNAs can then be examined for off-target sequences as described in Step 6.
+rs362331C.fa and rs362331T.fa are the names of the two input files. The output file will list all of the possible gRNA sequences for each of the two input sequences and provide a cleavage score for each of the two input sequences. To preferentially target one allele, select gRNA sequences that have the lowest score for the other allele. Selected gRNAs can then be examined for off-target sequences as described in Step 6.
 \section{References}
 \begin{thebibliography}{99}
 \bibitem[Mali P. et al., 2013]{Mali et al., 2013} Mali P. et al., CAS9 
