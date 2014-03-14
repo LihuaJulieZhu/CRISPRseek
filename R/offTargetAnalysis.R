@@ -1,6 +1,6 @@
 offTargetAnalysis <-
     function(inputFilePath, format = "fasta", findgRNAs = TRUE,
-		exportAllgRNAs = c("no", "fasta", "genbank", "all"),
+		exportAllgRNAs = c("all", "fasta", "genbank", "no"),
         findgRNAsWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6,
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = TRUE, 
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA",

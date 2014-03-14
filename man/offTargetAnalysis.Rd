@@ -11,7 +11,7 @@ getOfftargetScore, filterOfftarget and generate reports.
 }
 \usage{
 offTargetAnalysis(inputFilePath, format = "fasta", findgRNAs = TRUE,
-    exportAllgRNAs = c("no", "fasta", "genbank", "all"),
+    exportAllgRNAs = c("all", "fasta", "genbank", "no"),
     findgRNAsWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = TRUE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
@@ -40,7 +40,7 @@ contains user selected gRNAs plus PAM already.
 }
 \item{exportAllgRNAs}{
 Indicate whether to output all potential gRNAs to a file in fasta format,
-genbank format or both.
+genbank format or both. Default to both.
 }
   \item{findgRNAsWithREcutOnly}{
 Indicate whether to find gRNAs overlap with restriction enzyme recognition 
