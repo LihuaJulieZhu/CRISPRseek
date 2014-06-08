@@ -57,7 +57,7 @@ offTargetAnalysis <-
             max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
 		if (exportAllgRNAs == "fasta" || exportAllgRNAs == "all")
 		{
-			writeXStringSet(potential.gRNAs, filepath="allgRNAs.fa")
+			writeXStringSet(potential.gRNAs, filepath=paste(strsplit(basename(inputFilePath),split=".", fixed=TRUE)[[1]][1],"allgRNAs.fa", sep=""))
 		}
 		if (exportAllgRNAs == "genbank" || exportAllgRNAs == "all")
 		{
