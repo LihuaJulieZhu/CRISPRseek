@@ -2,12 +2,13 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
     findgRNAsWithREcutOnly = FALSE, REpatternFile, minREpatternSize = 6, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
-    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", outputDir, 
+    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch =4, outputDir, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 
     0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 
     0.685, 0.583), overwrite = FALSE)
 {
-    weights = rev(weights)
+#weights = rev(weights)
+	append = ifelse(overwrite, FALSE, TRUE)
     gRNAs1 = offTargetAnalysis(inputFile1Path, format = format, 
         findgRNAs = TRUE,
         findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "", 
@@ -28,93 +29,153 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
         gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
         gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
         outputDir = outputDir, weights = weights, overwrite = overwrite)
-    seqs1 = cbind(names(gRNAs1), as.character(gRNAs1))
-    seqs2 = cbind(names(gRNAs2), as.character(gRNAs2))
-
-    colnames(seqs1) = c("name", "gRNAPlusPAM")
-    colnames(seqs2) = c("name", "gRNAPlusPAM")
-    seqs = merge(seqs1, seqs2, by = "gRNAPlusPAM", all = TRUE)
-    name = as.character(seqs[,2])
-    name[is.na(name)] = as.character(seqs[is.na(seqs[,2]),3])
-    seqs = cbind(name, seqs)
-    colnames(seqs)[2] = "gRNAPlusPAM"
-    seqs[,3:4] = cbind(targetInSeq1 = character(dim(seqs)[1]), 
-        targetInSeq2 = character(dim(seqs)[1]))
-    colnames(seqs)[3:4] = c("targetInSeq1", "targetInSeq2")
-    subjects1 <- readDNAStringSet(inputFile1Path, format = "fasta",
+	print("Scoring ...")
+	subjects1 <- readDNAStringSet(inputFile1Path, format = "fasta",
         use.names = TRUE)
     subjects2 <- readDNAStringSet(inputFile2Path, format = "fasta",
         use.names = TRUE)
-    seqs = cbind(seqs, scoreForSeq1 = numeric(dim(seqs)[1]), 
-        scoreForSeq2 = numeric(dim(seqs)[1]))
-    seqs = cbind(seqs, mismatch.distance2PAM = numeric(dim(seqs)[1]), 
-         n.mismatch = numeric(dim(seqs)[1]))
-    #IsMismatch.posX = matrix(0, ncol = gRNA.size, nrow = (dim(seqs)[1]) 
-    targetSeqName = character(dim(seqs)[1]) 
+    #IsMismatch.posX = matrix(0, ncol = gRNA.size, nrow = dim(seqs)[1]) 
+    outfile <- tempfile(tmpdir = getwd())
+    max.mismatch <- max.mismatch + PAM.size -1
+    revsubject <- reverseComplement(subjects2[[1]])
+	chrom.len = nchar(as.character(subjects2))
+	seqname <- names(subjects2)
     for (i in 1:length(gRNAs1))
     {
-        if (length(grep(paste(gRNA.name.prefix,"f", sep = ""),
-            names(gRNAs1)[i])))
-	    aln <- pairwiseAlignment(gRNAs1[i], subjects2[1], 
-                type = "global-local")
-	else
-	    aln <- pairwiseAlignment(gRNAs1[i], 
-                reverseComplement(subjects2[1]), type = "global-local")
-	if (length(mismatchTable(aln)$PatternStart))
-       	    seqs$mismatch.distance2PAM[i] <- width(gRNAs1[i]) -
-                mismatchTable(aln)$PatternStart - PAM.size  + 1
-	else
-	    seqs$mismatch.distance2PAM[i] <- 0
-	seqs$targetInSeq2[i] <- as.character(subject(aln))
-	seqs$targetInSeq1[i] <- as.character(pattern(aln))
-	seqs$name[i] <- names(gRNAs1)[i]
-	seqs$gRNAPlusPAM[i] <- as.character(gRNAs1)[i]
-	seqs$scoreForSeq1[i] <- 100
-	seqs$n.mismatch[i] = nedit(aln)
-	if (seqs$mismatch.distance2PAM[i] >0)
-	    seqs$scoreForSeq2[i] <- 
-                100 * (1 - weights[seqs$mismatch.distance2PAM[i]])
-	else
-	    seqs$scoreForSeq2[i] <- 100
-    }
+	    patternID <- gsub("'", "", names(gRNAs1)[i])
+        if (length(patternID) < 1) {
+           patternID <- paste("pattern", i, sep = "")
+        }
+            pattern <- DNAString(toupper(gRNAs1[[i]]))
+            ### by default PAM is NGG or NAG
+            plus_matches <- matchPattern(pattern, subjects2[[1]],
+                max.mismatch = max.mismatch, min.mismatch = 0, 
+                with.indels = FALSE, fixed = TRUE, algorithm = "auto")
+            if (length(plus_matches) > 0) {
+                names(plus_matches) <- rep.int(patternID, length(plus_matches))
+                writeHits(pattern, seqname, plus_matches, strand = "+", 
+                    file = outfile, gRNA.size = gRNA.size,
+                    PAM = PAM, max.mismatch = max.mismatch - 2,
+                    chrom.len = chrom.len, append = append)
+                append <- TRUE
+				}
+			if (reverseComplement(pattern) != pattern) {
+                minus_matches <- matchPattern(pattern, revsubject, 
+                    max.mismatch = max.mismatch, min.mismatch = 0, 
+                    with.indels = FALSE, fixed = TRUE, algorithm = "auto")
+                if (length(minus_matches) > 0) {
+                    names(minus_matches) <- rep.int(patternID,
+                        length(minus_matches))
+                    writeHits(pattern, seqname, minus_matches, strand = "-", 
+                        file = outfile, gRNA.size = gRNA.size, PAM = PAM,
+                        max.mismatch = max.mismatch - 2, 
+                        chrom.len = chrom.len, append = append)
+                    append <- TRUE
+                }
+            }
+	} #### end of for loop for gRNAs1
+   	seqname <- names(subjects1)
+	revsubject <- reverseComplement(subjects1[[1]])
+	chrom.len = nchar(as.character(subjects1))
+   for (i in 1:length(gRNAs2))
+   {
+	patternID <- gsub("'", "", names(gRNAs2)[i])
+	if (length(patternID) < 1) {
+		patternID <- paste("pattern", i, sep = "")
+	}
+	pattern <- DNAString(toupper(gRNAs2[[i]]))
+### by default PAM is NGG or NAG
+	plus_matches <- matchPattern(pattern, subjects1[[1]],
+				max.mismatch = max.mismatch, min.mismatch = 0, 
+				with.indels = FALSE, fixed = TRUE, algorithm = "auto")
+	if (length(plus_matches) > 0) {
+		names(plus_matches) <- rep.int(patternID, length(plus_matches))
+		writeHits(pattern, seqname, plus_matches, strand = "+", 
+				  file = outfile, gRNA.size = gRNA.size,
+				  PAM = PAM, max.mismatch = max.mismatch - 2,
+				  chrom.len = chrom.len, append = append)
+		append <- TRUE
+	}            
+	if (reverseComplement(pattern) != pattern) {
+		minus_matches <- matchPattern(pattern, revsubject, 
+					max.mismatch = max.mismatch, min.mismatch = 0, 
+					 with.indels = FALSE, fixed = TRUE, algorithm = "auto")
+		if (length(minus_matches) > 0) {
+			names(minus_matches) <- rep.int(patternID,
+											length(minus_matches))
+			writeHits(pattern, seqname, minus_matches, strand = "-", 
+					  file = outfile, gRNA.size = gRNA.size, PAM = PAM,
+					  max.mismatch = max.mismatch - 2, 
+					  chrom.len = chrom.len, append = append)
+			append <- TRUE
+		}
+	}
+   } #### end of for loop for gRNAs2
+	hits <- read.table(outfile, sep="\t", header = TRUE, stringsAsFactors = FALSE)
+	unlink(outfile)
+	featureVectors <- buildFeatureVectorForScoring(hits = hits, 
+		canonical.PAM = PAM, gRNA.size = gRNA.size)
+	scores <- getOfftargetScore(featureVectors, weights = weights)
 
-    ioffset <- length(gRNAs1)
-    targetSeqName[1:ioffset] <- names(subjects1)
-    for (i in 1:length(gRNAs2))
-    {
-	j <- i + ioffset
-	if (length(grep(paste(gRNA.name.prefix,"f", sep = ""), 
-            names(gRNAs2)[i])))
-            aln <- pairwiseAlignment(gRNAs2[i], subjects1[1], 
-                type = "global-local")
-	else
-	    aln <- pairwiseAlignment(gRNAs2[i], 
-                reverseComplement(subjects1[1]),
-	        type = "global-local")
-	if (length(mismatchTable(aln)$PatternStart))
-       	    seqs$mismatch.distance2PAM[j] <- width(gRNAs2[i]) - 
-                mismatchTable(aln)$PatternStart - PAM.size  + 1
-	else
-            seqs$mismatch.distance2PAM[j] <- 0 
-	seqs$targetInSeq2[j] <- as.character(subject(aln))
-	seqs$targetInSeq1[j] <- as.character(pattern(aln))
-	seqs$name[j] <- names(gRNAs2)[i]
-	seqs$gRNAPlusPAM[j] <- as.character(gRNAs2)[i]
- 	seqs$scoreForSeq2[j] <- 100
-	seqs$n.mismatch[j] = nedit(aln)
-	if (seqs$mismatch.distance2PAM[j] >0)
-	    seqs$scoreForSeq1[j] <- 
-                100 * (1 - weights[seqs$mismatch.distance2PAM[j]])
-	else
-	     seqs$scoreForSeq1[j] <- 100
-    }
-    j <- ioffset + 1
-    k <- dim(seqs)[1]
-    targetSeqName[j:k] <- names(subjects2)
-    seqs = cbind(seqs, scoreDiff = seqs$scoreForSeq1 - seqs$scoreForSeq2, targetSeqName)
+	targetInSeq1 <- scores$gRNAPlusPAM
+	targetInSeq2 <- scores$gRNAPlusPAM
+	scoreForSeq1 <- rep(100, dim(scores)[1])
+	scoreForSeq2 <- rep(100, dim(scores)[1])
+	
+	scoreForSeq1[scores$chrom == names(subjects1)] <- 
+		scores$score[scores$chrom == names(subjects1)]
+	scoreForSeq2[scores$chrom == names(subjects2)] <- 
+		scores$score[scores$chrom == names(subjects2)]
+	targetInSeq1[scores$chrom == names(subjects1)] <- 
+		scores$alignment[scores$chrom == names(subjects1)]
+	targetInSeq2[scores$chrom == names(subjects2)] <- 
+		scores$alignment[scores$chrom == names(subjects2)]
+
+	seqNames <- c(names(subjects1), names(subjects2))
+	seqs.new <- cbind(name = scores$name,
+					  gRNAPlusPAM = scores$gRNAPlusPAM,
+					  targetInSeq1 = targetInSeq1,
+					  targetInSeq2 = targetInSeq2,
+					  scoreForSeq1 = scoreForSeq1,
+					  scoreForSeq2 = scoreForSeq2,
+					  mismatch.distance2PAM = as.character(scores$mismatche.distance2PAM),
+					  n.mismatch = scores$n.mismatch,
+					  targetSeqName = unlist(lapply(
+						 scores$chrom, function(i) {seqNames[seqNames !=i]}))
+					  )
+	if (length(setdiff(names(gRNAs1),seqs.new[,1])) >0)
+	{
+		seqs1.only <- cbind(name = names(gRNAs1)[!names(gRNAs1) %in% seqs.new[,1]],
+						gRNAPlusPAM = as.character(gRNAs1)[!as.character(gRNAs1) %in% seqs.new[,2]],
+						targetInSeq1 = as.character(gRNAs1)[!as.character(gRNAs1) %in% seqs.new[,2]],
+						targetInSeq2 = "NA",
+						scoreForSeq1 = 100,
+						scoreForSeq2 = 0,
+						mismatch.distance2PAM = "NA",
+						n.mismatch = "NA",
+						targetSeqName = names(subjects1)
+						)
+		seqs.new <- rbind(seqs.new, seqs1.only)
+	}
+	if (length(setdiff(names(gRNAs2),seqs.new[,1])) >0)
+	{
+		seqs2.only <- cbind(name = names(gRNAs2)[!names(gRNAs2) %in% seqs.new[,1]],
+						gRNAPlusPAM = as.character(gRNAs2)[!as.character(gRNAs2) %in% seqs.new[,2]],
+						targetInSeq1 = "NA",
+						targetInSeq2 = as.character(gRNAs2)[!as.character(gRNAs2) %in% seqs.new[,2]],
+						scoreForSeq1 = 0,
+						scoreForSeq2 = 100,
+						mismatch.distance2PAM = "NA",
+						n.mismatch = "NA",
+						targetSeqName = names(subjects2)
+						)
+		seqs.new <- rbind(seqs.new, seqs2.only)
+	}
+	seqs = cbind(seqs.new, scoreDiff = round(as.numeric(seqs.new[,5]) - as.numeric(seqs.new[,6]),4))
     setwd(outputDir)
-    write.table(seqs[order(seqs$scoreDiff, decreasing = TRUE), ], 
+    write.table(t(seqs[order(as.numeric(seqs[,10]), decreasing = TRUE), ]), 
         file = "scoresFor2InputSequences.xls",
-        sep = "\t", row.names = FALSE)
+        sep = "\t", row.names = TRUE, col.names=FALSE)
+	print("Done!")
     seqs
 }
