@@ -179,7 +179,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
     setwd(outputDir)
     write.table(seqs[order(as.numeric(seqs[,12]), decreasing = TRUE), ], 
         file = "scoresFor2InputSequences.xls",
-        sep = "\t", row.names = TRUE, col.names=FALSE)
+        sep = "\t", row.names = FALSE, col.names=TRUE)
 	print("Done!")
     seqs
 }
