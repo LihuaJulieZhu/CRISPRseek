@@ -102,8 +102,14 @@ In addition, a tab delimited file scoresFor2InputSequences.xls is also
 saved in the outputDir, sorted by scoreDiff descending.
 \item{name}{name of the gRNA}
 \item{gRNAPlusPAM}{gRNA plus PAM sequence}
-\item{targetInSeq1}{target/off-target sequence in the 1st input sequence file}
-\item{targetInSeq2}{target/off-target sequence in the 2nd input sequence file}
+\item{targetInSeq1}{target/off-target sequence including PAM in the 1st 
+	input sequence file}
+\item{targetInSeq2}{target/off-target sequence incuding PAM in the 2nd 
+	input sequence file}
+\item{guideAlignment2Offtarget}{alignment of gRNA to the other input 
+sequence (off-target sequence)}
+\item{offTargetStrand}{strand of the other sequence (off-target sequence)
+	the gRNA align to}
 \item{scoreForSeq1}{score for the target sequence in the 1st input 
     sequence file}
 \item{scoreForSeq2}{score for the target sequence in the 1st input 
