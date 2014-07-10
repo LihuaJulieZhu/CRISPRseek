@@ -21,14 +21,9 @@ offTargetAnalysis <-
             restriction enzyme recognition sequences!")
     }
     if (missing(inputFilePath)) {
-        stop("inputFilePath containing the searching sequence is required!")
+        stop("inputFilePath containing the searching sequence or a DNAStringSet
+             object is required!")
     }
-    if (!file.exists(inputFilePath)){
-        stop("inputfile specified as ", inputFilePath, " does not exists!")
-    }
-    if (format != "fasta" && format != "fastq") {
-        stop("format needs to be either fasta or fastq!")
-    }	
     if (substr(outputDir, nchar(outputDir), nchar(outputDir)) != .Platform$file.sep)
     {
         outputDir <- paste(outputDir, "", sep = .Platform$file.sep)
@@ -49,7 +44,7 @@ offTargetAnalysis <-
     if (findgRNAs)
     {
         cat("Searching for gRNAs ...\n")
-	potential.gRNAs <- findgRNAs(inputFilePath, 
+	    potential.gRNAs <- findgRNAs(inputFilePath, 
             findPairedgRNAOnly = findPairedgRNAOnly,
             pairOutputFile = pairOutputFile, PAM = PAM,
 	        gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
@@ -57,7 +52,9 @@ offTargetAnalysis <-
             max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
 		if (exportAllgRNAs == "fasta" || exportAllgRNAs == "all")
 		{
-			writeXStringSet(potential.gRNAs, filepath=paste(strsplit(basename(inputFilePath),split=".", fixed=TRUE)[[1]][1],"allgRNAs.fa", sep=""))
+			writeXStringSet(potential.gRNAs, filepath= file.path(outputDir,
+                paste(strsplit(basename(inputFilePath),split=".", 
+                    fixed=TRUE)[[1]][1],"allgRNAs.fa", sep="")))
 		}
 		if (exportAllgRNAs == "genbank" || exportAllgRNAs == "all")
 		{
@@ -88,7 +85,8 @@ offTargetAnalysis <-
 						found.gRNA <- found.gRNA + 1
 						if (found.gRNA == 1)
 						{
-						    thisFile <- paste(thisLocus, "gbk", sep=".")
+						    thisFile <- file.path(outputDir,
+						      paste(thisLocus, "gbk", sep="."))
                             write(header, thisFile)
 						}
 						feature <- temp[[j]][1]
@@ -178,8 +176,22 @@ offTargetAnalysis <-
     }
     else
     {
-        potential.gRNAs <- readDNAStringSet(inputFilePath, format, 
-            use.names = TRUE)
+        if (class(inputFilePath) != "DNAStringSet")
+        {
+            if (! file.exists(inputFilePath)) {
+                stop("inputfile specified as ", inputFilePath, " does not exists!")
+            }
+            if (format != "fasta" && format != "fastq") 
+            {
+                stop("format needs to be either fasta or fastq!")
+            }
+            potential.gRNAs <- readDNAStringSet(inputFilePath, format, 
+                use.names = TRUE)
+        }
+        else
+        {
+            potential.gRNAs <- inputFilePath
+        }
 	gRNAs.RE <- filtergRNAs(potential.gRNAs, 
             REpatternFile = REpatternFile, format = format, 
             minREpatternSize = minREpatternSize, 

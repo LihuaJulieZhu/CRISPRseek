@@ -4,24 +4,35 @@ findgRNAs <-
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "gRNA") 
 {
     if (missing(inputFilePath)) {
-        stop("inputFilePath containing the searching sequence is required!")
+        stop("inputFilePath containing the searching sequence 
+	   or a DNAStringSet object is required!")
     }
-    if (! file.exists(inputFilePath)) {
-        stop("inputfile specified as ", inputFilePath, " does not exists!")
-    }
-    if (format != "fasta" && format != "fastq") 
+    if (class(inputFilePath) != "DNAStringSet")
     {
-        stop("format needs to be either fasta or fastq!")
+    	if (! file.exists(inputFilePath)) {
+           stop("inputfile specified as ", inputFilePath, " does not exists!")
+	}
+    	if (format != "fasta" && format != "fastq") 
+    	{
+       	   stop("format needs to be either fasta or fastq!")
+    	}
+    	subjects <- readDNAStringSet(inputFilePath, format, use.names = TRUE)
     }
-    subjects <- readDNAStringSet(inputFilePath, format, use.names = TRUE)
-    if (width(subjects) == 0)
+    else
+    {
+	subjects <- inputFilePath
+     }
+    if (length(subjects) == 0)
     {
         stop("The input file contains no sequence! This could be caused by 
             wrong format of the file. If file is created in mac, you could 
             reformat to text by typing tr \"\\r\" \"\\n\" >newfile in the 
             command line")
     }
-    for (i in 1:length(subjects))
+    #for (i in 1:length(subjects))
+    toAppend = FALSE
+    colNames = TRUE
+    all.gRNAs.df <- do.call(rbind, lapply(1:length(subjects), function(i)
     {
         subjectname <- gsub("'", "", names(subjects)[i])
         subjectname <- gsub(" ", "", subjectname)
@@ -65,109 +76,127 @@ findgRNAs <-
             n.minus.gRNAs <- 0
         if (findPairedgRNAOnly && (n.minus.gRNAs  * n.plus.gRNAs) == 0)
         {
-            stop("No paired gRNAs found in the input sequence!")
+            warning(paste("No paired gRNAs found in the input sequence", subjectname))
+            all.gRNAs <- DNAStringSet()
         }
-        temp = matrix(nrow =0, ncol=5)
-        colnames(temp)[1:5] <- c( "ReversegRNAPlusPAM",
-            "ReversegRNAName", "ForwardgRNAPlusPAM",
-            "ForwardgRNAName", "gap")
-        write.table(temp, file = pairOutputFile, sep = "\t",
-            row.names = FALSE, quote = FALSE)
-        if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
-        {
-            for (j in 1:n.plus.gRNAs)
+	    else
+	    {
+            temp = matrix(nrow =0, ncol=5)
+            colnames(temp)[1:5] <- c( "ReversegRNAPlusPAM",
+                "ReversegRNAName", "ForwardgRNAPlusPAM",
+                "ForwardgRNAName", "gap")
+	        if (i >1)
+	        {
+	            toAppend = TRUE
+	            colNames = FALSE
+	        }
+            write.table(temp, file = pairOutputFile, sep = "\t",
+                row.names = FALSE, quote = FALSE, append = toAppend, 
+	            col.names = colNames)
+            if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
             {
-                for (k in 1:n.minus.gRNAs)
+                for (j in 1:n.plus.gRNAs)
                 {
-                    if ((as.numeric(as.character(pos.gRNAs[j,3])) - 1 - 
-                        as.numeric(as.character(minus.gRNAs[k,3]))) >= min.gap
-                        && (as.numeric(as.character(pos.gRNAs[j,3])) - 
-                        as.numeric(as.character(minus.gRNAs[k,3]))) <= 
-                        max.gap)
+                    for (k in 1:n.minus.gRNAs)
                     {
-                        if(findPairedgRNAOnly)
+                        if ((as.numeric(as.character(pos.gRNAs[j,3])) - 1 - 
+                            as.numeric(as.character(minus.gRNAs[k,3]))) >= min.gap
+                            && (as.numeric(as.character(pos.gRNAs[j,3])) - 
+                            as.numeric(as.character(minus.gRNAs[k,3]))) <= 
+                            max.gap)
                         {
-                            if (!k %in% minus.index)
+                            if(findPairedgRNAOnly)
                             {
-                                reverse.index <- reverse.index + 1
-                                minus.gRNAs[k,2] <- paste(name.prefix, "r", 
-                                    reverse.index, "_", minus.gRNAs[k, 2], 
-                                    sep = "")
+                                if (!k %in% minus.index)
+                                {
+                                    reverse.index <- reverse.index + 1
+                                    minus.gRNAs[k,2] <- paste(name.prefix, "r", 
+                                        reverse.index, "_", minus.gRNAs[k, 2], 
+                                        sep = "")
+                                }
+                                if (!j %in% plus.index)
+                                {
+                                    forward.index <- forward.index + 1
+                                    pos.gRNAs[j,2] <- paste(name.prefix,"f",
+                                        forward.index, "_", pos.gRNAs[j, 2], 
+                                        sep = "")
+                                }
                             }
-                            if (!j %in% plus.index)
-                            {
-                                forward.index <- forward.index + 1
-                                pos.gRNAs[j,2] <- paste(name.prefix,"f",
-                                    forward.index, "_", pos.gRNAs[j, 2], 
-                                    sep = "")
-                            }
-                        }
-                        plus.index <- c(plus.index, j)
-                        minus.index <- c(minus.index, k)
-                    } ### if paired
-                } #for k
-            }## for j
-            if (length(minus.index) > 0 && length(plus.index) > 0)
-            {
-                paired <- cbind(minus.gRNAs[minus.index,1], 
-                    minus.gRNAs[minus.index, 2], pos.gRNAs[plus.index,1], 
-                    pos.gRNAs[plus.index, 2],
-                    gap = as.numeric(as.character(
-                    pos.gRNAs[plus.index,3])) - 1 - as.numeric(
-                    as.character(minus.gRNAs[minus.index, 3])))
-                colnames(paired)[1:5] <- c( "ReversegRNAPlusPAM", 
-                    "ReversegRNAName", "ForwardgRNAPlusPAM", 
-                    "ForwardgRNAName", "gap")
-                if(findPairedgRNAOnly)
+                            plus.index <- c(plus.index, j)
+                            minus.index <- c(minus.index, k)
+                        } ### if paired
+                    } #for k
+                }## for j
+                if (length(minus.index) > 0 && length(plus.index) > 0)
                 {
-                    plus.index <- unique(plus.index)
-                    minus.index <- unique(minus.index)
-                    all.gRNAs <- DNAStringSet(c(pos.gRNAs[plus.index, 1], 
-                        minus.gRNAs[minus.index,1]))
-                    names(all.gRNAs) <- c(pos.gRNAs[plus.index,2], 
-                        minus.gRNAs[minus.index,2])
+                    paired <- cbind(minus.gRNAs[minus.index,1], 
+                        minus.gRNAs[minus.index, 2], pos.gRNAs[plus.index,1], 
+                        pos.gRNAs[plus.index, 2],
+                        gap = as.numeric(as.character(
+                        pos.gRNAs[plus.index,3])) - 1 - as.numeric(
+                        as.character(minus.gRNAs[minus.index, 3])))
+                    colnames(paired)[1:5] <- c( "ReversegRNAPlusPAM", 
+                        "ReversegRNAName", "ForwardgRNAPlusPAM", 
+                        "ForwardgRNAName", "gap")
+                    if(findPairedgRNAOnly)
+                    {
+                        plus.index <- unique(plus.index)
+                        minus.index <- unique(minus.index)
+                        all.gRNAs <- DNAStringSet(c(pos.gRNAs[plus.index, 1], 
+                            minus.gRNAs[minus.index,1]))
+                        names(all.gRNAs) <- c(pos.gRNAs[plus.index,2], 
+                            minus.gRNAs[minus.index,2])
+                    }
+                    else
+                    {
+                        paired[, 2] <- paste(name.prefix, "r", minus.index, "_", 
+                            paired[, 2], sep = "")
+                        paired[, 4] <- paste(name.prefix, "f", plus.index, "_", 
+                            paired[, 4], sep = "")
+                    }
+                    if (dim(paired)[1] == 1)
+                        write.table(paired, file = pairOutputFile, sep = "\t", 
+                            row.names = FALSE, quote = FALSE, append = toAppend,
+			                col.names = colNames)
+                    else
+                        write.table(paired[order(as.character(paired[,4])), ], 
+                            file = pairOutputFile, sep = "\t", row.names = FALSE,
+                            quote = FALSE, append = toAppend, col.names = colNames)
                 }
-                else
+                else if (findPairedgRNAOnly)
                 {
-                    paired[, 2] <- paste(name.prefix, "r", minus.index, "_", 
-                        paired[, 2], sep = "")
-                    paired[, 4] <- paste(name.prefix, "f", plus.index, "_", 
-                        paired[, 4], sep = "")
+                    warning(paste("No paired gRNAs found for sequence",
+                        subjectname))
+                   all.gRNAs <- DNAStringSet()
                 }
-                if (dim(paired)[1] == 1)
-                    write.table(paired, file = pairOutputFile, sep = "\t", 
-                        row.names = FALSE, quote = FALSE)
-                else
-                    write.table(paired[order(as.character(paired[,4])), ], 
-                        file = pairOutputFile, sep = "\t", row.names = FALSE,
-                        quote = FALSE)
-            }
-            else if (findPairedgRNAOnly)
+            }### if pos.gRNAs and minus.gRNAs not empty
+            if (! findPairedgRNAOnly)
             {
-                stop("No paired gRNAs found!")
+                all.gRNAs <- DNAStringSet(c(pos.gRNAs[,1], minus.gRNAs[,1]))
+                if (length(all.gRNAs) == 0)
+                    warning(paste("No gRNAs found in the input sequence", 
+                        subjectname))	
+                if (n.plus.gRNAs == 0)
+                    names(all.gRNAs) <- paste(name.prefix,
+                        c(rep("r", dim(minus.gRNAs)[1])),
+                        c(1:dim(minus.gRNAs)[1]), "_", 
+                        c(minus.gRNAs[,2]), sep = "")
+                else if (n.minus.gRNAs == 0)
+                    names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
+                        dim(pos.gRNAs)[1])),
+                        c(1:dim(pos.gRNAs)[1]), 
+                        c(pos.gRNAs[,2]), sep = "")
+                else
+                    names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
+                        dim(pos.gRNAs)[1]), rep("r", dim(minus.gRNAs)[1])),
+                        c(1:dim(pos.gRNAs)[1], 1:dim(minus.gRNAs)[1]), "_", 
+                        c(pos.gRNAs[,2], minus.gRNAs[,2]), sep = "")
             }
-        }### if pos.gRNAs and minus.gRNAs not empty
-        if (! findPairedgRNAOnly)
-        {
-            all.gRNAs <- DNAStringSet(c(pos.gRNAs[,1], minus.gRNAs[,1]))
-            if (length(all.gRNAs) == 0)
-                stop("No gRNAs found in the input sequence!")
-            if (n.plus.gRNAs == 0)
-                names(all.gRNAs) <- paste(name.prefix,
-                    c(rep("r", dim(minus.gRNAs)[1])),
-                    c(1:dim(minus.gRNAs)[1]), "_", 
-                    c(minus.gRNAs[,2]), sep = "")
-            else if (n.minus.gRNAs == 0)
-                names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
-                    dim(pos.gRNAs)[1])),
-                    c(1:dim(pos.gRNAs)[1]), 
-                    c(pos.gRNAs[,2]), sep = "")
-            else
-                names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
-                    dim(pos.gRNAs)[1]), rep("r", dim(minus.gRNAs)[1])),
-                    c(1:dim(pos.gRNAs)[1], 1:dim(minus.gRNAs)[1]), "_", 
-                    c(pos.gRNAs[,2], minus.gRNAs[,2]), sep = "")
-        }
-    } ## for subjects
+	 } ### no paired found and findPairedOnly   
+	 if (length(all.gRNAs) >0)
+	     cbind(as.data.frame(all.gRNAs), names(all.gRNAs))
+    })) ## do call subjects
+    all.gRNAs <- DNAStringSet(all.gRNAs.df[,1])
+    names(all.gRNAs) = all.gRNAs.df[,2]
     all.gRNAs
 }

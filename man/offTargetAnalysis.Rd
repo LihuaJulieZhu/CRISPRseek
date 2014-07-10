@@ -27,8 +27,8 @@ offTargetAnalysis(inputFilePath, format = "fasta", findgRNAs = TRUE,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{inputFilePath}{
-Sequence input file path that contains sequences to be searched for potential 
-gRNAs
+Sequence input file path or a DNAStringSet object that contains sequences
+to be searched for potential gRNAs
 }
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta

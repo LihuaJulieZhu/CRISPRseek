@@ -17,7 +17,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
         min.gap = min.gap, max.gap = max.gap, 
         gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
         gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
-        outputDir = outputDir, weights = weights, overwrite = overwrite)
+        outputDir = file.path(outputDir, basename(inputFile1Path)), 
+        weights = weights, overwrite = overwrite)
     gRNAs2 = offTargetAnalysis(inputFile2Path, format = format,                    
         findgRNAs = TRUE,
         findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "",
@@ -27,7 +28,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
         min.gap = min.gap, max.gap = max.gap, 
         gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
         gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
-        outputDir = outputDir, weights = weights, overwrite = overwrite)
+        outputDir = file.path(outputDir, basename(inputFile2Path)), 
+            weights = weights, overwrite = overwrite)
 	print("Scoring ...")
 	subjects1 <- readDNAStringSet(inputFile1Path, format = "fasta",
         use.names = TRUE)
