@@ -55,7 +55,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
             names(plus_matches) <- rep.int(patternID, length(plus_matches))
             writeHits(pattern, seqname, plus_matches, strand = "+", 
                 file = outfile, gRNA.size = gRNA.size,
-                PAM = PAM, max.mismatch = max.mismatch - 2,
+                PAM = PAM.pattern, max.mismatch = max.mismatch - 2,
                 chrom.len = chrom.len, append = append)
                 append <- TRUE
 		}
@@ -67,7 +67,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
                 names(minus_matches) <- rep.int(patternID,
                     length(minus_matches))
                 writeHits(pattern, seqname, minus_matches, strand = "-", 
-                    file = outfile, gRNA.size = gRNA.size, PAM = PAM,
+                    file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
                     max.mismatch = max.mismatch - 2, 
                     chrom.len = chrom.len, append = append)
                 append <- TRUE
@@ -92,7 +92,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 		    names(plus_matches) <- rep.int(patternID, length(plus_matches))
 		    writeHits(pattern, seqname, plus_matches, strand = "+", 
 			    file = outfile, gRNA.size = gRNA.size,
-			    PAM = PAM, max.mismatch = max.mismatch - 2,
+			    PAM = PAM.pattern, max.mismatch = max.mismatch - 2,
 			    chrom.len = chrom.len, append = append)
 		    append <- TRUE
 	    }            
@@ -104,7 +104,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 			    names(minus_matches) <- rep.int(patternID,
 				    length(minus_matches))
 			    writeHits(pattern, seqname, minus_matches, strand = "-", 
-				    file = outfile, gRNA.size = gRNA.size, PAM = PAM,
+				    file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
 				    max.mismatch = max.mismatch - 2, 
 				    chrom.len = chrom.len, append = append)
 			    append <- TRUE
