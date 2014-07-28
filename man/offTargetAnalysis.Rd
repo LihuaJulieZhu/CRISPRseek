@@ -122,8 +122,8 @@ Choose whether or not to indicate whether the off target is inside an exon or
 not, default TRUE
 }
   \item{txdb}{
-TranscriptDb object, for creating and using TranscriptDb object, please refer 
-to GenomicFeatures package. For a list of existing TranscriptDb object, please 
+TxDb object, for creating and using TxDb object, please refer 
+to GenomicFeatures package. For a list of existing TxDb object, please 
 search for annotation package starting with Txdb at 
 http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData, 
 such as TxDb.Rnorvegicus.UCSC.rn5.refGene for rat, 

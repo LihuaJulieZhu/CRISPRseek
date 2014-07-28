@@ -107,8 +107,8 @@ To find BSgenome of other species, please refer to available.genomes in the
 \Biocannopkg{BSgenome.Drerio.UCSC.danRer7} for Zv9, 
 and \Biocannopkg{BSgenome.Dmelanogaster.UCSC.dm3} for dm3
 
-To create and use TranscriptDb objects, please refer to the 
-\Biocpkg{GenomicFeatures} package. For a list of existing TranscriptDb objects, 
+To create and use TxDb objects, please refer to the 
+\Biocpkg{GenomicFeatures} package. For a list of existing TxDb objects, 
 please search for annotation package starting with Txdb at \linebreak 
 http://www.bioconductor.org/packages/release/BiocViews.html, 
 such as \Biocannopkg{TxDb.Rnorvegicus.UCSC.rn5.refGene} for rat, 
