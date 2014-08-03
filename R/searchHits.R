@@ -1,3 +1,52 @@
+.searchHitsInOneSeq <- function(gRNAs, seq, seqname, PAM, PAM.size,
+                                max.mismatch, outfile)
+{
+    preprocess <- FALSE
+    if (length(gRNAs) > 10L) {
+        gRNA_min_width <- min(width(gRNAs))
+        if (gRNA_min_width >= 6L
+         && gRNA_min_width %/% (max.mismatch + 1L) >= 3L)
+            preprocess <- TRUE
+    }
+    if (preprocess) {
+        patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
+    } else {
+        patterns <- gRNAs
+    }
+    all_plus_matches <- matchPDict(patterns, seq,
+                                   max.mismatch = max.mismatch)
+    revseq <- reverseComplement(seq)
+    all_minus_macthes <- matchPDict(patterns, revseq,
+                                    max.mismatch = max.mismatch)
+    for (i in seq_len(length(gRNAs))) {
+        patternID <- gsub("'", "", names(gRNAs)[i])
+        if (length(patternID) < 1) {
+            patternID <- paste("pattern", i, sep = "")
+        }
+        pattern <- DNAString(toupper(gRNAs[[i]]))
+        ### by default PAM is NGG or NAG
+        plus_matches <- Views(seq, all_plus_matches[[i]])
+        if (length(plus_matches) > 0) {
+            names(plus_matches) <- rep.int(patternID, length(plus_matches))
+            writeHits(pattern, seqname, plus_matches, strand = "+",
+                file = outfile, gRNA.size = length(pattern) - PAM.size,
+                PAM = PAM, max.mismatch = max.mismatch - 2,
+                chrom.len = length(seq), append = TRUE)
+        }
+        if (reverseComplement(pattern) != pattern) {
+            minus_matches <- Views(revseq, all_minus_macthes[[i]])
+            if (length(minus_matches) > 0) {
+                names(minus_matches) <- rep.int(patternID,
+                    length(minus_matches))
+                writeHits(pattern, seqname, minus_matches, strand = "-",
+                    file = outfile, gRNA.size = length(pattern) - PAM.size,
+                    PAM = PAM, max.mismatch = max.mismatch - 2,
+                    chrom.len = length(seq), append = TRUE)
+            }
+        }
+    }
+}
+
 searchHits <-
     function (gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 4, 
         PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$") 
@@ -15,43 +64,10 @@ searchHits <-
         seqnames <- intersect(seqnames, chromToSearch)
     append <- FALSE
     for (seqname in seqnames) {
+        cat(">>> Finding all hits in sequence", seqname, "...\n")
         subject <- BSgenomeName[[seqname]]
-        revsubject <- reverseComplement(subject)
-        chrom.len <- length(subject)
-        cat(">>> Finding all hits in sequences", seqname, "...\n")
-        for (i in seq_len(length(gRNAs))) {
-            patternID <- gsub("'", "", names(gRNAs)[i])
-            if (length(patternID) < 1) {
-                patternID <- paste("pattern", i, sep = "")
-            }
-            pattern <- DNAString(toupper(gRNAs[[i]]))
-            ### by default PAM is NGG or NAG
-            plus_matches <- matchPattern(pattern, subject,
-                max.mismatch = max.mismatch, min.mismatch = 0, 
-                with.indels = FALSE, fixed = TRUE, algorithm = "auto")
-            if (length(plus_matches) > 0) {
-                names(plus_matches) <- rep.int(patternID, length(plus_matches))
-                writeHits(pattern, seqname, plus_matches, strand = "+", 
-                    file = outfile, gRNA.size = gRNA.size,
-                    PAM = PAM, max.mismatch = max.mismatch - 2,
-                    chrom.len = chrom.len, append = append)
-                append <- TRUE
-            }            
-            if (reverseComplement(pattern) != pattern) {
-                minus_matches <- matchPattern(pattern, revsubject, 
-                    max.mismatch = max.mismatch, min.mismatch = 0, 
-                    with.indels = FALSE, fixed = TRUE, algorithm = "auto")
-                if (length(minus_matches) > 0) {
-                    names(minus_matches) <- rep.int(patternID,
-                        length(minus_matches))
-                    writeHits(pattern, seqname, minus_matches, strand = "-", 
-                        file = outfile, gRNA.size = gRNA.size, PAM = PAM,
-                        max.mismatch = max.mismatch - 2, 
-                        chrom.len = chrom.len, append = append)
-                    append <- TRUE
-                }
-            }
-        }
+        .searchHitsInOneSeq(gRNAs, subject, seqname, PAM, PAM.size,
+                            max.mismatch, outfile)
         cat(">>> DONE searching\n")
     }
     if (file.exists(outfile))
