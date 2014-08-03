@@ -1,14 +1,19 @@
+.preprocess_me <- function(gRNAs, max.mismatch)
+{
+    if (length(gRNAs) <= 10L)
+        return(FALSE)
+    gRNA_min_width <- min(width(gRNAs))
+    if (gRNA_min_width < 6L || gRNA_min_width %/% (max.mismatch + 1L) < 3L)
+        return(FALSE)
+    if (sum(alphabetFrequency(gRNAs, baseOnly=TRUE)[ , "other"]) != 0L)
+        return(FALSE)
+    TRUE
+}
+
 .searchHitsInOneSeq <- function(gRNAs, seq, seqname, PAM, PAM.size,
                                 max.mismatch, outfile)
 {
-    preprocess <- FALSE
-    if (length(gRNAs) > 10L) {
-        gRNA_min_width <- min(width(gRNAs))
-        if (gRNA_min_width >= 6L
-         && gRNA_min_width %/% (max.mismatch + 1L) >= 3L)
-            preprocess <- TRUE
-    }
-    if (preprocess) {
+    if (.preprocess_me(gRNAs, max.mismatch)) {
         patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
     } else {
         patterns <- gRNAs
@@ -23,7 +28,7 @@
         if (length(patternID) < 1) {
             patternID <- paste("pattern", i, sep = "")
         }
-        pattern <- DNAString(toupper(gRNAs[[i]]))
+        pattern <- gRNAs[[i]]
         ### by default PAM is NGG or NAG
         plus_matches <- Views(seq, all_plus_matches[[i]])
         if (length(plus_matches) > 0) {
@@ -52,7 +57,7 @@ searchHits <-
         PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$") 
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
-        stop("dictO is required as a DNAStringSet object!")
+        stop("gRNAs is required as a DNAStringSet object!")
     }
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
         stop("BSgenomeName is required as BSgenome object!")
