@@ -12,11 +12,13 @@ getOfftargetScore, filterOfftarget and generate reports.
 \usage{
 offTargetAnalysis(inputFilePath, format = "fasta", findgRNAs = TRUE,
     exportAllgRNAs = c("all", "fasta", "genbank", "no"),
-    findgRNAsWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6, 
+    findgRNAsWithREcutOnly = TRUE, 
+    REpatternFile = system.file("extdata", "NEBenzymes.fa",
+        package = "CRISPRseek"), minREpatternSize = 6, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = TRUE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
-    max.mismatch = 4, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
+    max.mismatch = 3, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
     min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
@@ -47,7 +49,7 @@ Indicate whether to find gRNAs overlap with restriction enzyme recognition
 pattern
 }
   \item{REpatternFile}{
-File path containing restriction enzyme cut patters
+File path containing restriction enzyme cut patterns
 }
   \item{minREpatternSize}{
 Minimum restriction enzyme recognition pattern length required for the enzyme 
@@ -96,8 +98,8 @@ chromosomes. For example, chrX indicates searching for matching in chromosome
 X only
 }
   \item{max.mismatch}{
-Maximum mismatch allowed in off target search, default 4. Warning: will be 
-considerably slower if set >4
+Maximum mismatch allowed in off target search, default 3. Warning: will be 
+considerably slower if set > 3
 }
   \item{PAM.pattern}{
 Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$

@@ -53,7 +53,7 @@
 }
 
 searchHits <-
-    function (gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 4, 
+    function (gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 3, 
         PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$") 
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {

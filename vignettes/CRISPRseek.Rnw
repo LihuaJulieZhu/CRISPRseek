@@ -271,7 +271,7 @@ for cooperative genome engineering. Nat Biotechnol. 2013. 31(9):833-8
 \bibitem[ Hsu, P.D et al., 2013]{Hsu et al., 2013} Hsu, P.D. et al., DNA 
 targeting specificity of rNA-guided Cas9 nucleases. Nat Biotechnol. 
 2013. 31:827-834. 
-\bibitem[Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky]{Zhu et al}Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: A Bioconductor package to help with the design of guide RNAs in CRISPR-Cas9 systems for targeted genome editing. (In preparation)
+\bibitem[Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky]{Zhu et al}Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One (Accepted)
 \end{thebibliography}
 
 \section{Session Info}

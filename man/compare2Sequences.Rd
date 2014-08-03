@@ -13,7 +13,7 @@ compare2Sequences(inputFile1Path, inputFile2Path, format = "fasta",
     findgRNAsWithREcutOnly = FALSE, REpatternFile, minREpatternSize = 6,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
-    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch =4,
+    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 3,
     outputDir, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
@@ -78,7 +78,7 @@ Regular expression of PAM, default N[A|G]G$
 }
   \item{max.mismatch}{
 Maximum mismatch allowed to search the off targets in the other sequence,
-default 4
+default 3 
 }
   \item{outputDir}{
 the directory where the sequence comparison results will be written to

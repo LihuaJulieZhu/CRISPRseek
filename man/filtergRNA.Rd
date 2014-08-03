@@ -10,7 +10,8 @@ Filter gRNAs containing restriction enzyme cut site
 \usage{
 filtergRNAs(all.gRNAs, pairOutputFile = "", 
     findgRNAsWithREcutOnly = FALSE,
-    REpatternFile, format = "fasta", 
+    REpatternFile = system.file("extdata", "NEBenzymes.fa",
+        package = "CRISPRseek"), format = "fasta", 
     minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
 }
 %- maybe also 'usage' for other objects documented here.

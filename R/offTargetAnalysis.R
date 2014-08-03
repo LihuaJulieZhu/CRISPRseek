@@ -1,11 +1,14 @@
 offTargetAnalysis <-
     function(inputFilePath, format = "fasta", findgRNAs = TRUE,
 		exportAllgRNAs = c("all", "fasta", "genbank", "no"),
-        findgRNAsWithREcutOnly = TRUE, REpatternFile, minREpatternSize = 6,
+        findgRNAsWithREcutOnly = TRUE, 
+	REpatternFile = system.file("extdata", "NEBenzymes.fa", 
+            package = "CRISPRseek"), 
+	minREpatternSize = 6,
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = TRUE, 
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA",
 	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
-        chromToSearch = "all", max.mismatch = 4, PAM.pattern = "N[A|G]G$",
+        chromToSearch = "all", max.mismatch = 3, PAM.pattern = "N[A|G]G$",
        gRNA.pattern = "", min.score = 0.5, topN = 100, 
 	    topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, outputDir,
@@ -15,7 +18,7 @@ offTargetAnalysis <-
         overwrite = FALSE)
 {
     cat("Validating input ...\n")
-    if(findgRNAsWithREcutOnly && !file.exists(REpatternFile))
+    if(findgRNAsWithREcutOnly && findgRNAs && !file.exists(REpatternFile))
     {
         stop("Please specify an REpattern file as fasta file with 
             restriction enzyme recognition sequences!")
@@ -218,10 +221,10 @@ offTargetAnalysis <-
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
         stop("BSgenomeName is required as BSgenome object!")
     }
-    if (annotateExon && (missing(txdb) || class(txdb) != "TxDb"))
+    if (annotateExon && (missing(txdb) || class(txdb) != "TranscriptDb"))
     {
         stop("To indicate whether an offtarget is inside an exon, txdb is
-            required as TxDb object!")
+            required as TranscriptDb object!")
     }
     hits <- searchHits(gRNAs = gRNAs, PAM = PAM.pattern, 
         BSgenomeName = BSgenomeName, chromToSearch = chromToSearch, 

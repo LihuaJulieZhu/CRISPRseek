@@ -8,7 +8,7 @@ Search for off targets
 Search for off targets for given gRNAs, BSgenome and maximum mismatches
 }
 \usage{
-searchHits(gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 4, 
+searchHits(gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 3, 
     PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$")
 }
 \arguments{
@@ -29,8 +29,8 @@ chromosomes. For example, chrX indicates searching for matching in
 chromosome X only
 }
   \item{max.mismatch}{
-Maximum mismatch allowed in off target search, default 4. Warning: will be 
-considerably slower if it is set to greater than 4
+Maximum mismatch allowed in off target search, default 3. Warning: will be 
+considerably slower if it is set to greater than 3 
 }
   \item{PAM.size}{
 Size of PAM, default 3

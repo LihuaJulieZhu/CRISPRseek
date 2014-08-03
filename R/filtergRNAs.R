@@ -1,6 +1,8 @@
 filtergRNAs <-
     function(all.gRNAs, pairOutputFile = "", 
-        findgRNAsWithREcutOnly = FALSE, REpatternFile, format = "fasta",
+        findgRNAsWithREcutOnly = FALSE, 
+	REpatternFile = system.file("extdata", "NEBenzymes.fa",
+            package = "CRISPRseek"), format = "fasta",
         minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
 {
     if (missing(REpatternFile)) {

@@ -7,7 +7,12 @@ filterOffTarget <-
         class(BSgenomeName) != "BSgenome")) 
     {
         stop("To fetch sequences, BSgenomeName is required as BSgenome object!")
-    }	
+    }
+    if (annotateExon && (missing(txdb) || class(txdb) != "TranscriptDb"))
+    {
+        stop("To indicate whether an offtarget is inside an exon, txdb is
+            required as TranscriptDb object!")
+    }
     scores <- scores[scores$score >= min.score,]
     if (length(grep("IsMismatch.pos", colnames(scores))) > 0)
         scores <- scores[,-c(grep("IsMismatch.pos", colnames(scores)))]
