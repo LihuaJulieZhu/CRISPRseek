@@ -242,14 +242,18 @@ offTargetAnalysis <-
             topN.OfftargetTotalScore = topN.OfftargetTotalScore, 
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon)
+    cat("Done annotating\n")
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 
         header = TRUE, stringsAsFactors = FALSE) 
+    if (dim(summary)[2] == 1)
+    	summary <- as.data.frame(t(data.matrix(offTargets$summary))) 
     for (i in grep("topOfftarget", names(summary)))
     {
         y <- as.character(summary[,i])
         y[is.na(y)] <- ""
 	summary[, i] = y	
     }
+    cat("Add paired information...\n")
     if (findgRNAs)
     {
         PairedgRNAName <- unlist(lapply(1:dim(summary)[1], function(i) {
@@ -263,6 +267,7 @@ offTargetAnalysis <-
                 collapse = " ")))
         }))
     }
+    cat("Add RE information...\n")
     if (findPairedgRNAOnly && findgRNAs)
     {
         REname <- unlist(lapply(1:dim(summary)[1], function(i) {
