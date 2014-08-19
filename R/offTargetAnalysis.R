@@ -221,10 +221,10 @@ offTargetAnalysis <-
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
         stop("BSgenomeName is required as BSgenome object!")
     }
-    if (annotateExon && (missing(txdb) || class(txdb) != "TranscriptDb"))
+    if (annotateExon && (missing(txdb) || class(txdb) != "TxDb"))
     {
         stop("To indicate whether an offtarget is inside an exon, txdb is
-            required as TranscriptDb object!")
+            required as TxDb object!")
     }
     hits <- searchHits(gRNAs = gRNAs, PAM = PAM.pattern, 
         BSgenomeName = BSgenomeName, chromToSearch = chromToSearch, 
