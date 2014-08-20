@@ -11,7 +11,7 @@ offTargetAnalysis <-
         chromToSearch = "all", max.mismatch = 3, PAM.pattern = "N[A|G]G$",
        gRNA.pattern = "", min.score = 0.5, topN = 100, 
 	    topN.OfftargetTotalScore = 10, 
-        annotateExon = TRUE, txdb, outputDir,
+        annotateExon = TRUE, txdb, orgAnn, outputDir,
         fetchSequence = TRUE, upstream = 200, downstream = 200,
         weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 
         0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
@@ -221,7 +221,7 @@ offTargetAnalysis <-
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
         stop("BSgenomeName is required as BSgenome object!")
     }
-    if (annotateExon && (missing(txdb) || class(txdb) != "TxDb"))
+    if (annotateExon && (missing(txdb) || (class(txdb) != "TxDb" && class(txdb) != "TranscriptDb")))
     {
         stop("To indicate whether an offtarget is inside an exon, txdb is
             required as TxDb object!")
@@ -238,7 +238,7 @@ offTargetAnalysis <-
     cat("Annotating, filtering and generating reports ...\n")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
-            min.score = min.score, topN = topN, 
+            orgAnn = orgAnn, min.score = min.score, topN = topN, 
             topN.OfftargetTotalScore = topN.OfftargetTotalScore, 
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon)
@@ -291,6 +291,23 @@ offTargetAnalysis <-
         }))
         summary <- cbind(summary, REname)
     }
+	seq <- as.character(summary$gRNAsPlusPAM)
+	n.C <- unlist(lapply(1:length(seq), function(i) {
+						 table(factor(s2c(substr(seq[i],1,gRNA.size)), levels=c("C")))
+						 }))
+	n.G <- unlist(lapply(1:length(seq), function(i) {
+						 table(factor(s2c(substr(seq[i],1,gRNA.size)), levels=c("G")))
+						 }))
+	summary <- cbind(summary,GC.percent.gRNA = (n.G+n.C)/gRNA.size * 100)
+	numberOfT.last4Position.gRNA <- unlist(lapply(1:length(seq), function(i) {
+						 table(factor(s2c(substr(seq[i],gRNA.size-5,gRNA.size)), levels=c("T")))
+						 }))
+	summary <- cbind(summary, numberOfT.last4Position.gRNA )
+	on.target <- offTargets$offtargets
+	on.target <- unique(subset(on.target, on.target$n.mismatch == 0 & on.target$NGG == 1))
+	on.target <- unique(cbind(as.character(on.target$name), as.character(on.target$toViewInUCSC)))
+	colnames(on.target) = c("names", "toViewInUCSC")
+	summary <- unique(merge(on.target, summary, by="names", all.y=TRUE))
     write.table(summary[order(as.character(summary$names)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)

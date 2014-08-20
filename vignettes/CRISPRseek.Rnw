@@ -117,11 +117,23 @@ such as \Biocannopkg{TxDb.Rnorvegicus.UCSC.rn5.refGene} for rat,
 \Biocannopkg{TxDb.Dmelanogaster.UCSC.dm3.ensGene} for Drosophila and 
 \Biocannopkg{TxDb.Celegans.UCSC.ce6.ensGene} for C.elegans
 
+\Biocpkg{org.Hs.eg.db} is the gene ID mapping package for human.
+For a list of existing OrgDb packages, 
+please search for OrgDb at \linebreak 
+http://www.bioconductor.org/packages/release/BiocViews.html, such as
+\Biocannopkg{org.Rn.eg.db} for rat
+\Biocannopkg{org.Mm.eg.db} for mouse 
+\Biocannopkg{org.Dm.eg.db} for Drosophila
+\Biocannopkg{org.Ce.eg.db} for C.elegans
+
+
+
 \begin{scriptsize}
 <<>>=
 library(CRISPRseek)
 library(BSgenome.Hsapiens.UCSC.hg19)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(org.Hs.eg.db)
 outputDir <- getwd()
 inputFilePath <- system.file('extdata', 'inputseq.fa', package = 'CRISPRseek')
 REpatternFile <- system.file('extdata', 'NEBenzymes.fa', package = 'CRISPRseek')
@@ -155,9 +167,9 @@ help(offTargetAnalysis)
 offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
 REpatternFile = REpatternFile, findPairedgRNAOnly = TRUE, 
 BSgenomeName = Hsapiens, chromToSearch ="chrX", min.gap = 0, max.gap = 20,
-txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 0,
-overlap.gRNA.positions = c(17, 18), outputDir = outputDir,
-overwrite = TRUE)
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, orgAnn = org.Hs.egSYMBOL,
+max.mismatch = 0,overlap.gRNA.positions = c(17, 18), 
+outputDir = outputDir,overwrite = TRUE)
 @
 \end{scriptsize}
 
@@ -174,7 +186,8 @@ be annotated with restriction enzyme cut sites for users to review later.
 offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
 REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE, 
 BSgenomeName = Hsapiens, chromToSearch = "chrX",
-txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+orgAnn = org.Hs.egSYMBOL, 
 max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
@@ -192,6 +205,7 @@ offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
 BSgenomeName = Hsapiens, chromToSearch = "chrX", 
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+orgAnn = org.Hs.egSYMBOL,
 max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
@@ -209,7 +223,8 @@ type of searches aforementioned.
 offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
 REpatternFile = REpatternFile,findPairedgRNAOnly = FALSE, 
 BSgenomeName = Hsapiens, chromToSearch = "chrX", 
-txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+orgAnn = org.Hs.egSYMBOL,
 max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
@@ -230,6 +245,7 @@ findgRNAsWithREcutOnly = TRUE, REpatternFile = REpatternFile,
 findPairedgRNAOnly = FALSE, findgRNAs = FALSE,
 BSgenomeName = Hsapiens, chromToSearch = 'chrX', 
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+orgAnn = org.Hs.egSYMBOL,
 max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}

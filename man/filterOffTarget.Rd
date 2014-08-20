@@ -13,7 +13,7 @@ filter off targets and generate reports.
 \usage{
 filterOffTarget(scores, min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10,
-    annotateExon = TRUE, txdb, outputDir, oneFilePergRNA = FALSE, 
+    annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE, 
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -58,6 +58,9 @@ TxDb.Mmusculus.UCSC.mm10.knownGene for mouse,
 TxDb.Hsapiens.UCSC.hg19.knownGene for human, 
 TxDb.Dmelanogaster.UCSC.dm3.ensGene for Drosophila and 
 TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
+}
+ \item{orgAnn}{
+organism annotation dataset such as org.Hs.egSYMBOL for human
 }
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to
@@ -106,6 +109,7 @@ offTargetAnalysis
 \examples{
     library("BSgenome.Hsapiens.UCSC.hg19")
     library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+    library(org.Hs.eg.db)
     hitsFile <-  system.file("extdata", "hits.txt", package="CRISPRseek")
     hits <- read.table(hitsFile, sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
@@ -113,7 +117,8 @@ offTargetAnalysis
     scores <- getOfftargetScore(featureVectors)
     outputDir <- getwd() 
     results <- filterOffTarget(scores, BSgenomeName = Hsapiens, 
-        txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, outputDir = outputDir, 
+        txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+         orgAnn = org.Hs.egSYMBOL, outputDir = outputDir, 
         min.score = 0.1, topN = 10, topN.OfftargetTotalScore = 5)
     results$offtargets
     results$summary

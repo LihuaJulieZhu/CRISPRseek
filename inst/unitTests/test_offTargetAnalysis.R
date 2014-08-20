@@ -1,6 +1,7 @@
 library(CRISPRseek)
 library("BSgenome.Hsapiens.UCSC.hg19")
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(org.Hs.eg.db)
 outputDir <- getwd();
 inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
@@ -91,7 +92,8 @@ test_offTargetAnalysis <- function() {
     offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
         findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
         findPairedgRNAOnly = FALSE, BSgenomeName = Hsapiens, 
-        txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 3, 
+        txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+		orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
         outputDir = outputDir, overwrite = TRUE)
     REcutDetails <- read.table("REcutDetails.xls", sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
@@ -118,7 +120,8 @@ test_offTargetAnalysis <- function() {
             offTargetAnalysis(inputFilePath = inputFilePath, 
                 findgRNAsWithREcutOnly = isRE, REpatternFile = REpatternFile,
                 findPairedgRNAOnly = isPaired, BSgenomeName = Hsapiens, 
-                txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 3, 
+                txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, 
+				orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
                 outputDir= outputDir, overwrite = TRUE)
             REcutDetails <- read.table("REcutDetails.xls", sep = "\t", 
                 header = TRUE, stringsAsFactors = FALSE)

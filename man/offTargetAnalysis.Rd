@@ -21,7 +21,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", findgRNAs = TRUE,
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
     min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
-    txdb, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
+    txdb, orgAnn, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 
     0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
     overwrite = FALSE)
@@ -133,7 +133,9 @@ TxDb.Mmusculus.UCSC.mm10.knownGene for mouse,
 TxDb.Hsapiens.UCSC.hg19.knownGene for human, 
 TxDb.Dmelanogaster.UCSC.dm3.ensGene for Drosophila and 
 TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
-
+}
+\item{orgAnn}{
+organism annotation dataset such as org.Hs.egSYMBOL from org.Hs.eg.db package for human
 }
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to
@@ -190,6 +192,7 @@ CRISPRseek
 	library(CRISPRseek)
 	library("BSgenome.Hsapiens.UCSC.hg19")
 	library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+	library(org.Hs.eg.db)
 	outputDir <- getwd()
 	inputFilePath <- system.file("extdata", "inputseq.fa",
             package = "CRISPRseek")
@@ -198,7 +201,8 @@ CRISPRseek
 	offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, max.mismatch = 1, 
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
             outputDir = outputDir, overwrite = TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

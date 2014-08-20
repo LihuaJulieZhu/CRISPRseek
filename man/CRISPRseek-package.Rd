@@ -54,6 +54,7 @@ offTargetAnalysis
     library(CRISPRseek)
     library("BSgenome.Hsapiens.UCSC.hg19")
     library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+    library(org.Hs.eg.db)
     outputDir <- getwd()
     inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
     REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
@@ -63,7 +64,7 @@ offTargetAnalysis
     offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly=TRUE,
         REpatternFile =REpatternFile,findPairedgRNAOnly=TRUE, 
         BSgenomeName=Hsapiens, txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, 
-        max.mismatch = 1, chromToSearch = "chrX",
+        orgAnn = org.Hs.egSYMBOL,max.mismatch = 1, chromToSearch = "chrX",
         outputDir = outputDir,overwrite = TRUE)
 
 ######## Scenario 2. Target and off-target analysis for paired gRNAs with or 
@@ -71,7 +72,7 @@ offTargetAnalysis
     offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
         REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,
         BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-        max.mismatch = 1, chromToSearch = "chrX",
+        orgAnn = org.Hs.egSYMBOL,max.mismatch = 1, chromToSearch = "chrX",
         outputDir = outputDir, overwrite = TRUE)
 
 ######## Scenario 3. Target and off-target analysis for gRNAs overlap RE sites
@@ -79,7 +80,7 @@ offTargetAnalysis
     offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
         REpatternFile = REpatternFile,findPairedgRNAOnly = FALSE, 
         BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-        max.mismatch = 1, chromToSearch = "chrX", 
+        orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, chromToSearch = "chrX", 
         outputDir = outputDir, overwrite = TRUE)
 
 ######## Scenario 4. Off-target analysis for all potential gRNAs, this will 
@@ -88,7 +89,7 @@ offTargetAnalysis
     offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE, 
         REpatternFile = REpatternFile,findPairedgRNAOnly = FALSE,
         BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-        max.mismatch = 1, chromToSearch = "chrX", 
+         orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, chromToSearch = "chrX", 
         outputDir = outputDir,overwrite = TRUE)
 
 ######## Scenario 5. Target and off-target analysis for gRNAs input by user.
@@ -98,7 +99,7 @@ offTargetAnalysis
         findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile,
         findPairedgRNAOnly = FALSE, BSgenomeName = Hsapiens, 
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-        max.mismatch = 1, chromToSearch = "chrX", 
+         orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, chromToSearch = "chrX", 
         outputDir = outputDir, overwrite = TRUE)
 
 ####### Scenario 6. Quick gRNA finding  without target and off-target analysis 

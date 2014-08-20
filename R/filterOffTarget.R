@@ -1,6 +1,6 @@
 filterOffTarget <-
     function(scores, min.score = 0.5, topN = 100, topN.OfftargetTotalScore = 10,
-    annotateExon = TRUE, txdb, outputDir, oneFilePergRNA = FALSE,
+    annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE,
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName)
 {
     if (fetchSequence && (missing(BSgenomeName) || 
@@ -8,7 +8,7 @@ filterOffTarget <-
     {
         stop("To fetch sequences, BSgenomeName is required as BSgenome object!")
     }
-    if (annotateExon && (missing(txdb) || class(txdb) != "TxDb"))
+    if (annotateExon && (missing(txdb) || (class(txdb) != "TxDb" && class(txdb) != "TranscriptDb")))
     {
         stop("To indicate whether an offtarget is inside an exon, txdb is
             required as TxDb object!")
@@ -50,19 +50,41 @@ filterOffTarget <-
             score.RD <- GRanges(seqnames = Rle(this.score$chrom), 
                 ranges = IRanges(start = this.score$chromStart, 
                 end = this.score$chromEnd, names = this.score$forViewInUCSC))
-            allExons <- as(exons(txdb),"GRanges")
+            allExons <- as(exons(txdb, columns="gene_id"),"GRanges")
             allExons <- allExons[as.character(seqnames(allExons)) %in% 
                 unique(as.character(seqnames(score.RD))),]
             ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
-                type = "any")
+                type = "any",ignore.strand=TRUE)
+			introns =  unlist(intronsByTranscript(txdb))
+			introns <- introns[as.character(seqnames(introns)) %in% 
+			unique(as.character(seqnames(score.RD))),]
+			ann.scores.intron <- overlapsAny(score.RD, introns, minoverlap = 1L, 
+				type = "any", ignore.strand=TRUE)
+			inIntron <- cbind(forViewInUCSC = names(score.RD),
+							inIntron = unlist(ann.scores.intron))
+            inIntron[inIntron[,2] == FALSE, 2] <- ""
+            
             inExon <- cbind(forViewInUCSC = names(score.RD),
                 inExon = unlist(ann.scores))
             inExon[inExon[,2] == FALSE, 2] <- ""
+			overlapGenes <- findOverlaps(score.RD, allExons, minoverlap = 1L, 
+				type = "any",ignore.strand=TRUE)
+			overlapGenes.ID <- allExons[subjectHits(overlapGenes),]$gene_id
+			overlapGenes.symbol <- as.vector(unlist(mget(overlapGenes.ID, 
+				envir= orgAnn, ifnotfound=NA)))
+			this.score <- cbind(this.score, entrez_id = "", symbol="")
+			this.score$entrez_id = as.character(this.score$entrez_id)
+			this.score$symbol = as.character(this.score$symbol)
+			this.score$entrez_id[queryHits(overlapGenes)] = overlapGenes.ID
+			this.score$symbol[queryHits(overlapGenes)] = overlapGenes.symbol
             this.score <- merge(this.score,inExon)
+			this.score <- merge(this.score,inIntron)
+			
             this.score <- cbind(name = this.score$name,
                 gRNAPlusPAM = this.score$gRNAPlusPAM,
                 OffTargetSequence = this.score$OffTargetSequence,
                 inExon = as.character(this.score$inExon),
+				inIntron = as.character(this.score$inIntron),
                 score = this.score$score, n.mismatch = this.score$n.mismatch, 
                 mismatche.distance2PAM = as.character(
                 this.score$mismatche.distance2PAM), 
@@ -148,6 +170,7 @@ filterOffTarget <-
     }
     write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
     Offtargets$inExon[is.na(Offtargets$inExon)] <- ""
+	Offtargets$inIntron[is.na(Offtargets$inIntron)] <- ""
     write.table(Offtargets[order(as.character(Offtargets$name), 
         -as.numeric(as.character(Offtargets$score)), 
         as.character(Offtargets$OffTargetSequence)),], 
