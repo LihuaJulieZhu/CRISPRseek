@@ -47,53 +47,69 @@ filterOffTarget <-
             as.character(this.score$mismatche.distance2PAM[1:11])
         if (annotateExon)
         {
-            score.RD <- GRanges(seqnames = Rle(this.score$chrom), 
-                ranges = IRanges(start = this.score$chromStart, 
-                end = this.score$chromEnd, names = this.score$forViewInUCSC))
-            allExons <- as(exons(txdb, columns="gene_id"),"GRanges")
-            allExons <- allExons[as.character(seqnames(allExons)) %in% 
-                unique(as.character(seqnames(score.RD))),]
-            ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
-                type = "any",ignore.strand=TRUE)
-			introns =  unlist(intronsByTranscript(txdb))
-			introns <- introns[as.character(seqnames(introns)) %in% 
-			unique(as.character(seqnames(score.RD))),]
-			ann.scores.intron <- overlapsAny(score.RD, introns, minoverlap = 1L, 
-				type = "any", ignore.strand=TRUE)
-			inIntron <- cbind(forViewInUCSC = names(score.RD),
-							inIntron = unlist(ann.scores.intron))
-            inIntron[inIntron[,2] == FALSE, 2] <- ""
-            
-            inExon <- cbind(forViewInUCSC = names(score.RD),
+            	score.RD <- GRanges(seqnames = Rle(this.score$chrom), 
+                	ranges = IRanges(start = this.score$chromStart, 
+                	end = this.score$chromEnd, names = this.score$forViewInUCSC))
+            	allExons <- as(exons(txdb, columns="gene_id"),"GRanges")
+            	allExons <- allExons[as.character(seqnames(allExons)) %in% 
+                	unique(as.character(seqnames(score.RD))),]
+            	ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
+                	type = "any",ignore.strand=TRUE)
+		introns =  unlist(intronsByTranscript(txdb))
+		introns <- introns[as.character(seqnames(introns)) %in% 
+		unique(as.character(seqnames(score.RD))),]
+		ann.scores.intron <- overlapsAny(score.RD, introns, minoverlap = 1L, 
+			type = "any", ignore.strand=TRUE)
+		inIntron <- cbind(forViewInUCSC = names(score.RD),
+		inIntron = unlist(ann.scores.intron))
+        	inIntron[inIntron[,2] == FALSE, 2] <- ""
+            	inExon <- cbind(forViewInUCSC = names(score.RD),
                 inExon = unlist(ann.scores))
-            inExon[inExon[,2] == FALSE, 2] <- ""
-			overlapGenes <- findOverlaps(score.RD, allExons, minoverlap = 1L, 
-				type = "any",ignore.strand=TRUE)
-			overlapGenes.ID <- allExons[subjectHits(overlapGenes),]$gene_id
+            	inExon[inExon[,2] == FALSE, 2] <- ""
+		overlapGenes <- findOverlaps(score.RD, allExons, minoverlap = 1L, 
+			type = "any",ignore.strand=TRUE)
+		overlapGenes.ID <- unlist(allExons[subjectHits(overlapGenes),]$gene_id)
+		this.score <- cbind(this.score, entrez_id = "", symbol="")
+		overlapGenes.ID <- subset(overlapGenes.ID, !is.na(overlapGenes.ID))
+		query.ind <- subset(queryHits(overlapGenes), !is.na(overlapGenes.ID))
+		if (length(overlapGenes.ID) > 0 )
+		{
+			print(overlapGenes.ID)
 			overlapGenes.symbol <- as.vector(unlist(mget(overlapGenes.ID, 
 				envir= orgAnn, ifnotfound=NA)))
-			this.score <- cbind(this.score, entrez_id = "", symbol="")
-			this.score$entrez_id = as.character(this.score$entrez_id)
 			this.score$symbol = as.character(this.score$symbol)
-			this.score$entrez_id[queryHits(overlapGenes)] = overlapGenes.ID
-			this.score$symbol[queryHits(overlapGenes)] = overlapGenes.symbol
-            this.score <- merge(this.score,inExon)
-			this.score <- merge(this.score,inIntron)
-			
-            this.score <- cbind(name = this.score$name,
-                gRNAPlusPAM = this.score$gRNAPlusPAM,
-                OffTargetSequence = this.score$OffTargetSequence,
-                inExon = as.character(this.score$inExon),
-				inIntron = as.character(this.score$inIntron),
-                score = this.score$score, n.mismatch = this.score$n.mismatch, 
-                mismatche.distance2PAM = as.character(
-                this.score$mismatche.distance2PAM), 
-                alignment = this.score$alignment,
-                NGG = as.character(this.score$NGG),
-                toViewInUCSC = this.score$forViewInUCSC, 
-                strand = this.score$strand,
-                chrom = this.score$chrom, chromStart = this.score$chromStart,
-                chromEnd = this.score$chromEnd)
+			this.score$symbol[query.ind] = overlapGenes.symbol
+		}
+		this.score$entrez_id = as.character(this.score$entrez_id)
+		this.score$entrez_id[query.ind] = overlapGenes.ID
+        	this.score <- merge(this.score,inExon)
+		this.score <- merge(this.score,inIntron)
+		this.score$entrez_id[is.na(this.score$entrez_id)] = ""
+		this.score$symbol[is.na(this.score$entrez_id)] = ""
+		if (length(grep("FBgn",overlapGenes.ID[1])) > 0)
+			{
+				
+				temp.id <- this.score$entrez_id
+				this.score$entrez_id <- this.score$symbol
+				this.score$symbol <- temp.id
+				rm(temp.id)
+			}
+            	this.score <- cbind(name = this.score$name,
+               		gRNAPlusPAM = this.score$gRNAPlusPAM,
+                	OffTargetSequence = this.score$OffTargetSequence,
+                	inExon = as.character(this.score$inExon),
+			inIntron = as.character(this.score$inIntron),
+			entrez_id = this.score$entrez_id,
+			gene = this.score$symbol,
+                	score = this.score$score, n.mismatch = this.score$n.mismatch, 
+                	mismatche.distance2PAM = as.character(
+                	this.score$mismatche.distance2PAM), 
+                	alignment = this.score$alignment,
+                	NGG = as.character(this.score$NGG),
+                	toViewInUCSC = this.score$forViewInUCSC, 
+                	strand = this.score$strand,
+                	chrom = this.score$chrom, chromStart = this.score$chromStart,
+                	chromEnd = this.score$chromEnd)
         }
         else
             this.score <- cbind(name = this.score$name, 
@@ -170,7 +186,8 @@ filterOffTarget <-
     }
     write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
     Offtargets$inExon[is.na(Offtargets$inExon)] <- ""
-	Offtargets$inIntron[is.na(Offtargets$inIntron)] <- ""
+    Offtargets$inIntron[is.na(Offtargets$inIntron)] <- ""
+    Offtargets$entrez_id[is.na(Offtargets$entrez_id)] <- ""
     write.table(Offtargets[order(as.character(Offtargets$name), 
         -as.numeric(as.character(Offtargets$score)), 
         as.character(Offtargets$OffTargetSequence)),], 
