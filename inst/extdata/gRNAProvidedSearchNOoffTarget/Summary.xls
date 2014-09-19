@@ -1,2 +1,2 @@
 "names"	"toViewInUCSC"	"gRNAsPlusPAM"	"top5OfftargetTotalScore"	"top1Hit(onTarget)MMdistance2PAM"	"topOfftarget1MMdistance2PAM"	"topOfftarget2MMdistance2PAM"	"topOfftarget3MMdistance2PAM"	"topOfftarget4MMdistance2PAM"	"topOfftarget5MMdistance2PAM"	"topOfftarget6MMdistance2PAM"	"topOfftarget7MMdistance2PAM"	"topOfftarget8MMdistance2PAM"	"topOfftarget9MMdistance2PAM"	"topOfftarget10MMdistance2PAM"	"REname"	"GC.percent.gRNA"	"numberOfT.last4Position.gRNA"
-"Tsp5D_1"	"chrX:5965026-5965048"	"TGGTTGCGACTGAGCTACGCGGG"	NA	""	""	""	""	""	""	""	""	""	""	""	""	60	1
+"Tsp5D_1"	"chrX:5965026-5965048"	"TGGTTGCGACTGAGCTACGCGGG"	NA	""	""	""	""	""	""	""	""	""	""	""	""	60	0

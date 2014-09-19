@@ -300,7 +300,7 @@ offTargetAnalysis <-
 						 }))
 	summary <- cbind(summary,GC.percent.gRNA = (n.G+n.C)/gRNA.size * 100)
 	numberOfT.last4Position.gRNA <- unlist(lapply(1:length(seq), function(i) {
-						 table(factor(s2c(substr(seq[i],gRNA.size-5,gRNA.size)), levels=c("T")))
+						 table(factor(s2c(substr(seq[i],gRNA.size-3,gRNA.size)), levels=c("T")))
 						 }))
 	summary <- cbind(summary, numberOfT.last4Position.gRNA )
 	on.target <- offTargets$offtargets
@@ -312,4 +312,5 @@ offTargetAnalysis <-
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
+    #list(summary=summary, offtarget=offTargets$Offtargets)
 }

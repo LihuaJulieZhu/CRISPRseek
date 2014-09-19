@@ -1,0 +1,7 @@
+CHANGES IN VERSION 1.3.3
+------------------------
+NEW FEATURE
+     o Search for off-targets is much faster when more than 10 gRNAs are searched 
+     o Added new optional parameter orgAnn in offTargetAnalysis 
+     o Added gene ID and optional gene symbol in off-target output file 
+     o Added gRNA target region, GC content of gRNA and number of Ts in the last 4 postion of gRNA (not including PAM sequence) in the summary output file
