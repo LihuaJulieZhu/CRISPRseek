@@ -183,12 +183,14 @@ filterOffTarget <-
     colnames(temp)[5] <- "top1Hit(onTarget)MMdistance2PAM"
     #colnames(temp)[3] <- paste("top", min(5, maxN - 1), 
     #    "OfftargetTotalScore", sep = "")
-    colnames(temp)[4] <- paste("top", maxN.totalScore - 1, 
-        "OfftargetTotalScore", sep = "")
+    #colnames(temp)[4] <- paste("top", maxN.totalScore - 1, 
+    #    "OfftargetTotalScore", sep = "")
+    colnames(temp)[4] <- paste("top", topN.OfftargetTotalScore, 
+       "OfftargetTotalScore", sep = "")
     colnames(temp)[6:15] <- paste("topOfftarget", 1:10, "MMdistance2PAM",
         sep = "")
-    if (maxN == maxN.totalScore)
-        temp <- temp[,-4]
+    #if (maxN == maxN.totalScore)
+    #    temp <- temp[,-4]
     Offtargets <- read.table(OfftargetFile, sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
     if (fetchSequence)

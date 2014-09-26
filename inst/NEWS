@@ -5,3 +5,8 @@ NEW FEATURE
      o Added new optional parameter orgAnn in offTargetAnalysis 
      o Added gene ID and optional gene symbol in off-target output file 
      o Added gRNA target region, GC content of gRNA and number of Ts in the last 4 postion of gRNA (not including PAM sequence) in the summary output file
+
+CHANGES IN VERSION 1.3.5
+------------------------
+BUG FIX
+     o TopN offtarget total score was sometimes missing for sequences containing gRNAs with less than 6 offtargets in version 1.3.3 

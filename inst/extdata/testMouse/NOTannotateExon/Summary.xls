@@ -1,18 +1,18 @@
-"names"	"toViewInUCSC"	"gRNAsPlusPAM"	"top5OfftargetTotalScore"	"top1Hit.onTarget.MMdistance2PAM"	"topOfftarget1MMdistance2PAM"	"topOfftarget2MMdistance2PAM"	"topOfftarget3MMdistance2PAM"	"topOfftarget4MMdistance2PAM"	"topOfftarget5MMdistance2PAM"	"topOfftarget6MMdistance2PAM"	"topOfftarget7MMdistance2PAM"	"topOfftarget8MMdistance2PAM"	"topOfftarget9MMdistance2PAM"	"topOfftarget10MMdistance2PAM"	"REname"	"GC.percent.gRNA"	"numberOfT.last4Position.gRNA"
-"gRNAf1_mRIPK1stopStart3End25"	"chr13:34032771-34032793"	"AGCCAGAGCTAAGCCTGGGCAGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"BsaJI"	65	0
-"gRNAf2_mRIPK1stopStart9End31"	"chr13:34032777-34032799"	"AGCTAAGCCTGGGCAGGCTCTGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"Aco12261II AlwNI Cac8I"	65	1
-"gRNAf3_mRIPK1stopStart15End37"	"chr13:34032783-34032805"	"GCCTGGGCAGGCTCTGGCAGTGG"	100	NA	"20"	""	""	""	""	""	""	""	""	""	"Aco12261II BtsI"	75	0
-"gRNAf4_mRIPK1stopStart16End38"	"chr13:34032784-34032806"	"CCTGGGCAGGCTCTGGCAGTGGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"BtsI TspRI"	70	1
-"gRNAf5_mRIPK1stopStart35End57"	"chr13:34032803-34032825"	"TGGGAAGCAAACTATTTGTCTGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	""	40	2
-"gRNAf6_mRIPK1stopStart107End129"	"chr13:34032875-34032897"	"AGCTCTGCATTTGAGCACACAGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"BsiHKAI Bsp1286I"	50	0
-"gRNAf7_mRIPK1stopStart108End130"	"chr13:34032876-34032898"	"GCTCTGCATTTGAGCACACAGGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"BsiHKAI Bsp1286I"	50	0
-"gRNAf8_mRIPK1stopStart121End143"	"chr13:34032889-34032911"	"GCACACAGGGTCATGCAGTTTGG"	60.5	NA	"15"	""	""	""	""	""	""	""	""	""	""	55	2
-"gRNAr1_mRIPK1stopStart105End83"	"chr13:34032851-34032873"	"ATGCTGAGATAGAGTTCTGAAGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"AcuI"	40	1
-"gRNAr2_mRIPK1stopStart98End76"	"chr13:34032844-34032866"	"GATAGAGTTCTGAAGGCTAGTGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	""	45	1
-"gRNAr3_mRIPK1stopStart97End75"	"chr13:34032843-34032865"	"ATAGAGTTCTGAAGGCTAGTGGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	""	40	2
-"gRNAr4_mRIPK1stopStart90End68"	"chr13:34032836-34032858"	"TCTGAAGGCTAGTGGGCAAACGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	""	50	0
-"gRNAr5_mRIPK1stopStart89End67"	"chr13:34032835-34032857"	"CTGAAGGCTAGTGGGCAAACGGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	""	55	0
-"gRNAr6_mRIPK1stopStart88End66"	"chr13:34032834-34032856"	"TGAAGGCTAGTGGGCAAACGGGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	""	55	0
-"gRNAr7_mRIPK1stopStart38End16"	"chr13:34032784-34032806"	"CCCACTGCCAGAGCCTGCCCAGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"AlwNI BsaJI Cac8I"	75	0
-"gRNAr8_mRIPK1stopStart27End5"	"chr13:34032773-34032795"	"AGCCTGCCCAGGCTTAGCTCTGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"Aco12261II BlpI"	65	1
-"gRNAr9_mRIPK1stopStart23End1"	"chr13:34032769-34032791"	"TGCCCAGGCTTAGCTCTGGCTGG"	NA	NA	""	""	""	""	""	""	""	""	""	""	"Aco12261II"	65	1
+"names"	"toViewInUCSC"	"gRNAsPlusPAM"	"top5OfftargetTotalScore"	"top10OfftargetTotalScore"	"top1Hit.onTarget.MMdistance2PAM"	"topOfftarget1MMdistance2PAM"	"topOfftarget2MMdistance2PAM"	"topOfftarget3MMdistance2PAM"	"topOfftarget4MMdistance2PAM"	"topOfftarget5MMdistance2PAM"	"topOfftarget6MMdistance2PAM"	"topOfftarget7MMdistance2PAM"	"topOfftarget8MMdistance2PAM"	"topOfftarget9MMdistance2PAM"	"topOfftarget10MMdistance2PAM"	"REname"	"GC.percent.gRNA"	"numberOfT.last4Position.gRNA"
+"gRNAf1_mRIPK1stopStart3End25"	"chr13:34032771-34032793"	"AGCCAGAGCTAAGCCTGGGCAGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"BsaJI"	65	0
+"gRNAf2_mRIPK1stopStart9End31"	"chr13:34032777-34032799"	"AGCTAAGCCTGGGCAGGCTCTGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"Aco12261II AlwNI Cac8I"	65	1
+"gRNAf3_mRIPK1stopStart15End37"	"chr13:34032783-34032805"	"GCCTGGGCAGGCTCTGGCAGTGG"	100	100	NA	"20"	""	""	""	""	""	""	""	""	""	"Aco12261II BtsI"	75	0
+"gRNAf4_mRIPK1stopStart16End38"	"chr13:34032784-34032806"	"CCTGGGCAGGCTCTGGCAGTGGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"BtsI TspRI"	70	1
+"gRNAf5_mRIPK1stopStart35End57"	"chr13:34032803-34032825"	"TGGGAAGCAAACTATTTGTCTGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	""	40	2
+"gRNAf6_mRIPK1stopStart107End129"	"chr13:34032875-34032897"	"AGCTCTGCATTTGAGCACACAGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"BsiHKAI Bsp1286I"	50	0
+"gRNAf7_mRIPK1stopStart108End130"	"chr13:34032876-34032898"	"GCTCTGCATTTGAGCACACAGGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"BsiHKAI Bsp1286I"	50	0
+"gRNAf8_mRIPK1stopStart121End143"	"chr13:34032889-34032911"	"GCACACAGGGTCATGCAGTTTGG"	60.5	60.5	NA	"15"	""	""	""	""	""	""	""	""	""	""	55	2
+"gRNAr1_mRIPK1stopStart105End83"	"chr13:34032851-34032873"	"ATGCTGAGATAGAGTTCTGAAGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"AcuI"	40	1
+"gRNAr2_mRIPK1stopStart98End76"	"chr13:34032844-34032866"	"GATAGAGTTCTGAAGGCTAGTGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	""	45	1
+"gRNAr3_mRIPK1stopStart97End75"	"chr13:34032843-34032865"	"ATAGAGTTCTGAAGGCTAGTGGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	""	40	2
+"gRNAr4_mRIPK1stopStart90End68"	"chr13:34032836-34032858"	"TCTGAAGGCTAGTGGGCAAACGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	""	50	0
+"gRNAr5_mRIPK1stopStart89End67"	"chr13:34032835-34032857"	"CTGAAGGCTAGTGGGCAAACGGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	""	55	0
+"gRNAr6_mRIPK1stopStart88End66"	"chr13:34032834-34032856"	"TGAAGGCTAGTGGGCAAACGGGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	""	55	0
+"gRNAr7_mRIPK1stopStart38End16"	"chr13:34032784-34032806"	"CCCACTGCCAGAGCCTGCCCAGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"AlwNI BsaJI Cac8I"	75	0
+"gRNAr8_mRIPK1stopStart27End5"	"chr13:34032773-34032795"	"AGCCTGCCCAGGCTTAGCTCTGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"Aco12261II BlpI"	65	1
+"gRNAr9_mRIPK1stopStart23End1"	"chr13:34032769-34032791"	"TGCCCAGGCTTAGCTCTGGCTGG"	NA	NA	NA	""	""	""	""	""	""	""	""	""	""	"Aco12261II"	65	1
