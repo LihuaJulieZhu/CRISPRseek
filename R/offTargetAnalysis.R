@@ -1,5 +1,5 @@
 offTargetAnalysis <-
-    function(inputFilePath, format = "fasta", findgRNAs = TRUE,
+    function(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = TRUE,
 		exportAllgRNAs = c("all", "fasta", "genbank", "no"),
         findgRNAsWithREcutOnly = TRUE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa", 
@@ -44,6 +44,11 @@ offTargetAnalysis <-
     }
     pairOutputFile <- paste(outputDir, "pairedgRNAs.xls", sep = "")
     REcutDetailFile <- paste(outputDir, "REcutDetails.xls", sep = "")
+	if (missing(gRNAoutputName) && class(inputFilePath) == "DNAStringSet")
+		stop("Please enter a name for the gRNA ouput file name!")
+	if (class(inputFilePath) != "DNAStringSet")
+		gRNAoutputName = strsplit(basename(inputFilePath),split=".", 
+			fixed=TRUE)[[1]][1]
     if (findgRNAs)
     {
         cat("Searching for gRNAs ...\n")
@@ -56,8 +61,7 @@ offTargetAnalysis <-
 		if (exportAllgRNAs == "fasta" || exportAllgRNAs == "all")
 		{
 			writeXStringSet(potential.gRNAs, filepath= file.path(outputDir,
-                paste(strsplit(basename(inputFilePath),split=".", 
-                    fixed=TRUE)[[1]][1],"allgRNAs.fa", sep="")))
+                paste(gRNAoutputName,"allgRNAs.fa", sep="")))
 		}
 		if (exportAllgRNAs == "genbank" || exportAllgRNAs == "all")
 		{
@@ -77,7 +81,7 @@ offTargetAnalysis <-
                     "                     ", n.bp,
 					" bp    dna     linear   UNK", sep="")
 				definition <- paste("DEFINITION  CRISPRseek output for ",
-				    basename(inputFilePath), " sequence", sep = "")
+				    gRNAoutputName, " sequence", sep = "")
 				accession <- "ACCESSION   unknown"
 				features <- "FEATURES             Location/Qualifiers"
 				header = rbind(locus, definition, accession, features)

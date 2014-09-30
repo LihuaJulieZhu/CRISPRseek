@@ -10,7 +10,9 @@ Generate all possible guide RNAs (gRNAs) for two input sequences and generate
 }
 \usage{
 compare2Sequences(inputFile1Path, inputFile2Path, format = "fasta", 
-    findgRNAsWithREcutOnly = FALSE, REpatternFile, minREpatternSize = 6,
+    findgRNAsWithREcutOnly = FALSE, 
+    REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
+    minREpatternSize = 6,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 3,

@@ -36,6 +36,7 @@ findgRNAs <-
     {
         subjectname <- gsub("'", "", names(subjects)[i])
         subjectname <- gsub(" ", "", subjectname)
+		subjectname <- gsub("\t", ":", subjectname)
         subject <- subjects[[i]]
         revsubject <- reverseComplement(subject)
         PAM <- translatePattern(PAM)
@@ -176,17 +177,17 @@ findgRNAs <-
                 if (length(all.gRNAs) == 0)
                     warning(paste("No gRNAs found in the input sequence", 
                         subjectname))	
-                if (n.plus.gRNAs == 0)
+                if (n.plus.gRNAs == 0 && n.minus.gRNAs >0 )
                     names(all.gRNAs) <- paste(name.prefix,
                         c(rep("r", dim(minus.gRNAs)[1])),
                         c(1:dim(minus.gRNAs)[1]), "_", 
                         c(minus.gRNAs[,2]), sep = "")
-                else if (n.minus.gRNAs == 0)
+                if (n.minus.gRNAs == 0 && n.plus.gRNAs > 0)
                     names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
                         dim(pos.gRNAs)[1])),
                         c(1:dim(pos.gRNAs)[1]), 
                         c(pos.gRNAs[,2]), sep = "")
-                else
+                if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
                     names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
                         dim(pos.gRNAs)[1]), rep("r", dim(minus.gRNAs)[1])),
                         c(1:dim(pos.gRNAs)[1], 1:dim(minus.gRNAs)[1]), "_", 
