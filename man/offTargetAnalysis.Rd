@@ -10,7 +10,7 @@ calling findgRNAs, filtergRNAs, searchHits, buildFeatureVectorForScoring,
 getOfftargetScore, filterOfftarget and generate reports.
 }
 \usage{
-offTargetAnalysis(inputFilePath, format = "fasta", findgRNAs = TRUE,
+offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = TRUE,
     exportAllgRNAs = c("all", "fasta", "genbank", "no"),
     findgRNAsWithREcutOnly = TRUE, 
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
@@ -34,6 +34,9 @@ to be searched for potential gRNAs
 }
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta
+}
+  \item{gRNAoutputName}{
+Specify the name of the gRNA outupt file when inputFilePath is DNAStringSet object instead of file path
 }
   \item{findgRNAs}{
 Indicate whether to find gRNAs from the sequences in the input file or skip 

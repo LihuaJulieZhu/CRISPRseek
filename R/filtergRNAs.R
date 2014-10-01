@@ -5,6 +5,8 @@ filtergRNAs <-
             package = "CRISPRseek"), format = "fasta",
         minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
 {
+	if (length(all.gRNAs) == 0)
+		stop("all.gRNAs contains no gRNAs!")
     if (missing(REpatternFile)) {
         stop("REpatternFile containing the restriction enzyme cut pattern 
             is required!")

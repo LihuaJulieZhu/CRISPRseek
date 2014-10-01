@@ -1,5 +1,5 @@
-compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
-    findgRNAsWithREcutOnly = FALSE, searchDirection=c("both","1to2", "2to1"),
+compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1", "Seq2"), 
+	format = "fasta", findgRNAsWithREcutOnly = FALSE, searchDirection=c("both","1to2", "2to1"),
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
@@ -11,40 +11,53 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 {
 	append = ifelse(overwrite, FALSE, TRUE)
 	if (class(inputFile1Path) != "DNAStringSet")
+	{
 		outputDir1 <- file.path(outputDir, basename(inputFile1Path))
+	}
 	else
+	{
 		outputDir1 <- file.path(outputDir, "File1")
+	}
 	if (class(inputFile2Path) != "DNAStringSet")
+	{
 		outputDir2 <- file.path(outputDir, basename(inputFile2Path))
+	}
 	else
+	{
 		outputDir2 <- file.path(outputDir, "File2")
+	}
 	if(searchDirection == "both" || searchDirection == "1to2")
 	{
-    gRNAs1 = offTargetAnalysis(inputFile1Path, format = format, 
-        findgRNAs = TRUE,
-        findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "", 
-        findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
-        REpatternFile = REpatternFile, minREpatternSize = minREpatternSize, 
-        overlap.gRNA.positions =  overlap.gRNA.positions,
-        min.gap = min.gap, max.gap = max.gap, 
-        gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
-        gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
-        outputDir = outputDir1, 
-        weights = weights, overwrite = overwrite)
+		cat("search for gRNAs for input file1...\n")
+		tryCatch(
+				 (gRNAs1 = offTargetAnalysis(inputFile1Path, format = format, 
+					 findgRNAs = TRUE, gRNAoutputName= inputNames[1],
+				     findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "", 
+				     findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
+				     REpatternFile = REpatternFile, minREpatternSize = minREpatternSize, 
+				     overlap.gRNA.positions =  overlap.gRNA.positions,
+				     min.gap = min.gap, max.gap = max.gap, 
+				     gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
+				    gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
+				    outputDir = outputDir1, 
+					weights = weights, overwrite = overwrite)), 
+				 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
 	}
 	if(searchDirection == "both" || searchDirection == "2to1")
 	{
-    gRNAs2 = offTargetAnalysis(inputFile2Path, format = format,                    
-        findgRNAs = TRUE,
-        findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "",
-        findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
-        REpatternFile = REpatternFile, minREpatternSize = minREpatternSize,
-        overlap.gRNA.positions =  overlap.gRNA.positions, 
-        min.gap = min.gap, max.gap = max.gap, 
-        gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
-        gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
-        outputDir = outputDir2, 
-            weights = weights, overwrite = overwrite)
+		cat("search for gRNAs for input file2...\n")
+		tryCatch((gRNAs2 = offTargetAnalysis(inputFile2Path, format = format,                    
+			findgRNAs = TRUE, gRNAoutputName = inputNames[2],
+			findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "",
+            findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
+            REpatternFile = REpatternFile, minREpatternSize = minREpatternSize,
+            overlap.gRNA.positions =  overlap.gRNA.positions, 
+            min.gap = min.gap, max.gap = max.gap, 
+            gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
+            gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
+            outputDir = outputDir2, 
+            weights = weights, overwrite = overwrite)) , 
+			error=function(e) {print(e); gRNAs2 = DNAStringSet()})
 	}
     print("Scoring ...")
     if (class(inputFile1Path) != "DNAStringSet")
@@ -54,7 +67,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
     }
     else
     {
-	subjects1 <- inputFile1Path
+		subjects1 <- inputFile1Path
     }
    if (class(inputFile2Path) != "DNAStringSet")
    {
@@ -202,7 +215,6 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 	targetInSeq2 <- scores$gRNAPlusPAM
 	scoreForSeq1 <- rep(100, dim(scores)[1])
 	scoreForSeq2 <- rep(100, dim(scores)[1])
-	
 	if(length(subjects1) == 1 && length(subjects2) == 1)
 	{
 		scoreForSeq1[scores$chrom == names(subjects1)] <- 
@@ -217,23 +229,35 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 		targetSeqName = unlist(lapply(
 			scores$chrom, function(i) {seqNames[seqNames !=i]}))
 	}
-	if (searchDirection == "1to2")
+	else if (searchDirection == "1to2")
 	{
 		scoreForSeq2 = scores$score
 		targetInSeq2 = scores$OffTargetSequence
 		targetSeqName = names(subjects1)
 	}
-	if (searchDirection == "2to1")
+	else if (searchDirection == "2to1")
 	{
 		scoreForSeq1 = scores$score
 		targetInSeq1 = scores$OffTargetSequence
 		targetSeqName = names(subjects2)
 	}
-	if(searchDirection == "both" && length(subjects1) > 1 && length(subjects2) > 1)
-	{
-		cat("Needs to be implemented yet")
-	}
-	
+	else
+	{	
+		seqNames <- c(names(subjects1), names(subjects2))
+		fileIndex <- c(rep(1, length(subjects1)), rep(2, length(subjects2)))
+		offTargetFiles <- fileIndex[match(scores$chrom,seqNames)]
+		targetSeqName <- scores$name
+		targetSeqName <- gsub(paste(gRNA.name.prefix, "[f|r][0-9]+", sep=""), "", targetSeqName)
+		targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)		
+		scoreForSeq1[offTargetFiles == 1] <- 
+			scores[offTargetFiles == 1, ]$score
+		scoreForSeq2[offTargetFiles == 2] <- 
+			scores[offTargetFiles == 2, ]$score
+		targetInSeq1[offTargetFiles ==1] <- 
+			scores[offTargetFiles == 1,]$OffTargetSequence
+		targetInSeq2[offTargetFiles == 2] <- 
+			scores[offTargetFiles == 2,]$OffTargetSequence
+	}	
 	seqs.new <- cbind(name = scores$name,
 		gRNAPlusPAM = scores$gRNAPlusPAM,
 		targetInSeq1 = targetInSeq1,
@@ -247,11 +271,15 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 		offTarget = scores$forViewInUCSC,
 		targetSeqName = targetSeqName
 	)
+	 
 	if(searchDirection == "both" || searchDirection == "1to2")
 	{
 	if (length(setdiff(names(gRNAs1),seqs.new[,1])) >0)
 	{
-		seqs1.only <- cbind(name = names(gRNAs1)[!names(gRNAs1) %in% seqs.new[,1]],
+		gRNAnames <- names(gRNAs1)[!names(gRNAs1) %in% seqs.new[,1]]
+		targetSeqName <- gsub(paste(gRNA.name.prefix, "[f|r][0-9]+", sep=""), "", gRNAnames)
+		targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)		
+		seqs1.only <- cbind(name = gRNAnames,
 			gRNAPlusPAM = as.character(gRNAs1)[!as.character(gRNAs1) %in% seqs.new[,2]],
 			targetInSeq1 = as.character(gRNAs1)[!as.character(gRNAs1) %in% seqs.new[,2]],
 			targetInSeq2 = "NA",
@@ -262,7 +290,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 			mismatch.distance2PAM = "NA",
 			n.mismatch = "NA",
 			offTarget = "NA",
-			targetSeqName = names(subjects1)
+			targetSeqName = targetSeqName
 			)
 		seqs.new <- rbind(seqs.new, seqs1.only)
 	}
@@ -271,7 +299,10 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 	{
 	if (length(setdiff(names(gRNAs2),seqs.new[,1])) >0)
 	{
-		seqs2.only <- cbind(name = names(gRNAs2)[!names(gRNAs2) %in% seqs.new[,1]],
+		gRNAnames <- names(gRNAs2)[!names(gRNAs2) %in% seqs.new[,1]]
+		targetSeqName <- gsub(paste(gRNA.name.prefix, "[f|r][0-9]+", sep=""), "", gRNAnames)
+		targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)	
+		seqs2.only <- cbind(name = gRNAnames,
     		gRNAPlusPAM = as.character(gRNAs2)[!as.character(gRNAs2) %in% seqs.new[,2]],
 		    targetInSeq1 = "NA",
 			targetInSeq2 = as.character(gRNAs2)[!as.character(gRNAs2) %in% seqs.new[,2]],
@@ -282,15 +313,15 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 			mismatch.distance2PAM = "NA",
 			n.mismatch = "NA",
 			offTarget = "NA",
-			targetSeqName = names(subjects2)
+			targetSeqName = targetSeqName
 		)
 		seqs.new <- rbind(seqs.new, seqs2.only)
 	}
 	}
 	seqs = unique(cbind(seqs.new, 
         scoreDiff = round(as.numeric(seqs.new[,7]) - as.numeric(seqs.new[,8]),4)))
-	
-    setwd(outputDir)
+	originalDir <- getwd()
+	setwd(outputDir)
 	if (dim(seqs)[1] ==1)
 	{
 		write.table(seqs, file = "scoresFor2InputSequences.xls",
@@ -303,6 +334,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, format = "fasta",
 			sep = "\t", row.names = FALSE, col.names=TRUE)
 	}
 	print("Done!")
+	setwd(originalDir)
 #scores
- seqs
+	seqs
 }

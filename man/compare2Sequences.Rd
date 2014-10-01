@@ -9,8 +9,10 @@ Generate all possible guide RNAs (gRNAs) for two input sequences and generate
     scores for potential off-targets in the other sequence.
 }
 \usage{
-compare2Sequences(inputFile1Path, inputFile2Path, format = "fasta", 
-    findgRNAsWithREcutOnly = FALSE, 
+compare2Sequences(inputFile1Path, inputFile2Path, 
+    inputNames=c("Seq1", "Seq2"), 
+    format = "fasta", findgRNAsWithREcutOnly = FALSE, 
+    searchDirection=c("both","1to2", "2to1"),
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
@@ -31,12 +33,20 @@ two sequences to be searched for potential gRNAs
 Sequence input file 2 path that contains one of the
 two sequences to be searched for potential gRNAs 
 }
+  \item{inputNames}{
+Name of the input sequences when inputFile1Path and inputFile2Path are 
+DNAStringSet instead of file path
+}
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta
 }
   \item{findgRNAsWithREcutOnly}{
 Indicate whether to find gRNAs overlap with restriction enzyme recognition 
 pattern
+}
+  \item{searchDirection}{
+Indicate whether perfrom gRNA in both sequences and off-target search against each other (both)
+or search gRNA in input1 and off-target analysis in input2 (1to2), or vice versa (2to1)
 }
   \item{REpatternFile}{
 File path containing restriction enzyme cut patters

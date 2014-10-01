@@ -10,3 +10,9 @@ CHANGES IN VERSION 1.3.5
 ------------------------
 BUG FIX
      o TopN offtarget total score was sometimes missing for sequences containing gRNAs with less than 6 offtargets in version 1.3.3 
+
+CHANGES IN VERSION 1.3.7
+------------------------
+NEW FEATURE
+     o Added searchDirection to compare2Sequences to allow search one against the other and many to many sequence search
+     o Added exception handling to catch no gRNA found error in compare2Sequences

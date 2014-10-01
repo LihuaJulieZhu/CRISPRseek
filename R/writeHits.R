@@ -21,7 +21,7 @@ writeHits <-
         append <- FALSE
     Lmismatch  <- ( ! hasLetterAt(as(matches, "DNAStringSet"), gRNA, 
         seq(nchar(gRNA))))
-    Lmismatch[!Lmismatch] <- 0
+    Lmismatch[!Lmismatch | is.na(Lmismatch)] <- 0
     if (length(dim(Lmismatch)) == 0)
     {
         Lmismatch <- as.data.frame(t(Lmismatch))
@@ -30,12 +30,13 @@ writeHits <-
     Lmismatch <- Lmismatch[, 1:gRNA.size]
     n.mismatch <- apply(Lmismatch, 1, sum)
     colnames(Lmismatch) <- paste("IsMismatch.pos", 1:gRNA.size, sep = "")
+	OffTargetSequence <- toString(as(matches, "DNAStringSet"))
     hits <- data.frame(strand = rep.int(strand, length(matches)),
         chrom = rep.int(seqname, length(matches)), 
         chromStart = start(matches), chromEnd = end(matches), 
         name = names(matches),  
         gRNAPlusPAM = rep(as.character(gRNA), length(matches)),
-        OffTargetSequence = unlist(strsplit(toString(matches), ", ")), 
+        OffTargetSequence = unlist(strsplit(OffTargetSequence, ", ")), 
         n.mismatch = n.mismatch,
         chrom.len = rep(chrom.len, length(matches))
     )

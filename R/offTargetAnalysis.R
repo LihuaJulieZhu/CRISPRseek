@@ -58,12 +58,14 @@ offTargetAnalysis <-
 	        gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
             gRNA.size = gRNA.size, min.gap = min.gap, 
             max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
-		if (exportAllgRNAs == "fasta" || exportAllgRNAs == "all")
+		if (length(potential.gRNAs) == 0)
+			stop("no gRNAs found!")
+		if (length(potential.gRNAs) > 0 && (exportAllgRNAs == "fasta" || exportAllgRNAs == "all"))
 		{
 			writeXStringSet(potential.gRNAs, filepath= file.path(outputDir,
                 paste(gRNAoutputName,"allgRNAs.fa", sep="")))
 		}
-		if (exportAllgRNAs == "genbank" || exportAllgRNAs == "all")
+		if (length(potential.gRNAs) > 0 && (exportAllgRNAs == "genbank" || exportAllgRNAs == "all"))
 		{
 			subjects <- readDNAStringSet(inputFilePath, format=format,
 				use.names = TRUE)
@@ -145,7 +147,7 @@ offTargetAnalysis <-
 				}
 			}
 		}
-	if (findPairedgRNAOnly)
+	if (findPairedgRNAOnly && length(potential.gRNAs) >0)
 	{
 	    gRNAs.RE <- filtergRNAs(potential.gRNAs, 
                 pairOutputFile = pairOutputFile, 
@@ -158,7 +160,7 @@ offTargetAnalysis <-
                 REcutDetails$ForwardgRNAName)), ], file = REcutDetailFile, 
                 sep = "\t", row.names = FALSE)		
         }
-        else
+        else if (length(potential.gRNAs) >0)
 	{
             gRNAs.RE <- filtergRNAs(potential.gRNAs, 
 	        findgRNAsWithREcutOnly = findgRNAsWithREcutOnly,
