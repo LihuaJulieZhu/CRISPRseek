@@ -15,6 +15,9 @@ offTargetAnalysis <-
         fetchSequence = TRUE, upstream = 200, downstream = 200,
         weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 
         0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
+		baseBeforegRNA = 4, baseAfterPAM = 3,
+		featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
+			package = "CRISPRseek"),
         overwrite = FALSE)
 {
     cat("Validating input ...\n")
@@ -247,7 +250,8 @@ offTargetAnalysis <-
             orgAnn = orgAnn, min.score = min.score, topN = topN, 
             topN.OfftargetTotalScore = topN.OfftargetTotalScore, 
             upstream = upstream, downstream = downstream, 
-            annotateExon = annotateExon)
+			annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 
+			baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile)
     cat("Done annotating\n")
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 
         header = TRUE, stringsAsFactors = FALSE) 
@@ -311,12 +315,16 @@ offTargetAnalysis <-
 	summary <- cbind(summary, numberOfT.last4Position.gRNA )
 	on.target <- offTargets$offtargets
 	on.target <- unique(subset(on.target, on.target$n.mismatch == 0 & on.target$NGG == 1))
-	on.target <- unique(cbind(as.character(on.target$name), as.character(on.target$toViewInUCSC)))
-	colnames(on.target) = c("names", "toViewInUCSC")
+	on.target <- unique(cbind(as.character(on.target$name), 
+						as.character(on.target$toViewInUCSC),
+						as.character(on.target$extendedSequence), on.target$gRNAefficiency
+					))
+	colnames(on.target) = c("names", "toViewInUCSC", "extendedSequence", "gRNAefficiency")
 	summary <- unique(merge(on.target, summary, by="names", all.y=TRUE))
+	
     write.table(summary[order(as.character(summary$names)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
-    #list(summary=summary, offtarget=offTargets$Offtargets)
+    list(summary=summary, offtarget=offTargets$offtargets)
 }

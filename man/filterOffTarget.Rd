@@ -6,15 +6,17 @@ filter off targets and generate reports.
 }
 \description{
  filter off targets that meet the criteria set by users such as minimum score, 
- topN. In addition, off target was annotated with flank sequence and whether 
- it is inside an exon or not if fetchSequence is set to TRUE and annotateExon 
+ topN. In addition, off target was annotated with flank sequence, gRNA cleavage efficiency and whether it is inside an exon or not if fetchSequence is set to TRUE and annotateExon 
  is set to TRUE
 }
 \usage{
 filterOffTarget(scores, min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10,
     annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE, 
-    fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName)
+    fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
+    baseBeforegRNA = 4, baseAfterPAM = 3,
+    featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
+	package = "CRISPRseek"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,6 +85,15 @@ example, BSgenome.Hsapiens.UCSC.hg19 for hg19, BSgenome.Mmusculus.UCSC.mm10
 for mm10, BSgenome.Celegans.UCSC.ce6 for ce6, BSgenome.Rnorvegicus.UCSC.rn5 
 for rn5, and BSgenome.Dmelanogaster.UCSC.dm3 for dm3
 }
+\item{baseBeforegRNA}{
+Number of bases before gRNA used for calculating gRNA efficiency, default 4
+}
+\item{baseAfterPAM}{
+Number of bases after PAM used for calculating gRNA efficiency, default 3
+}
+\item{featureWeightMatrixFile}{
+Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -92,7 +103,7 @@ for rn5, and BSgenome.Dmelanogaster.UCSC.dm3 for dm3
 \item{summary }{a data frame with summary of the off target analysis results}
 }
 \references{
-%% ~put references to the literature/web site here ~
+Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 }
 \author{
 Lihua Julie Zhu
@@ -107,6 +118,7 @@ Lihua Julie Zhu
 offTargetAnalysis
 }
 \examples{
+    library(CRISPRseek)
     library("BSgenome.Hsapiens.UCSC.hg19")
     library(TxDb.Hsapiens.UCSC.hg19.knownGene)
     library(org.Hs.eg.db)

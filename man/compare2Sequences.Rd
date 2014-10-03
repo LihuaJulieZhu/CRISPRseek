@@ -2,11 +2,10 @@
 \alias{compare2Sequences}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Compare 2 input sequences for possible guide RNAs (gRNAs)
+Compare 2 input sequences/sequence sets for possible guide RNAs (gRNAs)
 }
 \description{
-Generate all possible guide RNAs (gRNAs) for two input sequences and generate 
-    scores for potential off-targets in the other sequence.
+Generate all possible guide RNAs (gRNAs) for two input sequences, or two sets of sequences and generate scores for potential off-targets in the other sequence.
 }
 \usage{
 compare2Sequences(inputFile1Path, inputFile2Path, 

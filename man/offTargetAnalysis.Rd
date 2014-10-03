@@ -7,7 +7,7 @@ Design of target-specific guide RNAs for CRISPR-Cas9 system in one function
 \description{
 Design of target-specific guide RNAs (gRNAs) for CRISPR-Cas9 system by automatically 
 calling findgRNAs, filtergRNAs, searchHits, buildFeatureVectorForScoring, 
-getOfftargetScore, filterOfftarget and generate reports.
+getOfftargetScore, filterOfftarget, calculating gRNA cleavage efficiency and generate reports.
 }
 \usage{
 offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = TRUE,
@@ -24,6 +24,9 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     txdb, orgAnn, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 
     0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
+    baseBeforegRNA = 4, baseAfterPAM = 3,
+    featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
+	package = "CRISPRseek"),
     overwrite = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -158,6 +161,15 @@ a numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395,
 0.804, 0.685, 0.583) which is used in Hsu et al., 2013 cited in the reference 
 section
 }
+\item{baseBeforegRNA}{
+Number of bases before gRNA used for calculating gRNA efficiency, default 4
+}
+\item{baseAfterPAM}{
+Number of bases after PAM used for calculating gRNA efficiency, default 3
+}
+\item{featureWeightMatrixFile}{
+Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
+}
 \item{overwrite}{
 	overwrite the existing files in the output directory or not, default FALSE
 }
@@ -178,6 +190,7 @@ Konermann, Vineeta Agarwala, Yinqing Li, Eli J Fine, Xuebing Wu, Ophir Shalem,
 Thomas J Cradick, Luciano A Marraffini, Gang Bao & Feng Zhang (2013) DNA 
 targeting specificity of rNA-guided Cas9 nucleases. Nature Biotechnology 
 31:827-834
+Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 }
 \author{
 Lihua Julie Zhu

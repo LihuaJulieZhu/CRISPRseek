@@ -1,9 +1,16 @@
 filterOffTarget <-
     function(scores, min.score = 0.5, topN = 100, topN.OfftargetTotalScore = 10,
     annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE,
-    fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName)
+    fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
+	baseBeforegRNA = 4, baseAfterPAM = 3,
+	featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
+		package = "CRISPRseek"))
 {
-    if (fetchSequence && (missing(BSgenomeName) || 
+    if (featureWeightMatrixFile != ""  & file.exists(featureWeightMatrixFile))
+	{
+		featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
+	}
+	if (fetchSequence && (missing(BSgenomeName) || 
         class(BSgenomeName) != "BSgenome")) 
     {
         stop("To fetch sequences, BSgenomeName is required as BSgenome object!")
@@ -20,6 +27,10 @@ filterOffTarget <-
     scores <- scores[scores$score >= min.score,]
     if (length(grep("IsMismatch.pos", colnames(scores))) > 0)
         scores <- scores[,-c(grep("IsMismatch.pos", colnames(scores)))]
+	if (substr(outputDir, nchar(outputDir), nchar(outputDir)) != .Platform$file.sep)
+    {
+        outputDir <- paste(outputDir, "", sep = .Platform$file.sep)
+    }	
     if ( ! file.exists(outputDir))
     {
         dir.create(outputDir)
@@ -193,6 +204,34 @@ filterOffTarget <-
     #    temp <- temp[,-4]
     Offtargets <- read.table(OfftargetFile, sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
+	Start <- as.numeric(Offtargets$chromStart) - baseBeforegRNA
+	End <- as.numeric(Offtargets$chromEnd) + baseAfterPAM
+	strand <- Offtargets$strand		
+	chr <- as.character(Offtargets$chrom)
+	for (i in 1:length(Start))		
+	{
+		thisChr <-chr[i]
+		thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
+		thisStart <- max(1, Start[i])
+		thisStrand <- as.character(strand[i])
+		if (i == 1)
+		{
+			extendedSequence <- getSeq(BSgenomeName, thisChr, start = thisStart, 
+									   end = thisEnd, strand = thisStrand, width = NA, 
+									   as.character = TRUE)
+		}
+		else
+		{
+			extendedSequence <- c(extendedSequence, 
+								  getSeq(BSgenomeName, thisChr, start = thisStart, 
+										 end = thisEnd, strand = thisStrand, width = NA, 
+										 as.character = TRUE))
+		}
+	}
+	Offtargets <- cbind(Offtargets, extendedSequence = extendedSequence)
+	gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
+		featureWeightMatrix = featureWeightMatrix)
+	Offtargets <- cbind(Offtargets, gRNAefficiency = gRNAefficiency)
     if (fetchSequence)
     {
         Start <- as.numeric(Offtargets$chromStart) - as.numeric(upstream)
@@ -220,6 +259,7 @@ filterOffTarget <-
         }
         Offtargets <- cbind(Offtargets, flankSequence = seq)
     }
+	
     write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
     if (annotateExon)
     {
