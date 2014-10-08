@@ -126,8 +126,6 @@ http://www.bioconductor.org/packages/release/BiocViews.html, such as
 \Biocannopkg{org.Dm.eg.db} for Drosophila
 \Biocannopkg{org.Ce.eg.db} for C.elegans
 
-
-
 \begin{scriptsize}
 <<>>=
 library(CRISPRseek)
@@ -164,7 +162,7 @@ help(offTargetAnalysis)
 
 \begin{scriptsize}
 <<>>=
-offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
 REpatternFile = REpatternFile, findPairedgRNAOnly = TRUE, 
 BSgenomeName = Hsapiens, chromToSearch ="chrX", min.gap = 0, max.gap = 20,
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, orgAnn = org.Hs.egSYMBOL,
@@ -183,7 +181,7 @@ be annotated with restriction enzyme cut sites for users to review later.
 
 \begin{scriptsize}
 <<>>=
-offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
 REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE, 
 BSgenomeName = Hsapiens, chromToSearch = "chrX",
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
@@ -201,7 +199,7 @@ with paired information for users to review later.
 
 \begin{scriptsize}
 <<>>=
-offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
 BSgenomeName = Hsapiens, chromToSearch = "chrX", 
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
@@ -220,7 +218,7 @@ type of searches aforementioned.
 
 \begin{scriptsize}
 <<>>=
-offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
 REpatternFile = REpatternFile,findPairedgRNAOnly = FALSE, 
 BSgenomeName = Hsapiens, chromToSearch = "chrX", 
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
@@ -240,7 +238,7 @@ for users to review later. However, paired information will not be available.
 <<>>=
 gRNAFilePath <- system.file('extdata', 'testHsap_GATA1_ex2_gRNA1.fa',
 package = 'CRISPRseek')
-offTargetAnalysis(inputFilePath = gRNAFilePath, 
+results <- offTargetAnalysis(inputFilePath = gRNAFilePath, 
 findgRNAsWithREcutOnly = TRUE, REpatternFile = REpatternFile,
 findPairedgRNAOnly = FALSE, findgRNAs = FALSE,
 BSgenomeName = Hsapiens, chromToSearch = 'chrX', 
@@ -260,12 +258,27 @@ cut sites or not, and whether searching for gRNAs in paired configuration
 or not. 
 \begin{scriptsize}
 <<>>=
-offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
 REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,
 chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
-\subsection{Scenario 7. Find potential gRNAs preferentially targeting one of two alleles without running time-consuming off-target analysis on all possible gRNAs.}
+\subsection{ Scenario 7. Quick gRNA finding  with gRNA efficiency prediction 
+}
+Calling the function \Rfunction{offTargetAnalysis} with max.mismatch = 0 
+results in quick gRNA search with gRNA efficiency prediction without off-target
+analysis. Parameters findgRNAsWithREcutOnly and findPairedgRNAOnly can
+be tuned to indicate whether searching for gRNAs overlap restriction enzyme
+cut sites or not, and whether searching for gRNAs in paired configuration
+or not.
+\begin{scriptsize}
+<<>>=
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+annotateExon = FALSE,findPairedgRNAOnly = TRUE,
+max.mismatch = 0, BSgenomeName = Hsapiens, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+\subsection{Scenario 8. Find potential gRNAs preferentially targeting one of two alleles without running time-consuming off-target analysis on all possible gRNAs.}
 Below is an example to search for all gRNAs that target at least one of the alleles. Two files are provided containing sequences that differ by a single nucleotide polymorphism (SNP). The results are saved in file scoresFor2InputSequences.xls in outputDir directory. 
 \begin{scriptsize}
 <<>>=
@@ -284,10 +297,11 @@ rs362331C.fa and rs362331T.fa are the names of the two input files. The output f
 \bibitem[Mali P. et al., 2013]{Mali et al., 2013} Mali P. et al., CAS9 
 transcriptional activators for target specificity screening and paired nickases 
 for cooperative genome engineering. Nat Biotechnol. 2013. 31(9):833-8
-\bibitem[ Hsu, P.D et al., 2013]{Hsu et al., 2013} Hsu, P.D. et al., DNA 
+\bibitem[Hsu, P.D et al., 2013]{Hsu et al., 2013} Hsu, P.D. et al., DNA 
 targeting specificity of rNA-guided Cas9 nucleases. Nat Biotechnol. 
-2013. 31:827-834. 
-\bibitem[Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky]{Zhu et al}Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One (Accepted)
+2013. 31:827-834.
+\bibitem[Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE]{Doench et al., 2014}. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
+\bibitem[Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky]{Zhu et al., 2014}Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
 \end{thebibliography}
 
 \section{Session Info}

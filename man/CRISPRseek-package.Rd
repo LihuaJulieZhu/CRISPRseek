@@ -14,7 +14,7 @@ mismatch positions in the off target and a penalty weight matrix, filtering off
 targets with user-defined criteria, and annotating off targets with flank 
 sequences, whether located in exon or not. Summary report is also generated 
 with gRNAs ranked by total topN off target score, annotated with restriction 
-enzyme cut sites and  possible paired gRNAs. Detailed paired gRNAs 
+enzyme cut sites, gRNA efficacy and  possible paired gRNAs. Detailed paired gRNAs 
 information and restriction enzyme cut sites are stored in separate files in 
 the output directory specified by the user. In total, four tab delimited files 
 are generated in the output directory: OfftargetAnalysis.xls (off target 
@@ -60,8 +60,7 @@ offTargetAnalysis
     REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
 ######## Scenario 1. Target and off-target analysis for paired gRNAs with 
 ######## one of the pairs overlap RE sites
-
-    offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly=TRUE,
+    results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly=TRUE,
         REpatternFile =REpatternFile,findPairedgRNAOnly=TRUE, 
         BSgenomeName=Hsapiens, txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, 
         orgAnn = org.Hs.egSYMBOL,max.mismatch = 1, chromToSearch = "chrX",
@@ -69,7 +68,7 @@ offTargetAnalysis
 
 ######## Scenario 2. Target and off-target analysis for paired gRNAs with or 
 ######## without RE sites
-    offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
+    results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE,
         REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,
         BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
         orgAnn = org.Hs.egSYMBOL,max.mismatch = 1, chromToSearch = "chrX",
@@ -77,7 +76,7 @@ offTargetAnalysis
 
 ######## Scenario 3. Target and off-target analysis for gRNAs overlap RE sites
 
-    offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+    results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
         REpatternFile = REpatternFile,findPairedgRNAOnly = FALSE, 
         BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
         orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, chromToSearch = "chrX", 
@@ -86,7 +85,7 @@ offTargetAnalysis
 ######## Scenario 4. Off-target analysis for all potential gRNAs, this will 
 ########be the slowest among the aforementioned scenarios.
 
-    offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE, 
+    results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = FALSE, 
         REpatternFile = REpatternFile,findPairedgRNAOnly = FALSE,
         BSgenomeName = Hsapiens, txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
          orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, chromToSearch = "chrX", 
@@ -95,7 +94,7 @@ offTargetAnalysis
 ######## Scenario 5. Target and off-target analysis for gRNAs input by user.
     gRNAFilePath <- system.file("extdata", "testHsap_GATA1_ex2_gRNA1.fa",
         package="CRISPRseek")
-    offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
+    results <- offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
         findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile,
         findPairedgRNAOnly = FALSE, BSgenomeName = Hsapiens, 
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
@@ -103,7 +102,13 @@ offTargetAnalysis
         outputDir = outputDir, overwrite = TRUE)
 
 ####### Scenario 6. Quick gRNA finding  without target and off-target analysis 
-    offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+    results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
         REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,  
         chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
+
+####### Scenario 7. Quick gRNA finding  with gRNA efficacy analysis
+    results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+        REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,
+	BSgenomeName = Hsapiens, annotateExon = FALSE,
+        max.mismatch = 0, outputDir = outputDir, overwrite = TRUE)
 }

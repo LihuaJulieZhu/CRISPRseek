@@ -204,9 +204,14 @@ filterOffTarget <-
     #    temp <- temp[,-4]
     Offtargets <- read.table(OfftargetFile, sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
-	Start <- as.numeric(Offtargets$chromStart) - baseBeforegRNA
-	End <- as.numeric(Offtargets$chromEnd) + baseAfterPAM
+	Start <- as.numeric(Offtargets$chromStart)
+	End <- as.numeric(Offtargets$chromEnd)
 	strand <- Offtargets$strand		
+	Start[strand == "+"] = Start[strand == "+"] -  baseBeforegRNA
+	Start[strand == "-"] = Start[strand == "-"] -  baseAfterPAM
+	End[strand == "+"] = End[strand == "+"] +  baseAfterPAM
+        End[strand == "-"] = End[strand == "-"] +  baseBeforegRNA
+       
 	chr <- as.character(Offtargets$chrom)
 	for (i in 1:length(Start))		
 	{
@@ -217,19 +222,20 @@ filterOffTarget <-
 		if (i == 1)
 		{
 			extendedSequence <- getSeq(BSgenomeName, thisChr, start = thisStart, 
-									   end = thisEnd, strand = thisStrand, width = NA, 
-									   as.character = TRUE)
+			   end = thisEnd, strand = thisStrand, width = NA, 
+			   as.character = TRUE)
 		}
 		else
 		{
 			extendedSequence <- c(extendedSequence, 
-								  getSeq(BSgenomeName, thisChr, start = thisStart, 
-										 end = thisEnd, strand = thisStrand, width = NA, 
-										 as.character = TRUE))
+				 getSeq(BSgenomeName, thisChr, start = thisStart, 
+	 			 end = thisEnd, strand = thisStrand, width = NA, 
+				 as.character = TRUE))
 		}
 	}
 	Offtargets <- cbind(Offtargets, extendedSequence = extendedSequence)
 	gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
+		baseBeforegRNA = baseBeforegRNA,
 		featureWeightMatrix = featureWeightMatrix)
 	Offtargets <- cbind(Offtargets, gRNAefficiency = gRNAefficiency)
     if (fetchSequence)

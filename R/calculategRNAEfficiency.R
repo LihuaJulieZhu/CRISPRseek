@@ -1,4 +1,4 @@
-calculategRNAEfficiency <- function(extendedSequence, featureWeightMatrix, gRNA.size = 20)
+calculategRNAEfficiency <- function(extendedSequence, baseBeforegRNA, featureWeightMatrix, gRNA.size = 20)
 {
    	featureWeightMatrix[,1] = toupper(featureWeightMatrix[,1])
 	efficiency <- featureWeightMatrix[featureWeightMatrix[,1] == "INTERCEPT", 2]
@@ -12,11 +12,13 @@ calculategRNAEfficiency <- function(extendedSequence, featureWeightMatrix, gRNA.
 	featureWeights <- cbind(featureStart, featureEnd, featureNames, fWeights)
 	featureWeights <- featureWeights[order(featureWeights[,1]),]
 	n.C <- unlist(lapply(1:length(extendedSequence), function(i) {
-						 table(factor(s2c(substr(extendedSequence[i],1,gRNA.size)), levels=c("C")))
-						 }))
+	    table(factor(s2c(substr(extendedSequence[i],baseBeforegRNA + 1,
+			 baseBeforegRNA + gRNA.size)), levels=c("C")))
+		 }))
 	n.G <- unlist(lapply(1:length(extendedSequence), function(i) {
-						 table(factor(s2c(substr(extendedSequence[i],1,gRNA.size)), levels=c("G")))
-						 }))
+	    table(factor(s2c(substr(extendedSequence[i],baseBeforegRNA + 1, 
+			baseBeforegRNA + gRNA.size)), levels=c("G")))
+		 }))
 	GC.content <- n.C + n.G
 	GClow.coef <- as.numeric(GC.content <10)
 	GChigh.coef <- as.numeric(GC.content >10)

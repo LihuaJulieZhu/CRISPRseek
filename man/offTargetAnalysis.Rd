@@ -214,7 +214,7 @@ CRISPRseek
             package = "CRISPRseek")
 	REpatternFile <- system.file("extdata", "NEBenzymes.fa", 
             package = "CRISPRseek")
-	offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
+	results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
