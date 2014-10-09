@@ -26,7 +26,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
-	package = "CRISPRseek"),
+	package = "CRISPRseek"), useScore = TRUE,
     overwrite = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -169,6 +169,9 @@ Number of bases after PAM used for calculating gRNA efficiency, default 3
 }
 \item{featureWeightMatrixFile}{
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
+}
+\item{useScore}{
+	Default TRUE, display in gray scale with the darkness indicating the gRNA efficacy. The taller bar shows the Cas9 cutting site. If set to False, efficacy will not show. Instead, gRNAs in plus strand will be colored red and gRNAs in negative strand will be colored green. 
 }
 \item{overwrite}{
 	overwrite the existing files in the output directory or not, default FALSE

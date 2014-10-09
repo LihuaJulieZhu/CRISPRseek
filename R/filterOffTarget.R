@@ -69,15 +69,15 @@ filterOffTarget <-
 	forSummary <- forSummary[order(forSummary$score, decreasing=TRUE),]
 	mismatche.distance2PAM[i,2:11] <-
             as.character(forSummary$mismatche.distance2PAM)
-        if (annotateExon)
-        {
-            	score.RD <- GRanges(seqnames = Rle(this.score$chrom), 
+	if (annotateExon)
+	{
+		score.RD <- GRanges(seqnames = Rle(this.score$chrom), 
                 	ranges = IRanges(start = this.score$chromStart, 
                 	end = this.score$chromEnd, names = this.score$forViewInUCSC))
-            	allExons <- as(exons(txdb, columns="gene_id"),"GRanges")
-            	allExons <- allExons[as.character(seqnames(allExons)) %in% 
+         allExons <- as(exons(txdb, columns="gene_id"),"GRanges")
+         allExons <- allExons[as.character(seqnames(allExons)) %in% 
                 	unique(as.character(seqnames(score.RD))),]
-            	ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
+         ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
                 	type = "any",ignore.strand=TRUE)
 		introns =  unlist(intronsByTranscript(txdb))
 		introns <- introns[as.character(seqnames(introns)) %in% 
@@ -87,9 +87,9 @@ filterOffTarget <-
 		inIntron <- cbind(forViewInUCSC = names(score.RD),
 			inIntron = unlist(ann.scores.intron))
         	inIntron[inIntron[,2] == FALSE, 2] <- ""
-            	inExon <- cbind(forViewInUCSC = names(score.RD),
-                	inExon = unlist(ann.scores))
-            	inExon[inExon[,2] == FALSE, 2] <- ""
+            inExon <- cbind(forViewInUCSC = names(score.RD),
+			inExon = unlist(ann.scores))
+        inExon[inExon[,2] == FALSE, 2] <- ""
 		overlapGenes <- findOverlaps(score.RD, allExons, minoverlap = 1L, 
 			type = "any",ignore.strand=TRUE)
 		overlapGenes.ID <- unlist(allExons[subjectHits(overlapGenes),]$gene_id)
