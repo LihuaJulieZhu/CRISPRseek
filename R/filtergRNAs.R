@@ -3,7 +3,8 @@ filtergRNAs <-
         findgRNAsWithREcutOnly = FALSE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa",
             package = "CRISPRseek"), format = "fasta",
-        minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
+        minREpatternSize = 6, overlap.gRNA.positions = c(17, 18),
+		overlap.allpos = TRUE)
 {
 	if (length(all.gRNAs) == 0)
 		stop("all.gRNAs contains no gRNAs!")
@@ -34,28 +35,38 @@ filtergRNAs <-
     patterns <- singleRE
     seqs <- as.character(all.gRNAs)
     seq.names <- names(all.gRNAs)
-    min.pStart.plus <- overlap.gRNA.positions[1] - width(patterns) + 1
-    max.pStart.plus <- overlap.gRNA.positions[2] + width(patterns) - 1
+    min.pStart.plus <- min(overlap.gRNA.positions)
+    max.pStart.plus <- max(overlap.gRNA.positions)
     gRNAs.RE <- data.frame(gRNAPlusPAM = "", REcutgRNAName = "", 
         REname = "", REpattern = "", REcutStart = "", REcutEnd = "")
     for (j in 1:length(patterns))
     {
         pattern.name <- gsub("'", "", names(patterns)[j])
         pattern <- patterns[[j]]
+		this.pattern.size <- length(pattern)
         revpattern <- reverseComplement(pattern)
         if (revpattern != pattern)
         {
-            revpattern <- translatePattern(revpattern)
+			revpattern <- translatePattern(revpattern)
             minus.gRNAs <- do.call(rbind, lapply(1:length(all.gRNAs), 
                 function(i){
                     res1  <- as.numeric(gregexpr(revpattern, seqs[i],
                         perl = TRUE,fixed = FALSE,ignore.case = TRUE)[[1]])
                     do.call(rbind, lapply(1:length(res1), function(k) {
-                        if (res1[k] >0 && res1[k] >= min.pStart.plus[j] && 
-                            res1[k] <= max.pStart.plus[j])
+						if (res1[k] >0 && !overlap.allpos && 
+							((min.pStart.plus >= res1[k] && 
+							min.pStart.plus <= (res1[k] + this.pattern.size -1)) || 
+							 (max.pStart.plus >= res1[k] && 
+							  max.pStart.plus <= (res1[k] + this.pattern.size -1))))
                             c(as.character(seqs[i]),seq.names[i], pattern.name,
                                 as.character(reverseComplement(patterns[[j]])), 
-                                length(patterns[[j]]) - 1 + res1[k], res1[k])			
+                                this.pattern.size - 1 + res1[k], res1[k])
+						else if (res1[k] >0 && overlap.allpos && 
+							min.pStart.plus >= res1[k] && 
+							max.pStart.plus <= (res1[k] + this.pattern.size -1))
+							c(as.character(seqs[i]),seq.names[i], pattern.name,
+								as.character(reverseComplement(patterns[[j]])), 
+							    this.pattern.size - 1 + res1[k], res1[k])
                    }))
                 }
             ))
@@ -76,11 +87,20 @@ filtergRNAs <-
                 res1  <- as.numeric(gregexpr(pattern, seqs[i], perl = TRUE,
                     fixed = FALSE, ignore.case = TRUE)[[1]])
                 do.call(rbind, lapply(1:length(res1), function(k) {
-                    if (res1[k] >0 && res1[k] >= min.pStart.plus[j] && 
-                        res1[k] <= max.pStart.plus[j])
+					if (res1[k] >0 && !overlap.allpos && 
+						((min.pStart.plus >= res1[k] && 
+						min.pStart.plus <= (res1[k] + this.pattern.size -1)) || 
+						(max.pStart.plus >= res1[k] && 
+						max.pStart.plus <= (res1[k] + this.pattern.size -1))))
                         c(as.character(seqs[i]), seq.names[i], pattern.name, 
                             as.character(patterns[[j]]), res1[k], 
-                            res1[k] + length(patterns[[j]])- 1)			
+                            res1[k] + this.pattern.size - 1)
+					else if (res1[k] >0 && overlap.allpos && 
+						min.pStart.plus >= res1[k] && 
+						max.pStart.plus <= (res1[k] + this.pattern.size -1))
+						c(as.character(seqs[i]), seq.names[i], pattern.name, 
+						    as.character(patterns[[j]]), res1[k], 
+							res1[k] + this.pattern.size - 1)
                 }))
             }
         ))

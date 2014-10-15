@@ -27,7 +27,7 @@ concatenated), OffTargetSequence (the genomic sequence of the off target),
 n.mismatch (number of mismatches between the off target and the gRNA), 
 forViewInUCSC (string for viewing in UCSC genome browser, e.g., 
 chr14:31665685-31665707), score (score of the off target), 
-mismatche.distance2PAM (a comma separated distances of all mismatches to 
+mismatch.distance2PAM (a comma separated distances of all mismatches to 
 PAM, e.g., 14,11 means one mismatch is 14 bp away from PAM and the other 
 mismatch is 11 bp away from PAM), alignment (alignment between gRNA and off 
 target, e.g., ......G..C.......... means that this off target aligns with 
@@ -53,7 +53,7 @@ gRNAPlusPAM (gRNA sequence with PAM sequence concatenated),
 OffTargetSequence (the genomic sequence of the off target), n.mismatch 
 (number of mismatches between the off target and the gRNA), forViewInUCSC 
 (string for viewing in UCSC genome browser, e.g., chr14:31665685-31665707), 
-score (score of the off target), mismatche.distance2PAM (a comma separated 
+score (score of the off target), mismatch.distance2PAM (a comma separated 
 distances of all mismatches to PAM, e.g., 14,11 means one mismatch is 14 bp 
 away from PAM and the other mismatch is 11 bp away from PAM), alignment 
 (alignment between gRNA and off target, e.g., ......G..C.......... means 

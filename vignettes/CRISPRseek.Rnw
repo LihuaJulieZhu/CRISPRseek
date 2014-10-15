@@ -156,7 +156,7 @@ considered overlap with restriction enzyme cut site, the enzyme cut pattern
 must overlap with one of the gRNA positions specified in 
 overlap.gRNA.positions, default position 17 and 18. Please note that 
 max.mismatch allowed for off-target finding is set to 4 by default, set it 
-to a larger number will significantly slow down the search.  For detailed 
+to a larger number will significantly slow down the search. org.Hs.egSYMBOL is entrezID to gene symbol mapping in org.Hs.eg.db package for human. For detailed 
 parameter settings using function \Rfunction{offTargetAnalysis}, please type 
 help(offTargetAnalysis)
 
@@ -239,7 +239,7 @@ for users to review later. However, paired information will not be available.
 gRNAFilePath <- system.file('extdata', 'testHsap_GATA1_ex2_gRNA1.fa',
 package = 'CRISPRseek')
 results <- offTargetAnalysis(inputFilePath = gRNAFilePath, 
-findgRNAsWithREcutOnly = TRUE, REpatternFile = REpatternFile,
+findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile,
 findPairedgRNAOnly = FALSE, findgRNAs = FALSE,
 BSgenomeName = Hsapiens, chromToSearch = 'chrX', 
 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
@@ -274,7 +274,7 @@ or not.
 \begin{scriptsize}
 <<>>=
 results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
-annotateExon = FALSE,findPairedgRNAOnly = TRUE,
+annotateExon = FALSE,findPairedgRNAOnly = TRUE, chromToSearch = "chrX",
 max.mismatch = 0, BSgenomeName = Hsapiens, outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}

@@ -29,7 +29,7 @@ sequence concatenated), OffTargetSequence (the genomic sequence of the off
 target), n.mismatch (number of mismatches between the off target and the 
 gRNA), forViewInUCSC (string for viewing in UCSC genome browser, e.g., 
 chr14:31665685-31665707), score (score of the off target), 
-mismatche.distance2PAM (a comma separated distances of all mismatches to 
+mismatch.distance2PAM (a comma separated distances of all mismatches to 
 PAM, e.g., 14,11 means one mismatch is 14 bp away from PAM and the other 
 mismatch is 11 bp away from PAM), alignment (alignment between gRNA and off 
 target, e.g., ......G..C.......... means that this off target aligns with 
@@ -62,7 +62,7 @@ TxDb.Dmelanogaster.UCSC.dm3.ensGene for Drosophila and
 TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
 }
  \item{orgAnn}{
-organism annotation dataset such as org.Hs.egSYMBOL for human
+organism annotation mapping such as org.Hs.egSYMBOL in org.Hs.eg.db package for human
 }
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to
@@ -104,6 +104,7 @@ Feature weight matrix file used for calculating gRNA efficiency. By default Doen
 }
 \references{
 Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
+Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
 }
 \author{
 Lihua Julie Zhu

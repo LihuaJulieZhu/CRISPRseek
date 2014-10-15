@@ -50,10 +50,10 @@ offTargetAnalysis <-
     REcutDetailFile <- paste(outputDir, "REcutDetails.xls", sep = "")
     bedFile<- paste(outputDir, "gRNAsCRISPRseek.bed", sep = "")
     if (missing(gRNAoutputName) && class(inputFilePath) == "DNAStringSet")
-	stop("Please enter a name for the gRNA ouput file name!")
+	    stop("Please enter a name for the gRNA ouput file name!")
     if (class(inputFilePath) != "DNAStringSet" && missing(gRNAoutputName))
-	gRNAoutputName = strsplit(basename(inputFilePath), split=".", 
-		fixed=TRUE)[[1]][1]
+	    gRNAoutputName = strsplit(basename(inputFilePath), split=".", 
+		    fixed=TRUE)[[1]][1]
     if (findgRNAs)
     {
         cat("Searching for gRNAs ...\n")
@@ -248,6 +248,7 @@ offTargetAnalysis <-
         canonical.PAM = PAM, gRNA.size = gRNA.size)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
+    write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
@@ -320,10 +321,12 @@ offTargetAnalysis <-
 	cat("write to gRNAs to bed file...\n")
 	on.target <- offTargets$offtargets
 	on.target <- unique(subset(on.target, on.target$n.mismatch == 0 & on.target$NGG == 1))
-	gRNA.bed <- unique(cbind(as.character(on.target$chrom),on.target$chromStart,
-		on.target$chromEnd, as.character(on.target$name), 
+	gRNA.bed <- unique(cbind(as.character(on.target$chrom),as.character(on.target$chromStart),
+		as.character(on.target$chromEnd), as.character(on.target$name), 
 		on.target$gRNAefficiency * 1000, 
-		on.target$strand, on.target$chromStart, on.target$chromEnd))
+		as.character(on.target$strand), 
+		as.character(on.target$chromStart), 
+		as.character(on.target$chromEnd)))
 	if (!useScore)
 	{
 		gRNA.bed <- cbind(gRNA.bed, rep("255,0,0",dim(gRNA.bed)[1]))	
@@ -343,10 +346,11 @@ offTargetAnalysis <-
 	write.table("track name=\"gRNA sites\" description=\"CRISPRseek\" visibility=2 useScore=1 itemRgb=\"On\"", file=bedFile, col.names=FALSE, row.names=FALSE, quote = FALSE)
 	write.table(gRNA.bed, file=bedFile, sep=" ", row.names=FALSE, col.names=FALSE, append=TRUE, quote = FALSE)
 	on.target <- unique(cbind(as.character(on.target$name),
-                           as.character(on.target$toViewInUCSC),
-                          as.character(on.target$extendedSequence), on.target$gRNAefficiency
+						as.character(on.target$forViewInUCSC),
+						as.character(on.target$extendedSequence), 
+						on.target$gRNAefficiency
                         )) 
-	colnames(on.target) = c("names", "toViewInUCSC", "extendedSequence", "gRNAefficiency")
+	colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", "gRNAefficiency")
 	summary <- unique(merge(on.target, summary, by="names", all.y=TRUE))
 	
     write.table(summary[order(as.character(summary$names)), ], 

@@ -141,7 +141,7 @@ TxDb.Dmelanogaster.UCSC.dm3.ensGene for Drosophila and
 TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
 }
 \item{orgAnn}{
-organism annotation dataset such as org.Hs.egSYMBOL from org.Hs.eg.db package for human
+organism annotation mapping such as org.Hs.egSYMBOL in org.Hs.eg.db package for human
 }
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to
@@ -194,6 +194,7 @@ Thomas J Cradick, Luciano A Marraffini, Gang Bao & Feng Zhang (2013) DNA
 targeting specificity of rNA-guided Cas9 nucleases. Nature Biotechnology 
 31:827-834
 Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
+Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
 }
 \author{
 Lihua Julie Zhu

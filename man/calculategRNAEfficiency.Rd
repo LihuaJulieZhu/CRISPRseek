@@ -8,7 +8,7 @@
 	Calculate gRNA Efficiency for a given set of sequences and feature weight matrix
 }
 \usage{
-calculategRNAEfficiency <- function(extendedSequence, baseBeforegRNA, featureWeightMatrix, gRNA.size = 20)
+calculategRNAEfficiency(extendedSequence, baseBeforegRNA, featureWeightMatrix, gRNA.size = 20)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

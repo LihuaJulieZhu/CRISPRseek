@@ -32,24 +32,24 @@ findgRNAs <-
     #for (i in 1:length(subjects))
     toAppend = FALSE
     colNames = TRUE
-    all.gRNAs.df <- do.call(rbind, lapply(1:length(subjects), function(i)
+    all.gRNAs.df <- do.call(rbind, lapply(1:length(subjects), function(p)
     {
-        subjectname <- gsub("'", "", names(subjects)[i])
+        subjectname <- gsub("'", "", names(subjects)[p])
         subjectname <- gsub(" ", "", subjectname)
-		subjectname <- gsub("\t", ":", subjectname)
-        subject <- subjects[[i]]
+        subjectname <- gsub("\t", ":", subjectname)
+        subject <- subjects[[p]]
         revsubject <- reverseComplement(subject)
         PAM <- translatePattern(PAM)
         PAM <- paste(PAM, "$", sep = "")
-		gRNA.pattern <- translatePattern(gRNA.pattern)
+	    gRNA.pattern <- translatePattern(gRNA.pattern)
         seq.len <- nchar(as.character(subject))
         x <- seq.len - gRNA.size - PAM.size + 1
         pos.gRNAs <- do.call(rbind, lapply(1:x, function(i){
             seq <- subseq(as.character(subject), i, 
                 (i + gRNA.size + PAM.size -1))
             if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
-				(gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
-				ignore.case = TRUE)[[1]] > 0))
+		(gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
+		ignore.case = TRUE)[[1]] > 0))
                 c(seq, paste(subjectname,"Start",i,"End", 
                     (i + gRNA.size + PAM.size-1), sep = ""),i,"+")
         }))
@@ -86,7 +86,7 @@ findgRNAs <-
             colnames(temp)[1:5] <- c( "ReversegRNAPlusPAM",
                 "ReversegRNAName", "ForwardgRNAPlusPAM",
                 "ForwardgRNAName", "gap")
-	        if (i >1)
+	        if (p >1)
 	        {
 	            toAppend = TRUE
 	            colNames = FALSE

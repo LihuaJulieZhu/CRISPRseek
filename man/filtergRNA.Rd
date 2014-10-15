@@ -12,7 +12,7 @@ filtergRNAs(all.gRNAs, pairOutputFile = "",
     findgRNAsWithREcutOnly = FALSE,
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
         package = "CRISPRseek"), format = "fasta", 
-    minREpatternSize = 6, overlap.gRNA.positions = c(17, 18))
+    minREpatternSize = 6, overlap.gRNA.positions = c(17, 18),overlap.allpos = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,6 +39,10 @@ enzyme pattern to be searched for, default 6
   \item{overlap.gRNA.positions}{
 The required overlap positions of gRNA and restriction enzyme cut site, 
 default 17 and 18
+}
+\item{overlap.allpos}{
+Default TRUE, meaning that only gRNAs overlap with all the positions are retained
+FALSE, meaning that gRNAs overlap with one or both of the positions are retained
 }
 }
 \details{
@@ -72,9 +76,9 @@ offTargetAnalysis
         findPairedgRNAOnly = TRUE)
 
     gRNAs.RE <- filtergRNAs(all.gRNAs = all.gRNAs,
-        pairOutputFile = "testpairedgRNAs.xls",
+        pairOutputFile = "testpairedgRNAs.xls",minREpatternSize = 6,
         REpatternFile = system.file("extdata", "NEBenzymes.fa", 
-        package = "CRISPRseek"))
+        package = "CRISPRseek"), overlap.allpos = TRUE)
 
     gRNAs  <- gRNAs.RE$gRNAs.withRE
     restriction.enzyme.cut.sites <- gRNAs.RE$gRNAREcutDetails

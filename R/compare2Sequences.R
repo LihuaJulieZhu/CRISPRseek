@@ -329,9 +329,9 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	}
 	else
 	{
-		write.table(seqs[order(as.numeric(seqs[,13]), decreasing = TRUE), ], 
-			file = "scoresFor2InputSequences.xls",
-			sep = "\t", row.names = FALSE, col.names=TRUE)
+write.table(seqs[order(as.numeric(seqs[,dim(seqs)[2]]), decreasing = TRUE), ], 
+	file = "scoresFor2InputSequences.xls",
+		sep = "\t", row.names = FALSE, col.names=TRUE)
 	}
 	print("Done!")
 	setwd(originalDir)

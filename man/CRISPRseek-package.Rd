@@ -45,6 +45,7 @@ Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran, Silvana Konermann,
 Vineeta Agarwala, Yinqing Li, Eli J Fine, Xuebing Wu, Ophir Shalem, Thomas J 
 Cradick, Luciano A Marraffini, Gang Bao & Feng Zhang. DNA targeting specificity 
 of rNA-guided Cas9 nucleases.  Nat Biotechnol. 2013. 31:827-834
+Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
 }
 \keyword{ package }
 \seealso{

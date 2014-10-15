@@ -35,7 +35,7 @@ buildFeatureVectorForScoring <-
     }))
     features <- cbind(mismatch.distance2PAM, alignment, isCanonical.PAM,
         mean.neighbor.distance.mismatch)
-    colnames(features) <- c("mismatche.distance2PAM", "alignment", "NGG", 
+    colnames(features) <- c("mismatch.distance2PAM", "alignment", "NGG", 
         "mean.neighbor.distance.mismatch")
     cbind(hits, features)
 }
