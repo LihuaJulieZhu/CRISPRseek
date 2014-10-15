@@ -1,0 +1,16 @@
+citHeader("Please cite the paper below for the CRISPRseek package.")
+
+citEntry(entry="Article",
+	title="CRISPRseek: A Bioconductor Package to Identify Target-Specific Guide RNAs for CRISPR-Cas9 Genome-Editing Systems",
+	author="Zhu, Lihua Julie, Benjamin R. Holmes, Neil Aronin,and Michael H. Brodsky",
+	journal="PLoS one",
+	volume=9
+	year=2014,
+	number=9,
+	pages=e108424,
+	url="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4172692/"
+	DOI:10.1371/journal.pone.0108424,
+	PubMedID=" PMC4172692",
+	abstract="CRISPR-Cas systems are a diverse family of RNA-protein complexes in bacteria that target foreign DNA sequences for cleavage. Derivatives of these complexes have been engineered to cleave specific target sequences depending on the sequence of a CRISPR-derived guide RNA (gRNA) and the source of the Cas9 protein. Important considerations for the design of gRNAs are to maximize aimed activity at the desired target site while minimizing off-target cleavage. Because of the rapid advances in the understanding of existing CRISPR-Cas9-derived RNA-guided nucleases and the development of novel RNA-guided nuclease systems, it is critical to have computational tools that can accommodate a wide range of different parameters for the design of target-specific RNA-guided nuclease systems. We have developed CRISPRseek, a highly flexible, open source software package to identify gRNAs that target a given input sequence while minimizing off-target cleavage at other sites within any selected genome. CRISPRseek will identify potential gRNAs that target a sequence of interest for CRISPR-Cas9 systems from different bacterial species and generate a cleavage score for potential off-target sequences utilizing published or user-supplied weight matrices with position-specific mismatch penalty scores. Identified gRNAs may be further filtered to only include those that occur in paired orientations for increased specificity and/or those that overlap restriction enzyme sites. For applications where gRNAs are desired to discriminate between two related sequences, CRISPRseek can rank gRNAs based on the difference between predicted cleavage scores in each input sequence. CRISPRseek is implemented as a Bioconductor package within the R statistical programming environment, allowing it to be incorporated into computational pipelines to automate the design of gRNAs for target sequences identified in a wide variety of genome-wide analyses. CRISPRseek is available under the GNU General Public Licence v3.0 at http://www.bioconductor.org.",
+	textVersion="Zhu LJ, Holmes BR, Aronin N, Brodsky MH (2014) CRISPRseek: A Bioconductor Package to Identify Target-Specific Guide RNAs for CRISPR-Cas9 Genome-Editing Systems. PLoS ONE 9(9): e108424. doi:10.1371/journal.pone.0108424"
+)
