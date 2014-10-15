@@ -7,15 +7,15 @@ inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
 gRNAFilePath <- system.file("extdata", "testHsap_GATA1_ex2_gRNA1.fa",
      package = "CRISPRseek")
-outputPairedSearchRE <- "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/pairedSearch/withRE"
+outputPairedSearchRE <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/pairedSearch/withRE"
 	
-outputPairedSearchNoRE <- "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/pairedSearch/withoutRE"
+outputPairedSearchNoRE <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/pairedSearch/withoutRE"
    
-outputUnPairedSearchRE <- "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/unPairedSearch/withRE"
+outputUnPairedSearchRE <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/unPairedSearch/withRE"
   
-outputUnPairedSearchNoRE <- "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/unPairedSearch/withoutRE"
+outputUnPairedSearchNoRE <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/unPairedSearch/withoutRE"
 
-outputgRNAProvided <- "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/gRNAProvidedSearch"
+outputgRNAProvided <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/gRNAProvidedSearch"
 
 offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
         findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
@@ -28,7 +28,7 @@ library("BSgenome.Dmelanogaster.UCSC.dm3")
 library("TxDb.Dmelanogaster.UCSC.dm3.ensGene")
 library("org.Dm.eg.db")
 gRNAFilePath <- system.file("extdata", "tobi2.fa", package = "CRISPRseek")
-outputNoOffTarget <- "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/gRNAProvidedSearchNOoffTarget"
+outputNoOffTarget <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/gRNAProvidedSearchNOoffTarget"
 cat("Creating output for findgRNAs = FALSE and no off target found...\n")
 offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
 	findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
@@ -74,20 +74,20 @@ library(TxDb.Mmusculus.UCSC.mm10.knownGene)
 library(org.Mm.eg.db)
 inputFilePath = system.file("extdata", "RIPK1stop.fa", package = "CRISPRseek")
 #inputFilePath = "~/CRISPRseekDemo/RIPK1stop.fa"
-outputDir = "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/testMouse/WithorgAnn"
+outputDir = "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/testMouse/WithorgAnn"
 offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
 BSgenomeName = Mmusculus, annotateExon=TRUE, outputDir = outputDir, 
 overwrite = TRUE, max.mismatch=1, txdb = TxDb.Mmusculus.UCSC.mm10.knownGene,
 orgAnn = org.Mm.egSYMBOL)
 
-outputDir = "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/testMouse/NOorgAnn"
+outputDir = "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/testMouse/NOorgAnn"
 offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE, 
 BSgenomeName = Mmusculus, annotateExon=TRUE, outputDir = outputDir, 
 overwrite = TRUE, max.mismatch=1, txdb = TxDb.Mmusculus.UCSC.mm10.knownGene)
 
-outputDir = "~/Dev/Bioconductor/Truck/CRISPRseek/inst/extdata/testMouse/NOTannotateExon"
+outputDir = "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/testMouse/NOTannotateExon"
 offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE, 
 BSgenomeName = Mmusculus, annotateExon=FALSE, outputDir = outputDir, 
