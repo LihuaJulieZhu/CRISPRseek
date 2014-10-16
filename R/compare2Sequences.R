@@ -75,7 +75,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     }
     else
     {
-		subjects1 <- inputFile1Path
+	subjects1 <- inputFile1Path
     }
    if (class(inputFile2Path) != "DNAStringSet")
    {
@@ -88,14 +88,14 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
    }
     outfile <- tempfile(tmpdir = getwd())
     max.mismatch <- max.mismatch + PAM.size -1
-	seqname <- names(subjects2)
+    seqname <- names(subjects2)
     seqname <- gsub("'", "", seqname)
     seqname <- gsub(" ", "", seqname)
     seqname <- gsub("\t", ":", seqname)
-	names(subjects2) <- seqname
+    names(subjects2) <- seqname
 #revsubject <- reverseComplement(subjects2[[1]])
-	revsubject <- reverseComplement(subjects2)
-	chrom.len = nchar(as.character(subjects2))
+    revsubject <- reverseComplement(subjects2)
+    chrom.len <- nchar(as.character(subjects2))
     if(searchDirection == "both" || searchDirection == "1to2")
 	{
     for (i in 1:length(gRNAs1))
@@ -326,19 +326,34 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		seqs.new <- rbind(seqs.new, seqs2.only)
 	}
 	}
-	seqs = unique(cbind(seqs.new, 
-        scoreDiff = round(as.numeric(seqs.new[,7]) - as.numeric(seqs.new[,8]),4)))
+	seqs <- as.data.frame(unique(cbind(seqs.new, gRNAefficacy = 0, 
+            scoreDiff = round(as.numeric(seqs.new[,7]) - as.numeric(seqs.new[,8]),4))))
+        if (substr(outputDir1, nchar(outputDir1), nchar(outputDir1)) != .Platform$file.sep)
+    	{
+       	    outputDir1 <- paste(outputDir1, "", sep = .Platform$file.sep)
+    	}
+	if (substr(outputDir2, nchar(outputDir2), nchar(outputDir2)) != .Platform$file.sep)
+        {
+            outputDir2 <- paste(outputDir2, "", sep = .Platform$file.sep)
+        }
+	eff1File <- paste(outputDir1, "gRNAefficacy.xls", sep = "")
+        eff2File <- paste(outputDir2, "gRNAefficacy.xls", sep = "")
+	gRNAeff1 <- read.table(eff1File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
+        gRNAeff2 <- read.table(eff2File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
+	gRNAeff <- rbind(gRNAeff1, gRNAeff2)
+        m <- match(seqs$name, gRNAeff$name)
+        seqs$gRNAefficacy <- gRNAeff$gRNAefficacy[m]
 	originalDir <- getwd()
 	setwd(outputDir)
 	if (dim(seqs)[1] ==1)
 	{
 		write.table(seqs, file = "scoresFor2InputSequences.xls",
-				sep = "\t", row.names = FALSE, col.names=TRUE)
+			sep = "\t", row.names = FALSE, col.names=TRUE)
 	}
 	else
 	{
-write.table(seqs[order(as.numeric(seqs[,dim(seqs)[2]]), decreasing = TRUE), ], 
-	file = "scoresFor2InputSequences.xls",
+             write.table(seqs[order(as.numeric(seqs[,dim(seqs)[2]]), decreasing = TRUE), ], 
+	        file = "scoresFor2InputSequences.xls",
 		sep = "\t", row.names = FALSE, col.names=TRUE)
 	}
 	print("Done!")
