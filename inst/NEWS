@@ -41,3 +41,8 @@ CHANGES IN VERSION 1.5.3
 ------------------------
 NEW FEATURE
      o gRNA efficacy is calcualted for compare2Sequence function and for offTargetAnalysis with chromToSearch="" 
+
+CHANGES IN VERSION 1.5.4
+------------------------
+NEW FEATURE
+     o rename the gRNAs containing Cas9 cut site instead of gRNA start end end. Also output the cut sites in genbank file 

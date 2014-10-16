@@ -98,8 +98,8 @@ offTargetAnalysis <-
         		thisLocus <- gsub(" ", "", thisLocus)
 			thisSeq <- tolower(as.character(subjects[[i]]))
 			n.bp <- nchar(thisSeq)
-			temp <- strsplit(names.gRNA, split=paste("_", 
-	         		thisLocus,"Start",sep=""))
+			temp <- strsplit(names.gRNA, split=paste(
+	         		thisLocus,"_gR",sep=""))
 			locus <- paste("LOCUS       ", thisLocus,
                                         "                     ", n.bp,
 					" bp    dna     linear   UNK", sep="")
@@ -119,21 +119,44 @@ offTargetAnalysis <-
 					      paste(thisLocus, "gbk", sep="."))
                             		    write(header, thisFile)
 					}
-					feature <- temp[[j]][1]
-					location <- strsplit(temp[[j]][2], split="End")
-                        		Start <- min(as.numeric(location[[1]]))
-					End <- max(as.numeric(location[[1]]))
-					if (Start == as.numeric(location[[1]])[2])
-					    write(paste("     misc_bind       complement(", 
-						    (Start + PAM.size), "..", End, ")", sep = ""), 
-						    append = TRUE, sep="\n", file = thisFile)
-					else	
+					if  (length(grep("f", temp[[j]])) >0)
+					{
+						temp1 <-strsplit(temp[[j]], "f")
+						isForward <- TRUE
+					}
+					else
+					{
+						temp1 <-strsplit(temp[[j]], "r")
+						isForward <- FALSE
+					}
+					feature <- temp1[[2]][2]
+					feature[is.na(feature)] <- ""
+					location <- temp1[[2]][1] 
+					if (isForward)
+					{
+				       	    Start <- location
+					    End <- as.numeric(Start) + max(overlap.gRNA.positions) - 
+						min(overlap.gRNA.positions)
 					    write(paste("     misc_bind       ", Start, "..",
-						(End - PAM.size), sep = ""), append = TRUE, sep="\n",
-                                		file = thisFile)
-					write(paste("                     /note=\"", feature, 
+                                                End, sep = ""), append = TRUE, sep="\n",
+                                                file = thisFile)
+					     write(paste("                     /note=\"gRNAf",
+						as.character(feature),
+                                                "\"", sep = ""), append = TRUE, sep="\n", file = thisFile)
+					}	
+					else
+					{
+                                            End <- location
+                                            Start <- as.numeric(End) - max(overlap.gRNA.positions) + 
+						min(overlap.gRNA.positions)
+					    write(paste("     misc_bind       complement(", 
+						    Start, "..", End, ")", sep = ""), 
+						    append = TRUE, sep="\n", file = thisFile)
+					    write(paste("                     /note=\"gRNAr",
+						feature, 
                             			"\"", sep = ""), append = TRUE, sep="\n", file = thisFile)
 					}
+				}
 			}
 			if (found.gRNA > 0){
 			    write("ORIGIN", append = TRUE, sep="\n", file = thisFile)
@@ -294,6 +317,7 @@ offTargetAnalysis <-
                 summary$names[i]),]$ForwardgRNAName),
                 collapse = " ")))
         }))
+	#cat(PairedgRNAName)
     }
     cat("Add RE information...\n")
     if (findPairedgRNAOnly && findgRNAs)

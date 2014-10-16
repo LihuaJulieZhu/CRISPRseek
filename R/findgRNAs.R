@@ -1,7 +1,8 @@
 findgRNAs <-
     function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
         findPairedgRNAOnly = FALSE, gRNA.pattern = "", gRNA.size = 20, 
-        min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "gRNA",
+	overlap.gRNA.positions = c(17,18),
+        min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
 	featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
 	baseAfterPAM = 3,
@@ -11,6 +12,7 @@ findgRNAs <-
         stop("inputFilePath containing the searching sequence 
 	   or a DNAStringSet object is required!")
     }
+    cut.site <- min(overlap.gRNA.positions)
     if (class(inputFilePath) != "DNAStringSet")
     {
     	if (! file.exists(inputFilePath)) {
@@ -63,8 +65,8 @@ findgRNAs <-
             if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
 		(gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
 		ignore.case = TRUE)[[1]] > 0))
-                c(seq, paste(subjectname,"Start",i,"End", 
-                    (i + gRNA.size + PAM.size-1), sep = ""),i,"+", extendedSequence)
+                c(seq, paste(subjectname,"_gR",(i + cut.site - 1), 
+                    "f", sep = ""), i,"+", extendedSequence)
         }))
         minus.gRNAs <- do.call(rbind, lapply(1:x, function(i){
             seq <- subseq(as.character(revsubject), i, 
@@ -81,8 +83,9 @@ findgRNAs <-
             if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
 		(gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
 	     	    ignore.case = TRUE)[[1]] > 0))
-                c(seq, paste( subjectname,"Start", (seq.len - i + 1), "End", 
-                    (seq.len - i + 1 - gRNA.size - PAM.size + 1), sep = ""),
+                c(seq, paste( subjectname,"_gR", 
+		    (seq.len - i + 1 - cut.site + 1), 
+                    "r", sep = ""),
                     (seq.len - i + 1), "-", extendedSequence)			
         }))
         plus.index <- numeric()
@@ -132,17 +135,18 @@ findgRNAs <-
                             {
                                 if (!k %in% minus.index)
                                 {
-                                    reverse.index <- reverse.index + 1
-                                    minus.gRNAs[k,2] <- paste(name.prefix, "r", 
-                                        reverse.index, "_", minus.gRNAs[k, 2], 
-                                        sep = "")
+                                    #reverse.index <- reverse.index + 1
+                                    #minus.gRNAs[k,2] <- paste(name.prefix, 
+                                    #    minus.gRNAs[k, 2], reverse.index, 
+                                    #    sep = "")
                                 }
                                 if (!j %in% plus.index)
                                 {
-                                    forward.index <- forward.index + 1
-                                    pos.gRNAs[j,2] <- paste(name.prefix,"f",
-                                        forward.index, "_", pos.gRNAs[j, 2], 
-                                        sep = "")
+                                    #forward.index <- forward.index + 1
+                                    #pos.gRNAs[j,2] <- paste(name.prefix,
+                                    #    pos.gRNAs[j, 2], 
+				#	forward.index,
+                                #        sep = "")
                                 }
                             }
                             plus.index <- c(plus.index, j)
@@ -172,10 +176,10 @@ findgRNAs <-
                     }
                     else
                     {
-                        paired[, 2] <- paste(name.prefix, "r", minus.index, "_", 
-                            paired[, 2], sep = "")
-                        paired[, 4] <- paste(name.prefix, "f", plus.index, "_", 
-                            paired[, 4], sep = "")
+                        #paired[, 2] <- paste(name.prefix, paired[,2],  minus.index, 
+                        #    sep = "")
+                        #paired[, 4] <- paste(name.prefix,  paired[,4], plus.index, 
+                        #    sep = "")
                     }
                     if (dim(paired)[1] == 1)
                         write.table(paired, file = pairOutputFile, sep = "\t", 
@@ -199,21 +203,21 @@ findgRNAs <-
                 if (length(all.gRNAs) == 0)
                     warning(paste("No gRNAs found in the input sequence", 
                         subjectname))	
-                if (n.plus.gRNAs == 0 && n.minus.gRNAs >0 )
-                    names(all.gRNAs) <- paste(name.prefix,
-                        c(rep("r", dim(minus.gRNAs)[1])),
-                        c(1:dim(minus.gRNAs)[1]), "_", 
-                        c(minus.gRNAs[,2]), sep = "")
-                if (n.minus.gRNAs == 0 && n.plus.gRNAs > 0)
-                    names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
-                        dim(pos.gRNAs)[1])),
-                        c(1:dim(pos.gRNAs)[1]), 
-                        c(pos.gRNAs[,2]), sep = "")
-                if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
-                    names(all.gRNAs) <- paste(name.prefix,c(rep("f", 
-                        dim(pos.gRNAs)[1]), rep("r", dim(minus.gRNAs)[1])),
-                        c(1:dim(pos.gRNAs)[1], 1:dim(minus.gRNAs)[1]), "_", 
-                        c(pos.gRNAs[,2], minus.gRNAs[,2]), sep = "")
+                #if (n.plus.gRNAs == 0 && n.minus.gRNAs >0 )
+                    #names(all.gRNAs) <- paste(name.prefix,
+		#	c(minus.gRNAs[,2]),
+                #        c(1:dim(minus.gRNAs)[1]),
+                #        sep = "")
+                #if (n.minus.gRNAs == 0 && n.plus.gRNAs > 0)
+                #    names(all.gRNAs) <- paste(name.prefix, 
+		#	c(pos.gRNAs[,2]),
+                #        c(1:dim(pos.gRNAs)[1]), 
+                #        sep = "")
+                #if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
+                #    names(all.gRNAs) <- paste(name.prefix, 
+		#	c(pos.gRNAs[,2], minus.gRNAs[,2]),
+                #        c(1:dim(pos.gRNAs)[1], 1:dim(minus.gRNAs)[1]),
+                #        sep = "")
             }
 	 } ### no paired found and findPairedOnly   
 	 forEffi <- rbind(pos.gRNAs, minus.gRNAs)
