@@ -11,7 +11,9 @@
 \usage{
 findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
     findPairedgRNAOnly = FALSE, gRNA.pattern = "", gRNA.size = 20, min.gap = 0, max.gap = 20,
-    pairOutputFile, name.prefix = "gRNA")
+    pairOutputFile, name.prefix = "gRNA", featureWeightMatrixFile = system.file("extdata", 
+        "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
+        baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,6 +58,21 @@ The output file for writing paired gRNA information to
   \item{name.prefix}{
 The prefix used when assign name to found gRNAs, default gRNA, short for
 guided RNA.
+}
+ \item{baseBeforegRNA}{
+Number of bases before gRNA used for calculating gRNA efficiency, default 4
+}
+\item{baseAfterPAM}{
+Number of bases after PAM used for calculating gRNA efficiency, default 3
+}
+\item{featureWeightMatrixFile}{
+Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
+}
+\item{calculategRNAEfficacy}{
+Default to FALSE, not to calculate gRNA efficacy
+}
+\item{efficacyFile}{
+File path to write gRNA efficacies
 }
 }
 \details{

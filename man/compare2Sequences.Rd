@@ -20,7 +20,9 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     outputDir, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
-    overwrite = FALSE)
+    overwrite = FALSE, baseBeforegRNA = 4, 
+    baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
+       "DoenchNBT2014.csv", package = "CRISPRseek"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -102,6 +104,15 @@ section
 }
   \item{overwrite}{
 overwrite the existing files in the output directory or not, default TRUE 
+}
+\item{baseBeforegRNA}{
+Number of bases before gRNA used for calculating gRNA efficiency, default 4
+}
+\item{baseAfterPAM}{
+Number of bases after PAM used for calculating gRNA efficiency, default 3
+}
+\item{featureWeightMatrixFile}{
+Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
 }
 }
 \details{

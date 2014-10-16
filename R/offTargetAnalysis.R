@@ -57,7 +57,20 @@ offTargetAnalysis <-
     if (findgRNAs)
     {
         cat("Searching for gRNAs ...\n")
-	potential.gRNAs <- findgRNAs(inputFilePath, 
+	efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
+	if (chromToSearch == "")
+          potential.gRNAs <- findgRNAs(inputFilePath,
+            findPairedgRNAOnly = findPairedgRNAOnly,
+            pairOutputFile = pairOutputFile, PAM = PAM,
+            gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
+            gRNA.size = gRNA.size, min.gap = min.gap,
+            max.gap = max.gap, name.prefix = gRNA.name.prefix,
+            format = format, featureWeightMatrixFile = featureWeightMatrixFile, 
+            baseBeforegRNA = baseBeforegRNA, 
+	    baseAfterPAM = baseAfterPAM , 
+    	    calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile)
+       else	
+	 potential.gRNAs <- findgRNAs(inputFilePath, 
             findPairedgRNAOnly = findPairedgRNAOnly,
             pairOutputFile = pairOutputFile, PAM = PAM,
 	    gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
@@ -346,9 +359,9 @@ offTargetAnalysis <-
 	write.table("track name=\"gRNA sites\" description=\"CRISPRseek\" visibility=2 useScore=1 itemRgb=\"On\"", file=bedFile, col.names=FALSE, row.names=FALSE, quote = FALSE)
 	write.table(gRNA.bed, file=bedFile, sep=" ", row.names=FALSE, col.names=FALSE, append=TRUE, quote = FALSE)
 	on.target <- unique(cbind(as.character(on.target$name),
-						as.character(on.target$forViewInUCSC),
-						as.character(on.target$extendedSequence), 
-						on.target$gRNAefficiency
+			as.character(on.target$forViewInUCSC),
+			as.character(on.target$extendedSequence), 
+			on.target$gRNAefficiency
                         )) 
 	colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", "gRNAefficiency")
 	summary <- unique(merge(on.target, summary, by="names", all.y=TRUE))
@@ -357,5 +370,5 @@ offTargetAnalysis <-
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(summary=summary, offtarget=offTargets$offtargets, gRNAs=gRNA.bed)
+    list(summary=summary, offtarget=offTargets$offtargets, gRNAs.bedFormat=gRNA.bed)
 }

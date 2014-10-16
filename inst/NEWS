@@ -31,3 +31,13 @@ CHANGES IN VERSION 1.5.1
 ------------------------
 NEW FEATURE
      o annotateOfftargets is separated from filterOfftarget function and is faster as well
+
+CHANGES IN VERSION 1.5.2
+------------------------
+NEW FEATURE
+     o filter gRNAs with one or both cut site overlap with RE pattern 
+
+CHANGES IN VERSION 1.5.3
+------------------------
+NEW FEATURE
+     o gRNA efficacy is calcualted for compare2Sequence function and for offTargetAnalysis with chromToSearch="" 
