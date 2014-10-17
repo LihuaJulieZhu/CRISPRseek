@@ -10,8 +10,9 @@
 }
 \usage{
 findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
-    findPairedgRNAOnly = FALSE, gRNA.pattern = "", gRNA.size = 20, min.gap = 0, max.gap = 20,
-    pairOutputFile, name.prefix = "gRNA", featureWeightMatrixFile = system.file("extdata", 
+    findPairedgRNAOnly = FALSE, gRNA.pattern = "", gRNA.size = 20, 
+    overlap.gRNA.positions = c(17,18), min.gap = 0, max.gap = 20,
+    pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
         baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile)
 }
@@ -43,6 +44,10 @@ a list of IUPAC Extended Genetic Alphabet.
 }
   \item{gRNA.size}{
 The size of the gRNA, default 20
+}
+\item{overlap.gRNA.positions}{
+The required overlap positions of gRNA and restriction enzyme cut site, 
+default 17 and 18
 }
   \item{min.gap}{
 Minimum distance between two oppositely oriented gRNAs to be valid paired 
