@@ -2,7 +2,7 @@ citHeader("Please cite the paper below for the CRISPRseek package.")
 
 citEntry(entry="Article",
 	title="CRISPRseek: A Bioconductor Package to Identify Target-Specific Guide RNAs for CRISPR-Cas9 Genome-Editing Systems",
-	author="Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin,and Michael H. Brodsky",
+	author="Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin, Michael H. Brodsky",
 	journal="PLoS one",
 	volume=9,
 	year=2014,
