@@ -18,7 +18,7 @@ offTargetAnalysis <-
 	baseBeforegRNA = 4, baseAfterPAM = 3,
 	featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 		package = "CRISPRseek"),
-	useScore = TRUE,
+	useScore = TRUE, useEfficacyFromInputSeq = FALSE,
         overwrite = FALSE)
 {
     cat("Validating input ...\n")
@@ -58,7 +58,7 @@ offTargetAnalysis <-
     {
         cat("Searching for gRNAs ...\n")
 	efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
-	if (chromToSearch == "")
+	if (chromToSearch == "" || useEfficacyFromInputSeq)
           potential.gRNAs <- findgRNAs(inputFilePath,
             findPairedgRNAOnly = findPairedgRNAOnly,
             pairOutputFile = pairOutputFile, PAM = PAM,
@@ -284,7 +284,7 @@ offTargetAnalysis <-
         canonical.PAM = PAM, gRNA.size = gRNA.size)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
-    write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
+    #write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
@@ -360,7 +360,7 @@ offTargetAnalysis <-
 	on.target <- unique(subset(on.target, on.target$n.mismatch == 0 & on.target$NGG == 1))
 	gRNA.bed <- unique(cbind(as.character(on.target$chrom),as.character(on.target$chromStart),
 		as.character(on.target$chromEnd), as.character(on.target$name), 
-		on.target$gRNAefficiency * 1000, 
+		on.target$gRNAefficacy * 1000, 
 		as.character(on.target$strand), 
 		as.character(on.target$chromStart), 
 		as.character(on.target$chromEnd)))
@@ -385,14 +385,24 @@ offTargetAnalysis <-
 	on.target <- unique(cbind(as.character(on.target$name),
 			as.character(on.target$forViewInUCSC),
 			as.character(on.target$extendedSequence), 
-			on.target$gRNAefficiency
+			on.target$gRNAefficacy
                         )) 
-	colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", "gRNAefficiency")
+	colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", "gRNAefficacy")
+	if (useEfficacyFromInputSeq)
+	{
+		on.target <- as.data.frame(on.target[,1:2])
+		inputEfficacy <- read.table(efficacyFile, sep="\t", header = TRUE, 
+			stringsAsFactors=FALSE)
+		inputEfficacy <- as.data.frame(cbind(name = inputEfficacy$name,
+		        extendedSequence = inputEfficacy$extendedSequence,
+			gRNAefficacy = inputEfficacy$gRNAefficacy))
+		on.target <- merge(on.target, inputEfficacy, by.x="names", by.y ="name")
+	}
 	summary <- unique(merge(on.target, summary, by="names", all.y=TRUE))
 	
     write.table(summary[order(as.character(summary$names)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(summary=summary, offtarget=offTargets$offtargets, gRNAs.bedFormat=gRNA.bed)
+    list(summary=summary, offtarget = offTargets$offtargets, gRNAs.bedFormat=gRNA.bed)
 }

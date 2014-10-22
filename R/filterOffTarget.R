@@ -147,7 +147,7 @@ filterOffTarget <-
 	gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
 		baseBeforegRNA = baseBeforegRNA,
 		featureWeightMatrix = featureWeightMatrix)
-	Offtargets <- cbind(Offtargets, gRNAefficiency = gRNAefficiency)
+	Offtargets <- cbind(Offtargets, gRNAefficacy = gRNAefficiency)
     if (fetchSequence)
     {
         Start <- as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream)
@@ -181,5 +181,5 @@ filterOffTarget <-
         -as.numeric(as.character(Offtargets$score)), 
         as.character(Offtargets$OffTargetSequence)),], 
         file = OfftargetFile, sep = "\t", row.names = FALSE)
-    list(offtargets = Offtargets,summary = temp)
+    list(offtargets = unique(Offtargets), summary = temp)
 }

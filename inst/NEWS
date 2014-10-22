@@ -46,3 +46,8 @@ CHANGES IN VERSION 1.5.4
 ------------------------
 NEW FEATURE
      o rename the gRNAs containing Cas9 cut site instead of gRNA start end end. Also output the cut sites in genbank file 
+
+CHANGES IN VERSION 1.5.5
+------------------------
+NEW FEATURE
+     o added useEfficacyFromInputSeq parameter in offTargetAnalysis function to allow user to select whether to use the gRNA efficacy calculated from the input sequence or the one from off-target analysis. This is useful when the input sequence is from a genome that is different from the off-target analysis genome 

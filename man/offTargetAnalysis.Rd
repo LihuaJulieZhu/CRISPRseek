@@ -26,7 +26,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
-	package = "CRISPRseek"), useScore = TRUE,
+	package = "CRISPRseek"), useScore = TRUE, useEfficacyFromInputSeq = FALSE,
     overwrite = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -172,6 +172,9 @@ Feature weight matrix file used for calculating gRNA efficiency. By default Doen
 }
 \item{useScore}{
 	Default TRUE, display in gray scale with the darkness indicating the gRNA efficacy. The taller bar shows the Cas9 cutting site. If set to False, efficacy will not show. Instead, gRNAs in plus strand will be colored red and gRNAs in negative strand will be colored green. 
+}
+\item{useEfficacyFromInputSeq}{
+Default FALSE. If set to TRUE, summary file will contain gRNA efficacy calculated from input sequences instead of from off-target analysis. Set it to TRUE if the input sequence is from a different species than the one used for off-target analysis.
 }
 \item{overwrite}{
 	overwrite the existing files in the output directory or not, default FALSE
