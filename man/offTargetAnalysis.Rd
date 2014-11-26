@@ -14,7 +14,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     exportAllgRNAs = c("all", "fasta", "genbank", "no"),
     findgRNAsWithREcutOnly = TRUE, 
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
-        package = "CRISPRseek"), minREpatternSize = 6, 
+        package = "CRISPRseek"), minREpatternSize = 4, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
@@ -59,7 +59,7 @@ File path containing restriction enzyme cut patterns
 }
   \item{minREpatternSize}{
 Minimum restriction enzyme recognition pattern length required for the enzyme 
-pattern to be searched for, default 6
+pattern to be searched for, default 4
 }
   \item{overlap.gRNA.positions}{
 The required overlap positions of gRNA and restriction enzyme cut site, 

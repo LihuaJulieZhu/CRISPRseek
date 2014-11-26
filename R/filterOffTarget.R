@@ -148,33 +148,33 @@ filterOffTarget <-
 		baseBeforegRNA = baseBeforegRNA,
 		featureWeightMatrix = featureWeightMatrix)
 	Offtargets <- cbind(Offtargets, gRNAefficacy = gRNAefficiency)
-    if (fetchSequence)
-    {
-        Start <- as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream)
-        End <- as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(downstream)
+	if (fetchSequence)
+	{
+		Start <- as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream)
+        End <- as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(downstream)	
         strand <- as.character(Offtargets$strand)		
         chr <- as.character(Offtargets$chrom)
         for (i in 1:length(Start))		
-        {
-            thisChr <-chr[i]
-            thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
-            thisStart <- max(1, Start[i])
-            thisStrand <- as.character(strand[i])
-            if (i == 1)
-            {
-                seq <- getSeq(BSgenomeName, thisChr, start = thisStart, 
-                    end = thisEnd, strand = thisStrand, width = NA, 
-                    as.character = TRUE)
-            }
-            else
-            {
-                seq <- c(seq, getSeq(BSgenomeName, thisChr, start = thisStart, 
-                    end = thisEnd, strand = thisStrand, width = NA, 
-                    as.character = TRUE))
-            }
-        }
-        Offtargets <- cbind(Offtargets, flankSequence = seq)
-    }
+	   {
+		   thisChr <-chr[i]
+		   thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
+		   thisStart <- max(1, Start[i])
+		   thisStrand <- as.character(strand[i])
+		   if (i == 1)
+		   {
+			   seq <- getSeq(BSgenomeName, thisChr, start = thisStart, 
+				  end = thisEnd, strand = thisStrand, width = NA, 
+				  as.character = TRUE)
+		   }
+		   else
+		   {
+			  seq <- c(seq, getSeq(BSgenomeName, thisChr, start = thisStart, 
+				  end = thisEnd, strand = thisStrand, width = NA, 
+				  as.character = TRUE))
+		   }
+	   }
+	   Offtargets <- cbind(Offtargets, flankSequence = seq)
+	}
 	
     write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
     write.table(Offtargets[order(as.character(Offtargets$name), 

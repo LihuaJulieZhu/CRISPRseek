@@ -12,7 +12,7 @@ filtergRNAs(all.gRNAs, pairOutputFile = "",
     findgRNAsWithREcutOnly = FALSE,
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
         package = "CRISPRseek"), format = "fasta", 
-    minREpatternSize = 6, overlap.gRNA.positions = c(17, 18),overlap.allpos = TRUE)
+    minREpatternSize = 4, overlap.gRNA.positions = c(17, 18),overlap.allpos = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,7 @@ Format of the REpatternFile, default as fasta
 }
   \item{minREpatternSize}{
 Minimum restriction enzyme recognition pattern length required for the 
-enzyme pattern to be searched for, default 6
+enzyme pattern to be searched for, default 4
 }
   \item{overlap.gRNA.positions}{
 The required overlap positions of gRNA and restriction enzyme cut site, 

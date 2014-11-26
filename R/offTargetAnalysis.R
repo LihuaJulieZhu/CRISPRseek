@@ -4,7 +4,7 @@ offTargetAnalysis <-
         findgRNAsWithREcutOnly = TRUE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa", 
             package = "CRISPRseek"), 
-	minREpatternSize = 6,
+	minREpatternSize = 4,
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "",
 	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
@@ -399,10 +399,22 @@ offTargetAnalysis <-
 		on.target <- merge(on.target, inputEfficacy, by.x="names", by.y ="name")
 	}
 	summary <- unique(merge(on.target, summary, by="names", all.y=TRUE))
-	
+	if (!missing(BSgenomeName) && class(BSgenomeName) == "BSgenome")
+	{
+	    REs.isUnique100 <- uniqueREs(REcutDetails = REcutDetails, 
+		   summary = summary, offTargets$offtargets, scanUpstream = 100,
+		   scanDownstream =100, BSgenomeName = BSgenomeName)
+	    REs.isUnique50 <- uniqueREs(REcutDetails = REcutDetails, 
+		   summary = summary, offTargets$offtargets, scanUpstream = 50,
+		   scanDownstream = 50, BSgenomeName = BSgenomeName)
+	    summary <- cbind(summary, uniqueREsfor200total = REs.isUnique100, 
+		uniqueREsfor100total = REs.isUnique50)
+	}
     write.table(summary[order(as.character(summary$names)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(summary=summary, offtarget = offTargets$offtargets, gRNAs.bedFormat=gRNA.bed)
+    list(summary=summary, offtarget = offTargets$offtargets, 
+		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
+		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
 }

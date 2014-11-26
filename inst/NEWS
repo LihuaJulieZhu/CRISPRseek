@@ -51,3 +51,9 @@ CHANGES IN VERSION 1.5.5
 ------------------------
 NEW FEATURE
      o added useEfficacyFromInputSeq parameter in offTargetAnalysis function to allow user to select whether to use the gRNA efficacy calculated from the input sequence or the one from off-target analysis. This is useful when the input sequence is from a genome that is different from the off-target analysis genome 
+
+CHANGES IN VERSION 1.5.6
+------------------------
+NEW FEATURE
+     o added uniqueREsfor200total and uniqueREsfor100total in summary file to output RE sites that is unique in the 200 and 100 bp flanking gRNA region
+

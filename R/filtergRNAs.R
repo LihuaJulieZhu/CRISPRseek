@@ -3,7 +3,7 @@ filtergRNAs <-
         findgRNAsWithREcutOnly = FALSE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa",
             package = "CRISPRseek"), format = "fasta",
-        minREpatternSize = 6, overlap.gRNA.positions = c(17, 18),
+        minREpatternSize = 4, overlap.gRNA.positions = c(17, 18),
 		overlap.allpos = TRUE)
 {
 	if (length(all.gRNAs) == 0)
