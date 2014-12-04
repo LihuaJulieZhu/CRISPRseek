@@ -60,5 +60,5 @@ getOfftargetScore <-
     score$alignment <- as.character(score$alignment)
     score$score <- round(score$score, 1)
     score  <- score[order(c(score$name,score$score),decreasing = TRUE), ]
-    score[!is.na(score$score), ]
+    unique(score[!is.na(score$score), ])
 }

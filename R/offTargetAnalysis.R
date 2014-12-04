@@ -344,11 +344,23 @@ offTargetAnalysis <-
         summary <- cbind(summary, REname)
     }
 	seq <- as.character(summary$gRNAsPlusPAM)
-	cat("write to gRNAs to bed file...\n")
+	#n.C <- unlist(lapply(1:length(seq), function(i) {
+	#					 table(factor(s2c(substr(seq[i],1,gRNA.size)), levels=c("C")))
+	#					 }))
+	#n.G <- unlist(lapply(1:length(seq), function(i) {
+	#					 table(factor(s2c(substr(seq[i],1,gRNA.size)), levels=c("G")))
+	#					 }))
+	#summary <- cbind(summary,GC.percent.gRNA = (n.G+n.C)/gRNA.size * 100)
+	#numberOfT.last4Position.gRNA <- unlist(lapply(1:length(seq), function(i) {
+	#	 table(factor(s2c(substr(seq[i],gRNA.size-3,gRNA.size)), levels=c("T")))
+	#	 }))
+	#summary <- cbind(summary, numberOfT.last4Position.gRNA )
+	cat("write gRNAs to bed file...\n")
 	on.target <- offTargets$offtargets
-	on.target <- unique(subset(on.target, on.target$n.mismatch == 0 & on.target$NGG == 1))
+	on.target <- unique(subset(on.target, 
+	   as.character(on.target$gRNAPlusPAM) == as.character(on.target$OffTargetSequence)))
 	if (dim(on.target)[1] >0)
-	{
+        {
 	   gRNA.bed <- unique(cbind(as.character(on.target$chrom),as.character(on.target$chromStart),
 		as.character(on.target$chromEnd), as.character(on.target$name), 
 		on.target$gRNAefficacy * 1000, 
@@ -372,17 +384,15 @@ offTargetAnalysis <-
 	   gRNA.bed[gRNA.bed[,6] == "-", 8] <- as.numeric(gRNA.bed[gRNA.bed[,6] == "-", 3]) -
 		 min(overlap.gRNA.positions) + 1 
 	   write.table("track name=\"gRNA sites\" description=\"CRISPRseek\" visibility=2 useScore=1 itemRgb=\"On\"", file=bedFile, col.names=FALSE, row.names=FALSE, quote = FALSE)
-	   write.table(gRNA.bed, file=bedFile, sep=" ", row.names=FALSE, col.names=FALSE, append=TRUE, quote = FALSE)
-	   on.target <- unique(cbind(as.character(on.target$name),
+	  write.table(gRNA.bed, file=bedFile, sep=" ", row.names=FALSE, col.names=FALSE, append=TRUE, quote = FALSE)
+	  on.target <- unique(cbind(as.character(on.target$name),
 			as.character(on.target$forViewInUCSC),
 			as.character(on.target$extendedSequence), 
-			on.target$gRNAefficacy,
-			as.character(on.target$gRNAPlusPAM)
+			on.target$gRNAefficacy
                         )) 
-	   colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", 
-		"gRNAefficacy", "gRNAsPlusPAM")
-	   if (useEfficacyFromInputSeq)
-	   {
+	  colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", "gRNAefficacy")
+	  if (useEfficacyFromInputSeq)
+	  {
 		on.target <- as.data.frame(on.target[,1:2])
 		inputEfficacy <- read.table(efficacyFile, sep="\t", header = TRUE, 
 			stringsAsFactors=FALSE)
@@ -390,31 +400,36 @@ offTargetAnalysis <-
 		        extendedSequence = inputEfficacy$extendedSequence,
 			gRNAefficacy = inputEfficacy$gRNAefficacy))
 		on.target <- merge(on.target, inputEfficacy, by.x="names", by.y ="name")
-	   }
-	   summary <- unique(merge(on.target, summary, by=c("names","forViewInUCSC"), all.y=TRUE))
-	   if (!missing(BSgenomeName) && class(BSgenomeName) == "BSgenome")
+	  }
+	  summary <- unique(merge(on.target, summary, by="names"))
+	  write.table(summary[order(as.character(summary$names)), ],
+             file = paste(outputDir, "Summary.xls", sep = ""),
+             sep = "\t", row.names = FALSE)
+	  cat("Scan for REsites in flanking region...\n")
+	  if (!missing(BSgenomeName) && class(BSgenomeName) == "BSgenome")
 	  {
-	    cat("Scan flanking sequences for uniqueness of REsites.")
 	    REs.isUnique100 <- uniqueREs(REcutDetails = REcutDetails, 
 		   summary = summary, offTargets$offtargets, scanUpstream = 100,
 		   scanDownstream =100, BSgenomeName = BSgenomeName)
 	    REs.isUnique50 <- uniqueREs(REcutDetails = REcutDetails, 
 		   summary = summary, offTargets$offtargets, scanUpstream = 50,
 		   scanDownstream = 50, BSgenomeName = BSgenomeName)
-	    summary <- cbind(summary, uniqueREsfor200total = REs.isUnique100, 
-		uniqueREsfor100total = REs.isUnique50)
-	   }
-	}
-       else
-	{
-	   warnings("No on-target found for the input gRNAs with your search criteria!")
-	}
+	    summary <- cbind(summary, uniqREin200 = REs.isUnique100,
+                uniqREin100 = REs.isUnique50)
+	  }
+    }
+    else
+    {
+       warnings("No on-target found for the input gRNAs with your search criteria!")
+       gRNA.bed = ""
+       REs.isUnique100 = ""
+       REs.isUnique50 = ""
+    } 
     write.table(summary[order(as.character(summary$names)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(summary=summary, offtarget = unique(offTargets$offtargets), 
-		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails
-	)
-	#	 , REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
+    list(summary=summary, offtarget = offTargets$offtargets, 
+		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
+		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
 }

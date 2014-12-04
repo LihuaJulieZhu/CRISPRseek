@@ -37,18 +37,17 @@ filterOffTarget <-
     }
     OfftargetFile <-paste(outputDir, "OfftargetAnalysis.xls", sep = "")
     OfftargetSummary <-paste(outputDir, "Summary.xls", sep = "")
-    gRNAsPlusPAM<- unique(cbind(gRNAPlusPAM = scores$gRNAPlusPAM, 
-	forViewInUCSC =scores$forViewInUCSC))
-    names <- gRNAsPlusPAM[,1]
+    gRNAsPlusPAM<- unique(scores$gRNAPlusPAM)
+    names <- gRNAsPlusPAM
     top5OfftargetTotalScore <- numeric(length(names))
     topNOfftargetTotalScore <- top5OfftargetTotalScore
-    temp <- cbind(names, forViewInUCSC = gRNAsPlusPAM[,2], top5OfftargetTotalScore, 
+    temp <- cbind(names, gRNAsPlusPAM, top5OfftargetTotalScore, 
         topNOfftargetTotalScore)
     mismatch.distance2PAM <- matrix(ncol = 11, nrow = length(names))
     append <- FALSE
-    for (i in 1:length(names))
+    for (i in 1:length(gRNAsPlusPAM))
     {
-        this.score <- scores[scores$gRNAPlusPAM == names[i],]
+        this.score <- scores[scores$gRNAPlusPAM == gRNAsPlusPAM[i],]
         this.score <- this.score[order(this.score$score, decreasing = TRUE),]
         maxN <- min(topN+1, dim(this.score)[1])
         this.score <- this.score[1:maxN,]
@@ -178,9 +177,9 @@ filterOffTarget <-
 	}
 	
     write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
-    write.table(unique(Offtargets[order(as.character(Offtargets$name), 
+    write.table(Offtargets[order(as.character(Offtargets$name), 
         -as.numeric(as.character(Offtargets$score)), 
-        as.character(Offtargets$OffTargetSequence)),]), 
+        as.character(Offtargets$OffTargetSequence)),], 
         file = OfftargetFile, sep = "\t", row.names = FALSE)
-    list(offtargets = unique(Offtargets), summary = temp)
+    list(offtargets = unique(Offtargets), summary = unique(temp))
 }

@@ -92,5 +92,5 @@ annotateOffTargets <- function(scores, txdb, orgAnn)
 			chrom = as.character(scores$chrom), chromStart = scores$chromStart,
 			chromEnd = scores$chromEnd)
     }
-    data.frame(scores)
+    unique(data.frame(scores))
 }
