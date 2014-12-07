@@ -238,7 +238,8 @@ findgRNAs <-
         extendedSequences[nchar(extendedSequences[,5]) 
 	    < baseBeforegRNA + gRNA.size + PAM.size + baseAfterPAM, 6] <- 
             "extended sequence too short"
-	write.table(extendedSequences[order(extendedSequences[,6], decreasing = TRUE),],
+#write.table(extendedSequences[order(extendedSequences[,6], decreasing = TRUE),],
+		write.table(extendedSequences,
              file = efficacyFile, sep="\t", row.names = FALSE)
     }
     #else
