@@ -12,7 +12,7 @@ getOfftargetScore, filterOfftarget, calculating gRNA cleavage efficiency and gen
 \usage{
 offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = TRUE,
     exportAllgRNAs = c("all", "fasta", "genbank", "no"),
-    findgRNAsWithREcutOnly = TRUE, 
+    findgRNAsWithREcutOnly = FALSE, 
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
         package = "CRISPRseek"), minREpatternSize = 4, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 

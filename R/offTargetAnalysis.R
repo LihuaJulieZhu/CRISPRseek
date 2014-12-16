@@ -1,7 +1,7 @@
 offTargetAnalysis <-
     function(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = TRUE,
 		exportAllgRNAs = c("all", "fasta", "genbank", "no"),
-        findgRNAsWithREcutOnly = TRUE, 
+        findgRNAsWithREcutOnly = FALSE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa", 
             package = "CRISPRseek"), 
 	minREpatternSize = 4,
@@ -284,7 +284,7 @@ offTargetAnalysis <-
         canonical.PAM = PAM, gRNA.size = gRNA.size)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
-    #write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
+    write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,

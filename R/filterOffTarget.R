@@ -37,7 +37,7 @@ filterOffTarget <-
     }
     OfftargetFile <-paste(outputDir, "OfftargetAnalysis.xls", sep = "")
     OfftargetSummary <-paste(outputDir, "Summary.xls", sep = "")
-    gRNAsPlusPAM<- unique(scores$gRNAPlusPAM)
+    gRNAsPlusPAM<- unique(scores$name)
     names <- gRNAsPlusPAM
     top5OfftargetTotalScore <- numeric(length(names))
     topNOfftargetTotalScore <- top5OfftargetTotalScore
@@ -47,7 +47,7 @@ filterOffTarget <-
     append <- FALSE
     for (i in 1:length(gRNAsPlusPAM))
     {
-        this.score <- scores[scores$gRNAPlusPAM == gRNAsPlusPAM[i],]
+        this.score <- scores[scores$name == gRNAsPlusPAM[i],]
         this.score <- this.score[order(this.score$score, decreasing = TRUE),]
         maxN <- min(topN+1, dim(this.score)[1])
         this.score <- this.score[1:maxN,]
@@ -60,7 +60,7 @@ filterOffTarget <-
 	        temp[i,4] <- sum(this.score$score[2:maxN])
 	    else
             temp[i,4] <- sum(this.score$score[2:maxN.totalScore])
-        temp[i,1] <- unique(this.score$name)
+        temp[i,2] <- unique(this.score$gRNAPlusPAM)
 	    forSummary <- this.score[1:11,]
 	    forSummary <- forSummary[order(forSummary$n.mismatch),]
         mismatch.distance2PAM[i,] <- 
