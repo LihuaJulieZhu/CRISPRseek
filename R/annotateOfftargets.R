@@ -35,14 +35,22 @@ annotateOffTargets <- function(scores, txdb, orgAnn)
 	scores <- cbind(scores, entrez_id = entrez_id, symbol = entrez_id)
 	
 	if (length(queryHits(overlapGenes)) > 0 && !missing(orgAnn) && 
-		class(orgAnn) == "AnnDbBimap")
-    {
-		egSYMBOL <- toTable(orgAnn)
+		class(orgAnn) == "AnnDbBimap" )
+	{
+	    egSYMBOL <- toTable(orgAnn)
+	    if(length(grep("flybase_id", colnames(egSYMBOL)[2])) >0)
+            {
+                m <- match(scores$entrez_id, egSYMBOL$flybase_id)
+		scores$symbol <- egSYMBOL[,1][m]
+	    }
+	    else
+	    {
 		m <- match(scores$entrez_id, egSYMBOL$gene_id)
 		scores$symbol <- egSYMBOL$symbol[m]
+	    }
 		scores$symbol[is.na(scores$symbol)] = ""
 	}
-    scores <- merge(scores,inExon)
+        scores <- merge(scores,inExon)
 	inIntron <- entrez_id
 	inIntron[scores$entrez_id != "" & scores$inExon == ""] = TRUE
 	inIntron[scores$entrez_id == "" | scores$inExon == TRUE] = ""

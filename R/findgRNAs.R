@@ -28,6 +28,11 @@ findgRNAs <-
     {
 	subjects <- inputFilePath
      }
+    PAM <- translatePattern(PAM)
+    PAM <- paste(PAM, "$", sep = "")
+    gRNA.pattern <- translatePattern(gRNA.pattern)
+    min.subject <- gRNA.size + PAM.size 
+    subjects <-  subjects[width(subjects) >= min.subject,]
     if (length(subjects) == 0)
     {
         stop("The input file contains no sequence! This could be caused by 
@@ -45,9 +50,6 @@ findgRNAs <-
         subjectname <- gsub("\t", ":", subjectname)
         subject <- subjects[[p]]
         revsubject <- reverseComplement(subject)
-        PAM <- translatePattern(PAM)
-        PAM <- paste(PAM, "$", sep = "")
-	gRNA.pattern <- translatePattern(gRNA.pattern)
         seq.len <- nchar(as.character(subject))
         x <- seq.len - gRNA.size - PAM.size + 1
         pos.gRNAs <- do.call(rbind, lapply(1:x, function(i){

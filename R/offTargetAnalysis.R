@@ -8,7 +8,8 @@ offTargetAnalysis <-
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "",
 	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
-        chromToSearch = "all", max.mismatch = 3, PAM.pattern = "N[A|G]G$",
+        chromToSearch = "all", chromToExclude = "", max.mismatch = 3, 
+        PAM.pattern = "N[A|G]G$",
         gRNA.pattern = "", min.score = 0.5, topN = 100, 
         topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, orgAnn, outputDir,
@@ -18,7 +19,8 @@ offTargetAnalysis <-
 	baseBeforegRNA = 4, baseAfterPAM = 3,
 	featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 		package = "CRISPRseek"),
-	useScore = TRUE, useEfficacyFromInputSeq = FALSE,
+	useScore = TRUE, useEfficacyFromInputSeq = FALSE, 
+	outputUniqueREs = TRUE, 
         overwrite = FALSE)
 {
     cat("Validating input ...\n")
@@ -276,7 +278,8 @@ offTargetAnalysis <-
             required as TxDb object!")
     }
     hits <- searchHits(gRNAs = gRNAs, PAM = PAM.pattern, 
-        BSgenomeName = BSgenomeName, chromToSearch = chromToSearch, 
+        BSgenomeName = BSgenomeName, chromToSearch = chromToSearch,
+	chromToExclude = chromToExclude,
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
         gRNA.size = gRNA.size) 
     cat("Building feature vectors for scoring ...\n")
@@ -406,7 +409,7 @@ offTargetAnalysis <-
              file = paste(outputDir, "Summary.xls", sep = ""),
              sep = "\t", row.names = FALSE)
 	  cat("Scan for REsites in flanking region...\n")
-	  if (!missing(BSgenomeName) && class(BSgenomeName) == "BSgenome")
+	  if (outputUniqueREs && !missing(BSgenomeName) && class(BSgenomeName) == "BSgenome")
 	  {
 	    REs.isUnique100 <- uniqueREs(REcutDetails = REcutDetails, 
 		   summary = summary, offTargets$offtargets, scanUpstream = 100,
@@ -417,6 +420,11 @@ offTargetAnalysis <-
 	    summary <- cbind(summary, uniqREin200 = REs.isUnique100,
                 uniqREin100 = REs.isUnique50)
 	  }
+	 else
+	{
+	   REs.isUnique100 = ""
+       	   REs.isUnique50 = "" 
+	}
     }
     else
     {
@@ -425,7 +433,7 @@ offTargetAnalysis <-
        REs.isUnique100 = ""
        REs.isUnique50 = ""
     } 
-    write.table(summary[order(as.character(summary$names)), ], 
+    write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")

@@ -8,7 +8,8 @@ Search for off targets
 Search for off targets for given gRNAs, BSgenome and maximum mismatches
 }
 \usage{
-searchHits(gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 3, 
+searchHits(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
+    max.mismatch = 3, 
     PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$")
 }
 \arguments{
@@ -23,11 +24,18 @@ For example, BSgenome.Hsapiens.UCSC.hg19 for hg19, BSgenome.Mmusculus.UCSC.mm10
 for mm10, BSgenome.Celegans.UCSC.ce6 for ce6, BSgenome.Rnorvegicus.UCSC.rn5 
 for rn5, and BSgenome.Dmelanogaster.UCSC.dm3 for dm3
 }
-	\item{chromToSearch}{
+\item{chromToSearch}{
 Specify the chromosome to search, default to all, meaning search all 
 chromosomes. For example, chrX indicates searching for matching in 
 chromosome X only
 }
+\item{chromToExclude}{
+Specify the chromosome not to search, default to none, meaning to search chromosomes 
+specified by chromToSearch. For example, to exclude haplotype blocks from offtarget search
+in hg19, set chromToExclude to c(""chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
+"chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
+"chr6_ssto_hap7")
+} 
   \item{max.mismatch}{
 Maximum mismatch allowed in off target search, default 3. Warning: will be 
 considerably slower if it is set to greater than 3 

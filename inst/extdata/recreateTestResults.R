@@ -29,14 +29,23 @@ library("TxDb.Dmelanogaster.UCSC.dm3.ensGene")
 library("org.Dm.eg.db")
 gRNAFilePath <- system.file("extdata", "tobi2.fa", package = "CRISPRseek")
 outputNoOffTarget <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/gRNAProvidedSearchNOoffTarget"
-cat("Creating output for findgRNAs = FALSE and no off target found...\n")
-offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
-	findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
-	findPairedgRNAOnly = FALSE, BSgenomeName = Dmelanogaster, 
-	txdb = TxDb.Dmelanogaster.UCSC.dm3.ensGene, 
-	orgAnn = org.Dm.egFLYBASE2EG, max.mismatch = 3, 
-	outputDir = outputNoOffTarget, overwrite = TRUE)
+outputNoOffTargetNoAnn <- "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/gRNAProvidedSearchNOoffTargetNoAnn"
 
+cat("Creating output for findgRNAs = FALSE and no off target found and annotateExon FALSE...\n")
+offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE,
+        findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile,
+        findPairedgRNAOnly = FALSE, BSgenomeName = Dmelanogaster,
+        txdb = TxDb.Dmelanogaster.UCSC.dm3.ensGene, annotateExon = FALSE,
+        orgAnn = org.Dm.egFLYBASE2EG, max.mismatch = 3,
+        outputDir = outputNoOffTargetNoAnn, overwrite = TRUE)
+
+cat("Creating output for findgRNAs = FALSE and no off target found, annotateExon TRUE...\n")
+offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE,
+        findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile,
+        findPairedgRNAOnly = FALSE, BSgenomeName = Dmelanogaster,
+        txdb = TxDb.Dmelanogaster.UCSC.dm3.ensGene,
+        orgAnn = org.Dm.egFLYBASE2EG, max.mismatch = 3,
+        outputDir = outputNoOffTarget, overwrite = TRUE)
 
     for (isPaired in c(TRUE, FALSE))
     {	
@@ -75,20 +84,20 @@ library(org.Mm.eg.db)
 inputFilePath = system.file("extdata", "RIPK1stop.fa", package = "CRISPRseek")
 #inputFilePath = "~/CRISPRseekDemo/RIPK1stop.fa"
 outputDir = "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/testMouse/WithorgAnn"
-offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
+results <- offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
 BSgenomeName = Mmusculus, annotateExon=TRUE, outputDir = outputDir, 
 overwrite = TRUE, max.mismatch=1, txdb = TxDb.Mmusculus.UCSC.mm10.knownGene,
 orgAnn = org.Mm.egSYMBOL)
 
 outputDir = "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/testMouse/NOorgAnn"
-offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
+results <- offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE, 
 BSgenomeName = Mmusculus, annotateExon=TRUE, outputDir = outputDir, 
 overwrite = TRUE, max.mismatch=1, txdb = TxDb.Mmusculus.UCSC.mm10.knownGene)
 
 outputDir = "~/Dev/Bioconductor/Trunk/CRISPRseek/inst/extdata/testMouse/NOTannotateExon"
-offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
+results <- offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE, 
 BSgenomeName = Mmusculus, annotateExon=FALSE, outputDir = outputDir, 
 overwrite = TRUE, max.mismatch=1)

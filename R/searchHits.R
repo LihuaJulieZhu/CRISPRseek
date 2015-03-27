@@ -53,8 +53,8 @@
 }
 
 searchHits <-
-    function (gRNAs, BSgenomeName, chromToSearch = "all", max.mismatch = 3, 
-        PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$") 
+    function (gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "", 
+	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$") 
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")
@@ -67,6 +67,8 @@ searchHits <-
     seqnames <- seqnames(BSgenomeName)
     if (chromToSearch != "all")
         seqnames <- intersect(seqnames, chromToSearch)
+    if (chromToExclude != "")
+	seqnames <- setdiff(seqnames, chromToExclude)
     append <- FALSE
     for (seqname in seqnames) {
         cat(">>> Finding all hits in sequence", seqname, "...\n")

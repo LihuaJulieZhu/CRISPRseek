@@ -56,20 +56,23 @@ filterOffTarget <-
             temp[i,3] <- sum(this.score$score[2:maxN])
         else
             temp[i,3] <- sum(this.score$score[2:6]) 
-	    if (maxN < maxN.totalScore)
-	        temp[i,4] <- sum(this.score$score[2:maxN])
-	    else
+        if (maxN < maxN.totalScore)
+            temp[i,4] <- sum(this.score$score[2:maxN])
+	else
             temp[i,4] <- sum(this.score$score[2:maxN.totalScore])
         temp[i,2] <- unique(this.score$gRNAPlusPAM)
-	    forSummary <- this.score[1:11,]
-	    forSummary <- forSummary[order(forSummary$n.mismatch),]
+	forSummary <- this.score[1:11,]
+	forSummary <- forSummary[order(forSummary$n.mismatch),]
         mismatch.distance2PAM[i,] <- 
-            as.character(forSummary$mismatch.distance2PAM)
-	    forSummary <- forSummary[2:11,]
-	    forSummary <- forSummary[order(forSummary$score, decreasing=TRUE),]
-	    mismatch.distance2PAM[i,2:11] <-
-            as.character(forSummary$mismatch.distance2PAM)
-		this.score <- cbind(name = this.score$name, 
+	   ifelse(as.character(forSummary$mismatch.distance2PAM) == "", "NMM",
+            as.character(forSummary$mismatch.distance2PAM))
+        forSummary <- this.score[2:11,]
+	forSummary <- forSummary[order(forSummary$score, decreasing=TRUE),]
+	mismatch.distance2PAM[i,2:11] <-
+           as.character(forSummary$mismatch.distance2PAM)
+	if (dim(this.score)[1] < 11)
+	   mismatch.distance2PAM[i, (dim(this.score)[1]+1):11] <- "NA"
+	this.score <- cbind(name = this.score$name, 
                 gRNAPlusPAM = this.score$gRNAPlusPAM,
                 OffTargetSequence = this.score$OffTargetSequence,
                 score = this.score$score, n.mismatch = this.score$n.mismatch, 
@@ -150,28 +153,28 @@ filterOffTarget <-
 	Offtargets <- cbind(Offtargets, gRNAefficacy = gRNAefficiency)
 	if (fetchSequence)
 	{
-		Start <- as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream)
-        End <- as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(downstream)	
-        strand <- as.character(Offtargets$strand)		
-        chr <- as.character(Offtargets$chrom)
-        for (i in 1:length(Start))		
+	   Start <- as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream)
+           End <- as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(downstream)	
+           strand <- as.character(Offtargets$strand)		
+           chr <- as.character(Offtargets$chrom)
+           for (i in 1:length(Start))		
 	   {
-		   thisChr <-chr[i]
-		   thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
-		   thisStart <- max(1, Start[i])
-		   thisStrand <- as.character(strand[i])
-		   if (i == 1)
-		   {
-			   seq <- getSeq(BSgenomeName, thisChr, start = thisStart, 
-				  end = thisEnd, strand = thisStrand, width = NA, 
-				  as.character = TRUE)
-		   }
-		   else
-		   {
-			  seq <- c(seq, getSeq(BSgenomeName, thisChr, start = thisStart, 
-				  end = thisEnd, strand = thisStrand, width = NA, 
-				  as.character = TRUE))
-		   }
+	      thisChr <-chr[i]
+	      thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
+	      thisStart <- max(1, Start[i])
+	      thisStrand <- as.character(strand[i])
+	      if (i == 1)
+	      {
+		seq <- getSeq(BSgenomeName, thisChr, start = thisStart, 
+	 	  end = thisEnd, strand = thisStrand, width = NA, 
+		  as.character = TRUE)
+	      }
+	      else
+	     {
+	        seq <- c(seq, getSeq(BSgenomeName, thisChr, start = thisStart, 
+		  end = thisEnd, strand = thisStrand, width = NA, 
+		  as.character = TRUE))
+	     }
 	   }
 	   Offtargets <- cbind(Offtargets, flankSequence = seq)
 	}

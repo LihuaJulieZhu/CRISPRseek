@@ -2,40 +2,40 @@ LOCUS       mRIPK1stop                     147 bp    dna     linear   UNK
 DEFINITION  CRISPRseek output for RIPK1stop sequence
 ACCESSION   unknown
 FEATURES             Location/Qualifiers
-     misc_bind       3..22
-                     /note="gRNAf1"
-     misc_bind       9..28
-                     /note="gRNAf2"
-     misc_bind       15..34
-                     /note="gRNAf3"
-     misc_bind       16..35
-                     /note="gRNAf4"
-     misc_bind       35..54
-                     /note="gRNAf5"
-     misc_bind       107..126
-                     /note="gRNAf6"
-     misc_bind       108..127
-                     /note="gRNAf7"
-     misc_bind       121..140
-                     /note="gRNAf8"
-     misc_bind       complement(86..105)
-                     /note="gRNAr1"
-     misc_bind       complement(79..98)
-                     /note="gRNAr2"
-     misc_bind       complement(78..97)
-                     /note="gRNAr3"
-     misc_bind       complement(71..90)
-                     /note="gRNAr4"
-     misc_bind       complement(70..89)
-                     /note="gRNAr5"
-     misc_bind       complement(69..88)
-                     /note="gRNAr6"
-     misc_bind       complement(19..38)
-                     /note="gRNAr7"
-     misc_bind       complement(8..27)
-                     /note="gRNAr8"
-     misc_bind       complement(4..23)
-                     /note="gRNAr9"
+     misc_bind       19..20
+                     /note="gRNAf"
+     misc_bind       25..26
+                     /note="gRNAf"
+     misc_bind       31..32
+                     /note="gRNAf"
+     misc_bind       32..33
+                     /note="gRNAf"
+     misc_bind       51..52
+                     /note="gRNAf"
+     misc_bind       123..124
+                     /note="gRNAf"
+     misc_bind       124..125
+                     /note="gRNAf"
+     misc_bind       137..138
+                     /note="gRNAf"
+     misc_bind       complement(88..89)
+                     /note="gRNAr"
+     misc_bind       complement(81..82)
+                     /note="gRNAr"
+     misc_bind       complement(80..81)
+                     /note="gRNAr"
+     misc_bind       complement(73..74)
+                     /note="gRNAr"
+     misc_bind       complement(72..73)
+                     /note="gRNAr"
+     misc_bind       complement(71..72)
+                     /note="gRNAr"
+     misc_bind       complement(21..22)
+                     /note="gRNAr"
+     misc_bind       complement(10..11)
+                     /note="gRNAr"
+     misc_bind       complement(6..7)
+                     /note="gRNAr"
 ORIGIN
         1 ccagccagag ctaagcctgg gcaggctctg gcagtgggaa gcaaactatt tgtctggtgc 
        61 acaaaccccg tttgcccact agccttcaga actctatctc agcatgagct ctgcatttga 

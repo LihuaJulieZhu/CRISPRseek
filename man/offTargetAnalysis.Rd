@@ -18,6 +18,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
+    chromToExclude = "",
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
     min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
@@ -27,6 +28,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"), useScore = TRUE, useEfficacyFromInputSeq = FALSE,
+    outputUniqueREs = TRUE,
     overwrite = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -103,6 +105,13 @@ Specify the chromosome to search, default to all, meaning search all
 chromosomes. For example, chrX indicates searching for matching in chromosome 
 X only
 }
+\item{chromToExclude}{
+Specify the chromosome not to search, default to none, meaning to search chromosomes
+specified by chromToSearch. For example, to exclude haplotype blocks from offtarget search
+in hg19, set chromToExclude to c(""chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
+"chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
+"chr6_ssto_hap7") 
+}
   \item{max.mismatch}{
 Maximum mismatch allowed in off target search, default 3. Warning: will be 
 considerably slower if set > 3
@@ -175,6 +184,9 @@ Feature weight matrix file used for calculating gRNA efficiency. By default Doen
 }
 \item{useEfficacyFromInputSeq}{
 Default FALSE. If set to TRUE, summary file will contain gRNA efficacy calculated from input sequences instead of from off-target analysis. Set it to TRUE if the input sequence is from a different species than the one used for off-target analysis.
+}
+\item{outputUniqueREs}{
+Default TRUE. If set to TRUE, summary file will contain REs unique to the cleavage site within 100 or 200 bases surrounding the gRNA sequence.
 }
 \item{overwrite}{
 	overwrite the existing files in the output directory or not, default FALSE
