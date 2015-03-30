@@ -18,7 +18,9 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
-    chromToExclude = "",
+    chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
+"chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
+"chr6_ssto_hap7"),
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
     min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
@@ -106,9 +108,9 @@ chromosomes. For example, chrX indicates searching for matching in chromosome
 X only
 }
 \item{chromToExclude}{
-Specify the chromosome not to search, default to none, meaning to search chromosomes
-specified by chromToSearch. For example, to exclude haplotype blocks from offtarget search
-in hg19, set chromToExclude to c(""chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
+Specify the chromosome not to search. If specified as "", meaning to search chromosomes
+specified by chromToSearch. By default, to exclude haplotype blocks from offtarget search
+in hg19, i.e., chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7") 
 }
