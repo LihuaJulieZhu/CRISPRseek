@@ -30,7 +30,9 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"), useScore = TRUE, useEfficacyFromInputSeq = FALSE,
-    outputUniqueREs = TRUE,
+    outputUniqueREs = TRUE, foldgRNAs = TRUE, 
+    gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+    temperature = 37,
     overwrite = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -189,6 +191,17 @@ Default FALSE. If set to TRUE, summary file will contain gRNA efficacy calculate
 }
 \item{outputUniqueREs}{
 Default TRUE. If set to TRUE, summary file will contain REs unique to the cleavage site within 100 or 200 bases surrounding the gRNA sequence.
+}
+\item{foldgRNAs}{
+Default TRUE. If set to TRUE, summary file will contain minimum free energy of the secondary
+structure of gRNA with gRNA backbone from GeneRfold package provided that GeneRfold package has been installed.
+}
+\item{gRNA.backbone}{
+gRNA backbone constant region sequence. Default to the
+sequence in Sp gRNA backbone.
+}
+  \item{temperature}{
+temperature in celsius. Default to 37 celsius. 
 }
 \item{overwrite}{
 	overwrite the existing files in the output directory or not, default FALSE

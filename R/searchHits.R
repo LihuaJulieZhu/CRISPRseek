@@ -67,7 +67,7 @@ searchHits <-
     seqnames <- seqnames(BSgenomeName)
     if (chromToSearch != "all")
         seqnames <- intersect(seqnames, chromToSearch)
-    if (chromToExclude != "")
+    if (length(chromToExclude) >0)
 	seqnames <- setdiff(seqnames, chromToExclude)
     append <- FALSE
     for (seqname in seqnames) {

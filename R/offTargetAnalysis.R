@@ -24,7 +24,9 @@ offTargetAnalysis <-
 	featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 		package = "CRISPRseek"),
 	useScore = TRUE, useEfficacyFromInputSeq = FALSE, 
-	outputUniqueREs = TRUE, 
+	outputUniqueREs = TRUE, foldgRNAs = TRUE, 
+        gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+        temperature = 37,
         overwrite = FALSE)
 {
     cat("Validating input ...\n")
@@ -437,6 +439,14 @@ offTargetAnalysis <-
        REs.isUnique100 = ""
        REs.isUnique50 = ""
     } 
+    if (foldgRNAs)
+     {
+	gRNAs.withoutPAM <- substr(as.character(summary$gRNAsPlusPAM), 1, gRNA.size)
+        folded.gRNAs <- foldgRNAs(gRNAs.withoutPAM, gRNA.backbone = gRNA.backbone, 
+           temperature = temperature)
+	if (length(dim(folded.gRNAs)) > 0)
+	   	summary <- cbind(summary, folded.gRNAs[,-1])
+     }
     write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)

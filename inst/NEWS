@@ -67,3 +67,13 @@ CHANGES IN VERSION 1.7.3
 NEW FEATURE
      o added parameter chromToExclude in offTargetAnalysis to specify chromosomes not to
 search for offtargets, which can be used to exclude haplotype blocks
+
+CHANGES IN VERSION 1.7.6
+------------------------
+NEW FEATURE
+     o added parameter foldgRNA to calculate the minimum free energy (mfe) of the secondary 
+structure of the gRNA with gRNA backbone sequence. In addition, summary file also includes
+the difference of mfe between the secondary structure of gRNA backbone alone and the secondary
+structure of gRNA backbone with the variable region of the gRNA, and the bracket 
+notation of the secondary structure of gRNA backbone with the variable region of the gRNA 
+to facilitate gRNA selection. 

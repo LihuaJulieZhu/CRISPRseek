@@ -9,7 +9,9 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 
     0.685, 0.583), overwrite = FALSE, baseBeforegRNA = 4, 
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
-       "DoenchNBT2014.csv", package = "CRISPRseek"))
+       "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = TRUE, 
+        gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+        temperature = 37)
 {
 	append = ifelse(overwrite, FALSE, TRUE)
 	if (class(inputFile1Path) != "DNAStringSet")
@@ -42,7 +44,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 				     gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
 				    gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
 				    outputDir = outputDir1, 
-				    weights = weights, overwrite = overwrite,
+				    weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
 				     featureWeightMatrixFile = featureWeightMatrixFile, 
             			     baseBeforegRNA = baseBeforegRNA, 
             			     baseAfterPAM = baseAfterPAM)), 
@@ -61,7 +63,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
             		gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
             		gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
             		outputDir = outputDir2, 
-            		weights = weights, overwrite = overwrite,
+            		weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
                         featureWeightMatrixFile = featureWeightMatrixFile,
                         baseBeforegRNA = baseBeforegRNA,
                         baseAfterPAM = baseAfterPAM)), 
@@ -358,6 +360,14 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	seqs$gRNAefficacy <- gRNAeff$gRNAefficacy[m]
 	originalDir <- getwd()
 	setwd(outputDir)
+        if (foldgRNAs)
+        {
+           gRNAs.withoutPAM <- substr(as.character(seqs$gRNAPlusPAM), 1, gRNA.size)
+           folded.gRNAs <- foldgRNAs(gRNAs.withoutPAM, gRNA.backbone = gRNA.backbone, 
+           temperature = temperature)
+           if (length(dim(folded.gRNAs)) > 0)
+               seqs <- cbind(seqs, folded.gRNAs[,-1])
+        }
 	if (dim(seqs)[1] ==1)
 	{
 		write.table(seqs, file = "scoresFor2InputSequences.xls",

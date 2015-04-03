@@ -5,4 +5,4 @@ import(seqinr)
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits, writeHits, translatePattern, getOfftargetScore, 
     buildFeatureVectorForScoring, compare2Sequences, calculategRNAEfficiency,
-    annotateOffTargets, isPatternUnique,uniqueREs)
+    annotateOffTargets, isPatternUnique,uniqueREs, foldgRNAs)

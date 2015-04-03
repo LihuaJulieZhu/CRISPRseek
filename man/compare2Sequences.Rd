@@ -22,7 +22,9 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
     overwrite = FALSE, baseBeforegRNA = 4, 
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
-       "DoenchNBT2014.csv", package = "CRISPRseek"))
+       "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = TRUE, 
+    gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+    temperature = 37)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -114,6 +116,17 @@ Number of bases after PAM used for calculating gRNA efficiency, default 3
 \item{featureWeightMatrixFile}{
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
 }
+\item{foldgRNAs}{
+Default TRUE. If set to TRUE, summary file will contain minimum free energy of the secondary
+structure of gRNA with gRNA backbone from GeneRfold package provided that GeneRfold package has been installed.
+}
+\item{gRNA.backbone}{
+gRNA backbone constant region sequence. Default to the
+sequence in Sp gRNA backbone.
+}
+  \item{temperature}{
+temperature in celsius. Default to 37 celsius. 
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -142,6 +155,10 @@ sequence (off-target sequence)}
 \item{targetSeqName}{the name of the input sequence where the target
     sequence is located}
 \item{scoreDiff}{scoreForSeq1 - scoreForSeq2}
+\item{bracket.notation}{folded gRNA in bracket notation}
+\item{mfe.guide}{minimum free energy of gRNA with the gRNA backbone}
+\item{mfe.diff}{mfe.guide-mfe.backbone}
+\item{ mfe.backbone}{minimum free energy of the gRNA backbone by itself}
 }
 \references{
 Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran, Silvana 
