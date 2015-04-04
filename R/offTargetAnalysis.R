@@ -445,7 +445,12 @@ offTargetAnalysis <-
         folded.gRNAs <- foldgRNAs(gRNAs.withoutPAM, gRNA.backbone = gRNA.backbone, 
            temperature = temperature)
 	if (length(dim(folded.gRNAs)) > 0)
-	   	summary <- cbind(summary, folded.gRNAs[,-1])
+	{
+	   if (dim(folded.gRNAs)[1] >1)
+	      summary <- cbind(summary, folded.gRNAs[,-1])
+	   else
+	      summary <- data.frame(c(summary, folded.gRNAs[,-1]))	
+	}
      }
     write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
         file = paste(outputDir, "Summary.xls", sep = ""), 

@@ -156,8 +156,8 @@ sequence (off-target sequence)}
     sequence is located}
 \item{scoreDiff}{scoreForSeq1 - scoreForSeq2}
 \item{bracket.notation}{folded gRNA in bracket notation}
-\item{mfe.guide}{minimum free energy of gRNA with the gRNA backbone}
-\item{mfe.diff}{mfe.guide-mfe.backbone}
+\item{mfe.sgRNA}{minimum free energy of sgRNA}
+\item{mfe.diff}{mfe.sgRNA-mfe.backbone}
 \item{ mfe.backbone}{minimum free energy of the gRNA backbone by itself}
 }
 \references{
