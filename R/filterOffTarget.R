@@ -117,35 +117,18 @@ filterOffTarget <-
 	{
 		Offtargets <- annotateOffTargets(Offtargets, txdb, orgAnn)
 	}
-	Start <- as.numeric(as.character(Offtargets$chromStart))
-	End <- as.numeric(as.character(Offtargets$chromEnd))
-	strand <- as.character(Offtargets$strand)		
-	Start[strand == "+"] = Start[strand == "+"] -  baseBeforegRNA
-	Start[strand == "-"] = Start[strand == "-"] -  baseAfterPAM
-	End[strand == "+"] = End[strand == "+"] +  baseAfterPAM
-        End[strand == "-"] = End[strand == "-"] +  baseBeforegRNA
-       
 	chr <- as.character(Offtargets$chrom)
-	for (i in 1:length(Start))		
-	{
-		thisChr <-chr[i]
-		thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
-		thisStart <- max(1, Start[i])
-		thisStrand <- as.character(strand[i])
-		if (i == 1)
-		{
-			extendedSequence <- getSeq(BSgenomeName, thisChr, start = thisStart, 
-			   end = thisEnd, strand = thisStrand, width = NA, 
-			   as.character = TRUE)
-		}
-		else
-		{
-			extendedSequence <- c(extendedSequence, 
-				 getSeq(BSgenomeName, thisChr, start = thisStart, 
-	 			 end = thisEnd, strand = thisStrand, width = NA, 
-				 as.character = TRUE))
-		}
-	}
+        strand <- as.character(Offtargets$strand)
+        Start <- ifelse(strand=="-",
+              as.numeric(as.character(Offtargets$chromStart)) - baseAfterPAM,
+              as.numeric(as.character(Offtargets$chromStart)) - baseBeforegRNA)
+        End <- ifelse(strand=="-",
+              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(baseBeforegRNA),
+              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(baseAfterPAM))
+        starts <- unlist(apply(cbind(Start,1), 1, max))
+        ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
+        extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
+           end = ends, strand = strand, width = NA, as.character = TRUE)
 	Offtargets <- cbind(Offtargets, extendedSequence = extendedSequence)
 	gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
 		baseBeforegRNA = baseBeforegRNA,
@@ -153,29 +136,18 @@ filterOffTarget <-
 	Offtargets <- cbind(Offtargets, gRNAefficacy = gRNAefficiency)
 	if (fetchSequence)
 	{
-	   Start <- as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream)
-           End <- as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(downstream)	
-           strand <- as.character(Offtargets$strand)		
+           strand <- as.character(Offtargets$strand)
            chr <- as.character(Offtargets$chrom)
-           for (i in 1:length(Start))		
-	   {
-	      thisChr <-chr[i]
-	      thisEnd <- min(End[i], seqlengths(BSgenomeName)[thisChr][[1]])
-	      thisStart <- max(1, Start[i])
-	      thisStrand <- as.character(strand[i])
-	      if (i == 1)
-	      {
-		seq <- getSeq(BSgenomeName, thisChr, start = thisStart, 
-	 	  end = thisEnd, strand = thisStrand, width = NA, 
-		  as.character = TRUE)
-	      }
-	      else
-	     {
-	        seq <- c(seq, getSeq(BSgenomeName, thisChr, start = thisStart, 
-		  end = thisEnd, strand = thisStrand, width = NA, 
-		  as.character = TRUE))
-	     }
-	   }
+	   Start <- ifelse(strand=="-", 
+	      as.numeric(as.character(Offtargets$chromStart)) - as.numeric(downstream),
+              as.numeric(as.character(Offtargets$chromStart)) - as.numeric(upstream))
+	   End <- ifelse(strand=="-",             
+              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(upstream),
+              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(downstream)) 
+	   starts <- unlist(apply(cbind(Start,1), 1, max))
+	   ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
+	   seq <- getSeq(BSgenomeName, names = chr, start = starts,
+                end = ends, strand = strand, width = NA, as.character = TRUE)
 	   Offtargets <- cbind(Offtargets, flankSequence = seq)
 	}
 	
