@@ -1,79 +1,109 @@
+CHANGES IN VERSION 1.7.6
+------------------------
+
+NEW FEATURES
+
+     o added parameter foldgRNA to calculate the minimum free energy (mfe) of the secondary structure of the gRNA with gRNA backbone sequence. In addition, summary file also includes the difference of mfe between the secondary structure of gRNA backbone alone and the secondary structure of gRNA backbone with the variable region of the gRNA, and the bracket notation of the secondary structure of gRNA backbone with the variable region of the gRNA to facilitate gRNA selection. 
+
+CHANGES IN VERSION 1.7.3
+------------------------
+
+NEW FEATURES
+
+     o added parameter chromToExclude in offTargetAnalysis to specify chromosomes not to search for offtargets, which can be used to exclude haplotype blocks
+
+
+CHANGES IN VERSION 1.7.1
+------------------------
+
+BUG FIXES
+
+     o only search for gRNAs for input sequences longer than gRNA.size plus PAM size 
+
+
+CHANGES IN VERSION 1.5.6
+------------------------
+
+NEW FEATURES
+
+     o added uniqueREsfor200total and uniqueREsfor100total in summary file to output RE sites that is unique in the 200 and 100 bp flanking gRNA region
+
+
+CHANGES IN VERSION 1.5.5
+------------------------
+
+NEW FEATURES
+
+     o added useEfficacyFromInputSeq parameter in offTargetAnalysis function to allow user to select whether to use the gRNA efficacy calculated from the input sequence or the one from off-target analysis. This is useful when the input sequence is from a genome that is different from the off-target analysis genome 
+
+CHANGES IN VERSION 1.5.4
+------------------------
+
+NEW FEATURES
+
+     o rename the gRNAs containing Cas9 cut site instead of gRNA start end end. Also output the cut sites in genbank file 
+
+
+CHANGES IN VERSION 1.5.3
+------------------------
+
+NEW FEATURES
+
+     o gRNA efficacy is calcualted for compare2Sequence function and for offTargetAnalysis with chromToSearch="" 
+
+CHANGES IN VERSION 1.5.2
+------------------------
+
+NEW FEATURES
+
+     o filter gRNAs with one or both cut site overlap with RE pattern 
+
+CHANGES IN VERSION 1.5.1
+------------------------
+
+NEW FEATURES
+
+     o annotateOfftargets is separated from filterOfftarget function and is faster as well
+
+CHANGES IN VERSION 1.3.10
+------------------------
+
+NEW FEATURES
+
+     o gRNAs are automatically output to a bed file for view in the UCSC genome browser 
+
+CHANGES IN VERSION 1.3.8
+------------------------
+
+NEW FEATURES
+
+     o Added calculategRNAefficiency to calculate gRNA cleavage efficiency using DoenchNBT2014 predictive logistic model
+
+CHANGES IN VERSION 1.3.7
+------------------------
+
+NEW FEATURES
+
+     o Added searchDirection to compare2Sequences to allow search one against the other and many to many sequence search
+     o Added exception handling to catch no gRNA found error in compare2Sequences
+
+
+CHANGES IN VERSION 1.3.5
+------------------------
+
+BUG FIXES
+
+     o TopN offtarget total score was sometimes missing for sequences containing gRNAs with less than 6 offtargets in version 1.3.3 
+
+
+
 CHANGES IN VERSION 1.3.3
 ------------------------
-NEW FEATURE
+
+NEW FEATURES
+
      o Search for off-targets is much faster when more than 10 gRNAs are searched 
      o Added new optional parameter orgAnn in offTargetAnalysis 
      o Added gene ID and optional gene symbol in off-target output file 
      o Added gRNA target region, GC content of gRNA and number of Ts in the last 4 postion of gRNA (not including PAM sequence) in the summary output file
 
-CHANGES IN VERSION 1.3.5
-------------------------
-BUG FIX
-     o TopN offtarget total score was sometimes missing for sequences containing gRNAs with less than 6 offtargets in version 1.3.3 
-
-CHANGES IN VERSION 1.3.7
-------------------------
-NEW FEATURE
-     o Added searchDirection to compare2Sequences to allow search one against the other and many to many sequence search
-     o Added exception handling to catch no gRNA found error in compare2Sequences
-
-CHANGES IN VERSION 1.3.8
-------------------------
-NEW FEATURE
-     o Added calculategRNAefficiency to calculate gRNA cleavage efficiency using DoenchNBT2014 predictive logistic model
-
-CHANGES IN VERSION 1.3.10
-------------------------
-NEW FEATURE
-     o gRNAs are automatically output to a bed file for view in the UCSC genome browser 
-
-CHANGES IN VERSION 1.5.1
-------------------------
-NEW FEATURE
-     o annotateOfftargets is separated from filterOfftarget function and is faster as well
-
-CHANGES IN VERSION 1.5.2
-------------------------
-NEW FEATURE
-     o filter gRNAs with one or both cut site overlap with RE pattern 
-
-CHANGES IN VERSION 1.5.3
-------------------------
-NEW FEATURE
-     o gRNA efficacy is calcualted for compare2Sequence function and for offTargetAnalysis with chromToSearch="" 
-
-CHANGES IN VERSION 1.5.4
-------------------------
-NEW FEATURE
-     o rename the gRNAs containing Cas9 cut site instead of gRNA start end end. Also output the cut sites in genbank file 
-
-CHANGES IN VERSION 1.5.5
-------------------------
-NEW FEATURE
-     o added useEfficacyFromInputSeq parameter in offTargetAnalysis function to allow user to select whether to use the gRNA efficacy calculated from the input sequence or the one from off-target analysis. This is useful when the input sequence is from a genome that is different from the off-target analysis genome 
-
-CHANGES IN VERSION 1.5.6
-------------------------
-NEW FEATURE
-     o added uniqueREsfor200total and uniqueREsfor100total in summary file to output RE sites that is unique in the 200 and 100 bp flanking gRNA region
-
-CHANGES IN VERSION 1.7.1
-------------------------
-BUG FIXES
-     o only search for gRNAs for input sequences longer than gRNA.size plus PAM size 
-
-CHANGES IN VERSION 1.7.3
-------------------------
-NEW FEATURE
-     o added parameter chromToExclude in offTargetAnalysis to specify chromosomes not to
-search for offtargets, which can be used to exclude haplotype blocks
-
-CHANGES IN VERSION 1.7.6
-------------------------
-NEW FEATURE
-     o added parameter foldgRNA to calculate the minimum free energy (mfe) of the secondary 
-structure of the gRNA with gRNA backbone sequence. In addition, summary file also includes
-the difference of mfe between the secondary structure of gRNA backbone alone and the secondary
-structure of gRNA backbone with the variable region of the gRNA, and the bracket 
-notation of the secondary structure of gRNA backbone with the variable region of the gRNA 
-to facilitate gRNA selection. 
