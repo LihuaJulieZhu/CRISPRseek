@@ -21,8 +21,8 @@ offTargetAnalysis(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = T
     chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
-    max.mismatch = 3, PAM.pattern = "N[A|G]G$", gRNA.pattern = "",
-    min.score = 0.5, topN = 100, 
+    max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 2, 
+    gRNA.pattern = "", min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, orgAnn, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 
@@ -122,6 +122,9 @@ considerably slower if set > 3
 }
   \item{PAM.pattern}{
 Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$
+}
+\item{allowed.mismatch.PAM}{
+Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
 }
 \item{gRNA.pattern}{
 Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 

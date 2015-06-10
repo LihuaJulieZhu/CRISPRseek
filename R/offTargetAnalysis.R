@@ -13,7 +13,7 @@ offTargetAnalysis <-
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
 	 max.mismatch = 3, 
-        PAM.pattern = "N[A|G]G$",
+        PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 2,
         gRNA.pattern = "", min.score = 0.5, topN = 100, 
         topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, orgAnn, outputDir,
@@ -287,7 +287,7 @@ offTargetAnalysis <-
         BSgenomeName = BSgenomeName, chromToSearch = chromToSearch,
 	chromToExclude = chromToExclude,
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
-        gRNA.size = gRNA.size) 
+        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM) 
     cat("Building feature vectors for scoring ...\n")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
         canonical.PAM = PAM, gRNA.size = gRNA.size)
@@ -452,11 +452,15 @@ offTargetAnalysis <-
 	      summary <- data.frame(c(summary, folded.gRNAs[,-1]))	
 	}
      }
-    write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
+    #write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
+    ### even there is no perfect target for a gRNA, it will be kept in the summary file
+    ### need to calculate the topN offtarget score and distance correctly yet if include those gRNAs without target
+     #write.table(summary,
+     write.table(summary[order(as.character(summary$forViewInUCSC)), ],
         file = paste(outputDir, "Summary.xls", sep = ""), 
         sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(summary=summary, offtarget = offTargets$offtargets, 
+    list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
 		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
 		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
 }

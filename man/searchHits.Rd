@@ -10,7 +10,7 @@ Search for off targets for given gRNAs, BSgenome and maximum mismatches
 \usage{
 searchHits(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
     max.mismatch = 3, 
-    PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$")
+    PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$", allowed.mismatch.PAM = 2)
 }
 \arguments{
   \item{gRNAs}{
@@ -49,7 +49,9 @@ Size of gRNA, default 20
   \item{PAM}{
 Regular expression of PAM, default N[A|G]G$
 }
-}
+ \item{allowed.mismatch.PAM}{
+Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
+}}
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }

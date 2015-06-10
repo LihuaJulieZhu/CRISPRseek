@@ -150,7 +150,7 @@ filterOffTarget <-
                 end = ends, strand = strand, width = NA, as.character = TRUE)
 	   Offtargets <- cbind(Offtargets, flankSequence = seq)
 	}
-	
+    colnames(Offtargets)[colnames(Offtargets) == "NGG"] = "isCanonicalPAM"
     write.table(temp, file = OfftargetSummary, sep = "\t", row.names = FALSE)
     write.table(Offtargets[order(as.character(Offtargets$name), 
         -as.numeric(as.character(Offtargets$score)), 
