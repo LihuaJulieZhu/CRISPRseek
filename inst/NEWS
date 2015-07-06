@@ -1,3 +1,18 @@
+CHANGES IN VERSION 1.9.2
+------------------------
+
+NEW FEATURES
+
+     o summary file will contain all input gRNAs even there is no on target in the searching genome. This feature is useful to search for offtarget in a different genome 
+     o support bed format inputFilePath for offTargetAnalysis 
+
+CHANGES IN VERSION 1.9.1
+------------------------
+
+NEW FEATURES
+
+     o added parameter allowed.mismatch.PAM to specify the number of degenerative bases in the PAM sequence. This feature is useful for specifying different PAM.pattern for offtarget search.
+
 CHANGES IN VERSION 1.7.6
 ------------------------
 

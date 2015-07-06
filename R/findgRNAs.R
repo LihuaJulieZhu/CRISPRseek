@@ -1,5 +1,5 @@
 findgRNAs <-
-    function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
+    function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, gRNA.pattern = "", gRNA.size = 20, 
 	overlap.gRNA.positions = c(17,18),
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
@@ -17,12 +17,15 @@ findgRNAs <-
     {
     	if (! file.exists(inputFilePath)) {
            stop("inputfile specified as ", inputFilePath, " does not exists!")
-	}
-    	if (format != "fasta" && format != "fastq") 
-    	{
-       	   stop("format needs to be either fasta or fastq!")
-    	}
-    	subjects <- readDNAStringSet(inputFilePath, format, use.names = TRUE)
+        }
+        if (format == "fasta" || format == "fastq")
+        {
+            subjects <- readDNAStringSet(inputFilePath, format, use.names = TRUE)
+        }
+        else
+        {
+            stop("format needs to be either fasta, fastq or bed!")
+        }
     }
     else
     {

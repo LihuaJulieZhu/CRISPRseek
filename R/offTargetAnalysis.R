@@ -1,5 +1,5 @@
 offTargetAnalysis <-
-    function(inputFilePath, format = "fasta", gRNAoutputName, findgRNAs = TRUE,
+    function(inputFilePath, format = "fasta", header=FALSE, gRNAoutputName, findgRNAs = TRUE,
 		exportAllgRNAs = c("all", "fasta", "genbank", "no"),
         findgRNAsWithREcutOnly = FALSE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa", 
@@ -36,7 +36,7 @@ offTargetAnalysis <-
             restriction enzyme recognition sequences!")
     }
     if (missing(inputFilePath)) {
-        stop("inputFilePath containing the searching sequence or a DNAStringSet
+        stop("inputFilePath containing the searching sequence, coordinate or a DNAStringSet
              object is required!")
     }
     if (substr(outputDir, nchar(outputDir), nchar(outputDir)) != .Platform$file.sep)
@@ -62,11 +62,20 @@ offTargetAnalysis <-
     if (class(inputFilePath) != "DNAStringSet" && missing(gRNAoutputName))
 	    gRNAoutputName = strsplit(basename(inputFilePath), split=".", 
 		    fixed=TRUE)[[1]][1]
+    if (format =="bed")
+    {
+        if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
+            stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
+        }
+        inputFilePath <- getSeqFromBed(inputFilePath, header = header, BSgenomeName = BSgenomeName)
+        #### format for filtergRNAs
+        format <- "fasta"
+    }
     if (findgRNAs)
     {
         cat("Searching for gRNAs ...\n")
-	efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
-	if (chromToSearch == "" || useEfficacyFromInputSeq)
+	    efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
+	    if (chromToSearch == "" || useEfficacyFromInputSeq)
           potential.gRNAs <- findgRNAs(inputFilePath,
             findPairedgRNAOnly = findPairedgRNAOnly,
             pairOutputFile = pairOutputFile, PAM = PAM,
@@ -75,15 +84,15 @@ offTargetAnalysis <-
             max.gap = max.gap, name.prefix = gRNA.name.prefix,
             format = format, featureWeightMatrixFile = featureWeightMatrixFile, 
             baseBeforegRNA = baseBeforegRNA, 
-	    baseAfterPAM = baseAfterPAM , 
+	        baseAfterPAM = baseAfterPAM ,
     	    calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile)
-       else	
-	 potential.gRNAs <- findgRNAs(inputFilePath, 
-            findPairedgRNAOnly = findPairedgRNAOnly,
-            pairOutputFile = pairOutputFile, PAM = PAM,
-	    gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
-            gRNA.size = gRNA.size, min.gap = min.gap, 
-            max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
+         else
+	        potential.gRNAs <- findgRNAs(inputFilePath,
+               findPairedgRNAOnly = findPairedgRNAOnly,
+               pairOutputFile = pairOutputFile, PAM = PAM,
+	           gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
+               gRNA.size = gRNA.size, min.gap = min.gap,
+               max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
 	if (length(potential.gRNAs) == 0)
 		stop("no gRNAs found!")
 	if (length(potential.gRNAs) > 0 && (exportAllgRNAs == "fasta" || exportAllgRNAs == "all"))
@@ -204,7 +213,7 @@ offTargetAnalysis <-
                 pairOutputFile = pairOutputFile, 
                 findgRNAsWithREcutOnly = findgRNAsWithREcutOnly,
 	        REpatternFile = REpatternFile, 
-                format = format,  minREpatternSize = minREpatternSize, 
+                format = format,  minREpatternSize = minREpatternSize,
                 overlap.gRNA.positions = overlap.gRNA.positions)
             REcutDetails  <- gRNAs.RE$gRNAREcutDetails
 	    write.table(REcutDetails[order(as.character(
@@ -241,12 +250,15 @@ offTargetAnalysis <-
             if (! file.exists(inputFilePath)) {
                 stop("inputfile specified as ", inputFilePath, " does not exists!")
             }
-            if (format != "fasta" && format != "fastq") 
+            if (format == "fasta" || format == "fastq")
             {
-                stop("format needs to be either fasta or fastq!")
+                potential.gRNAs <- readDNAStringSet(inputFilePath, format,
+                      use.names = TRUE)
             }
-            potential.gRNAs <- readDNAStringSet(inputFilePath, format, 
-                use.names = TRUE)
+            else
+            {
+                stop("format needs to be either fasta,fastq or bed!")
+            }
         }
         else
         {
@@ -410,7 +422,7 @@ offTargetAnalysis <-
 			gRNAefficacy = inputEfficacy$gRNAefficacy))
 		on.target <- merge(on.target, inputEfficacy, by.x="names", by.y ="name")
 	  }
-	  summary <- unique(merge(on.target, summary, by="names"))
+	  summary <- unique(merge(on.target, summary, by="names", all=TRUE))
 	  write.table(summary[order(as.character(summary$names)), ],
              file = paste(outputDir, "Summary.xls", sep = ""),
              sep = "\t", row.names = FALSE)
