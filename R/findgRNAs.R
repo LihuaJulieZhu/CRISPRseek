@@ -24,7 +24,7 @@ findgRNAs <-
         }
         else
         {
-            stop("format needs to be either fasta, fastq or bed!")
+            stop("format needs to be either fasta or fastq !")
         }
     }
     else
