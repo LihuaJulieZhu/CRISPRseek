@@ -1,12 +1,14 @@
 compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1", "Seq2"), 
-	format = "fasta", findgRNAsWithREcutOnly = FALSE, searchDirection=c("both","1to2", "2to1"),
+	format = c("fasta", "fasta"), header = FALSE, findgRNAsWithREcutOnly = FALSE,
+    searchDirection=c("both","1to2", "2to1"), BSgenomeName,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
     allowed.mismatch.PAM = 2, max.mismatch = 3, 
-    outputDir, weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 
+    outputDir, upstream =0, downstream = 0,
+    weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 
     0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 
     0.685, 0.583), overwrite = FALSE, baseBeforegRNA = 4, 
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
@@ -14,6 +16,9 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
         gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
         temperature = 37)
 {
+	if ((format[1] == "bed" || format[2] == "bed") && 
+            (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome"))
+            stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
 	append = ifelse(overwrite, FALSE, TRUE)
 	if (class(inputFile1Path) != "DNAStringSet")
 	{
@@ -35,26 +40,27 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	{
 		cat("search for gRNAs for input file1...\n")
 		tryCatch(
-				 (gRNAs1 = offTargetAnalysis(inputFile1Path, format = format, 
-					 findgRNAs = TRUE, gRNAoutputName= inputNames[1],
-				     findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "", 
-				     findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
-				     REpatternFile = REpatternFile, minREpatternSize = minREpatternSize, 
-				     overlap.gRNA.positions =  overlap.gRNA.positions,
-				     min.gap = min.gap, max.gap = max.gap, 
-				     gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
-				    gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
-				    outputDir = outputDir1, 
-				    weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
-				     featureWeightMatrixFile = featureWeightMatrixFile, 
-            			     baseBeforegRNA = baseBeforegRNA, 
-            			     baseAfterPAM = baseAfterPAM)), 
-				 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
+			 (gRNAs1 = offTargetAnalysis(inputFile1Path, format = format[1], 
+			     findgRNAs = TRUE, gRNAoutputName= inputNames[1],
+			     findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "", 
+			     findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
+			     REpatternFile = REpatternFile, minREpatternSize = minREpatternSize, 
+			     overlap.gRNA.positions =  overlap.gRNA.positions,
+			     min.gap = min.gap, max.gap = max.gap, 
+			     gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
+			     gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
+			     outputDir = outputDir1, upstream.search = upstream,
+			     downstream.search = downstream,
+			     weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
+			     featureWeightMatrixFile = featureWeightMatrixFile, 
+            		     baseBeforegRNA = baseBeforegRNA, BSgenomeName = BSgenomeName,
+            		     baseAfterPAM = baseAfterPAM, header = header)), 
+			 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
 	}
 	if(searchDirection == "both" || searchDirection == "2to1")
 	{
 		cat("search for gRNAs for input file2...\n")
-		tryCatch((gRNAs2 = offTargetAnalysis(inputFile2Path, format = format,                    
+		tryCatch((gRNAs2 = offTargetAnalysis(inputFile2Path, format = format[2],          
 			findgRNAs = TRUE, gRNAoutputName = inputNames[2],
 			findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "",
             		findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
@@ -63,18 +69,23 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
             		min.gap = min.gap, max.gap = max.gap, 
             		gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
             		gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
-            		outputDir = outputDir2, 
+            		outputDir = outputDir2,upstream.search = upstream,
+			downstream.search = downstream, 
             		weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
                         featureWeightMatrixFile = featureWeightMatrixFile,
-                        baseBeforegRNA = baseBeforegRNA,
-                        baseAfterPAM = baseAfterPAM)), 
+                        baseBeforegRNA = baseBeforegRNA, BSgenomeName = BSgenomeName,
+                        baseAfterPAM = baseAfterPAM, header = header)), 
 			error=function(e) {print(e); gRNAs2 = DNAStringSet()})
 	}
     print("Scoring ...")
     if (class(inputFile1Path) != "DNAStringSet")
     {
-    	subjects1 <- readDNAStringSet(inputFile1Path, format = format,
-    	    use.names = TRUE)
+	if (format[1] == "bed")
+	    subjects1 <- getSeqFromBed(inputFile1Path, header = header,
+                BSgenomeName = BSgenomeName, upstream = upstream, downstream = downstream)
+	else
+    	    subjects1 <- readDNAStringSet(inputFile1Path, format = format[1],
+    	        use.names = TRUE)
     }
     else
     {
@@ -82,8 +93,12 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     }
    if (class(inputFile2Path) != "DNAStringSet")
    {
-    	subjects2 <- readDNAStringSet(inputFile2Path, format = format,
-       	    use.names = TRUE)
+	if (format[2] == "bed")
+            subjects2 <- getSeqFromBed(inputFile2Path, header = header, 
+	        BSgenomeName = BSgenomeName, upstream = upstream, downstream = downstream)
+	else
+    	    subjects2 <- readDNAStringSet(inputFile2Path, format = format[2],
+       	        use.names = TRUE)
    }
    else
    {
@@ -115,8 +130,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		{
 			plus_matches <- matchPattern(pattern, subjects2[[j]],
 #plus_matches <- vmatchPattern(pattern, subjects2,
-				max.mismatch = max.mismatch, min.mismatch = 0, 
-                with.indels = FALSE, fixed = TRUE, algorithm = "auto")
+			    max.mismatch = max.mismatch, min.mismatch = 0, 
+                            with.indels = FALSE, fixed = TRUE, algorithm = "auto")
 			if (length(plus_matches) > 0) {
 				names(plus_matches) <- rep.int(patternID, length(plus_matches))
 				writeHits(pattern, seqname[j], plus_matches, strand = "+", 

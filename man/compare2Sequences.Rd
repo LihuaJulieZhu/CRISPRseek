@@ -10,15 +10,15 @@ Generate all possible guide RNAs (gRNAs) for two input sequences, or two sets of
 \usage{
 compare2Sequences(inputFile1Path, inputFile2Path, 
     inputNames=c("Seq1", "Seq2"), 
-    format = "fasta", findgRNAsWithREcutOnly = FALSE, 
-    searchDirection=c("both","1to2", "2to1"),
+    format = c("fasta", "fasta"), header=FALSE, findgRNAsWithREcutOnly = FALSE, 
+    searchDirection=c("both","1to2", "2to1"), BSgenomeName,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
     allowed.mismatch.PAM = 2, max.mismatch = 3,
-    outputDir, 
+    outputDir, upstream = 0, downstream = 0, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
     overwrite = FALSE, baseBeforegRNA = 4, 
@@ -44,6 +44,8 @@ DNAStringSet instead of file path
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta
 }
+  \item{header}{
+Indicate whether the input file contains header, default FALSE, only applies to bed format}
   \item{findgRNAsWithREcutOnly}{
 Indicate whether to find gRNAs overlap with restriction enzyme recognition 
 pattern
@@ -51,6 +53,13 @@ pattern
   \item{searchDirection}{
 Indicate whether perfrom gRNA in both sequences and off-target search against each other (both)
 or search gRNA in input1 and off-target analysis in input2 (1to2), or vice versa (2to1)
+}
+\item{BSgenomeName}{
+BSgenome object. Please refer to available.genomes in BSgenome package. For 
+example, BSgenome.Hsapiens.UCSC.hg19 for hg19, BSgenome.Mmusculus.UCSC.mm10 
+for mm10, BSgenome.Celegans.UCSC.ce6 for ce6, BSgenome.Rnorvegicus.UCSC.rn5 
+for rn5, BSgenome.Drerio.UCSC.danRer7 for Zv9, and 
+BSgenome.Dmelanogaster.UCSC.dm3 for dm3
 }
   \item{REpatternFile}{
 File path containing restriction enzyme cut patters
@@ -101,6 +110,12 @@ default 3
 }
   \item{outputDir}{
 the directory where the sequence comparison results will be written to
+}
+  \item{upstream}{
+upstream offset from the bed input starts to search for gRNA and/or offtargets, default 0
+}
+  \item{downstream}{
+downstream offset from the bed input ends to search for gRNA and/or offtargets, default 0 
 }
   \item{weights}{
  numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395, 

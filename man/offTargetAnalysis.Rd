@@ -26,6 +26,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     gRNA.pattern = "", min.score = 0.5, topN = 100, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, orgAnn, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
+    upstream.search = 0, downstream.search = 0,
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 
     0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
     baseBeforegRNA = 4, baseAfterPAM = 3,
@@ -173,6 +174,12 @@ upstream offset from the off target start, default 200
 }
   \item{downstream}{
 downstream offset from the off target end, default 200
+}
+ \item{upstream.search}{
+upstream offset from the bed input starts to search for gRNAs, default 0
+}
+  \item{downstream.search}{
+downstream offset from the bed input ends to search for gRNAs, default 0
 }
   \item{weights}{
 a numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395, 

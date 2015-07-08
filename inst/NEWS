@@ -3,6 +3,16 @@ CHANGES IN VERSION 1.9.2
 
 NEW FEATURES
 
+     o support bed format inputFilePath for compare2Sequences 
+     o added upstream and downstream parameters to compare2Sequences for bed input file
+     o added upstream.search and downstream.search in offTargetAnalysis for bed input file
+     o these features are particularly useful for annotating GUIDE-seq peaks 
+
+CHANGES IN VERSION 1.9.2
+------------------------
+
+NEW FEATURES
+
      o summary file will contain all input gRNAs even there is no on target in the searching genome. This feature is useful to search for offtarget in a different genome 
      o support bed format inputFilePath for offTargetAnalysis 
 
