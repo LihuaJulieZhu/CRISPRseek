@@ -42,7 +42,7 @@ Name of the input sequences when inputFile1Path and inputFile2Path are
 DNAStringSet instead of file path
 }
   \item{format}{
-Format of the input file, fasta and fastq are supported, default fasta
+Format of the input files, fasta, fastq and bed format are supported, default fasta
 }
   \item{header}{
 Indicate whether the input file contains header, default FALSE, only applies to bed format}

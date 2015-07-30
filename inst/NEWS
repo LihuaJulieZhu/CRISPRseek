@@ -1,4 +1,12 @@
-CHANGES IN VERSION 1.9.2
+CHANGES IN VERSION 1.9.4
+------------------------
+
+NEW FEATURES
+
+     o added offTargetAnalysisOfPeakRegions function for GUIDE-seq analysis
+
+offTargetAnalysisOfPeakRegions
+CHANGES IN VERSION 1.9.3
 ------------------------
 
 NEW FEATURES
@@ -7,7 +15,7 @@ NEW FEATURES
      o added upstream and downstream parameters to compare2Sequences for bed input file
      o added upstream.search and downstream.search in offTargetAnalysis for bed input file
      o these features are particularly useful for annotating GUIDE-seq peaks 
-
+ 
 CHANGES IN VERSION 1.9.2
 ------------------------
 
