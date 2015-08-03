@@ -1,22 +1,12 @@
-#library(BSgenome.Hsapiens.UCSC.hg19)
-#library(CRISPRseek)
-### T2test100bp.bed
-#offTargetAnalysisOfPeakRegions(gRNA = "T2.fa",
-#   peaks = "T2test100bp.bed",
-#   format=c("fasta", "bed"),
-#   peaks.withHeader = FALSE, BSgenomeName = Hsapiens,
-#   upstream = 50, downstream =50, PAM.size = 3, gRNA.size = 20,
-#   PAM = "NGG", PAM.pattern = "NNN$", max.mismatch = 8,
-#   outputDir="TS2bedplusminusMerged",
-#   allowed.mismatch.PAM = 3, overwrite = TRUE
-#   )
-
 offTargetAnalysisOfPeakRegions <- function(gRNA, peaks, 
    format=c("fasta", "bed"),
    peaks.withHeader = FALSE, BSgenomeName,
    upstream = 50, downstream =50, PAM.size = 3, gRNA.size = 20,
    PAM = "NGG", PAM.pattern = "NNN$", max.mismatch = 8,
-   outputDir, allowed.mismatch.PAM = 3, overwrite = TRUE
+   outputDir, allowed.mismatch.PAM = 3, overwrite = TRUE,
+   weights = c(0, 0, 0.014, 0, 0, 0.395,
+0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615,
+0.804, 0.685, 0.583)
    )
 {
    thePeaks <- read.table(peaks, sep="\t", header = peaks.withHeader, 
@@ -43,10 +33,15 @@ offTargetAnalysisOfPeakRegions <- function(gRNA, peaks,
       min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = PAM.size, 
       gRNA.size = 20, PAM = PAM, PAM.pattern = PAM.pattern, max.mismatch = max.mismatch,
       outputDir = outputDir, foldgRNAs = FALSE,
-      allowed.mismatch.PAM = allowed.mismatch.PAM, overwrite = overwrite
+      allowed.mismatch.PAM = allowed.mismatch.PAM, overwrite = overwrite,
+      weights = weights
      )
    TS2 <- cbind(names = as.character(unlist(lapply(as.character(TS2$offTarget), 
-      function(temp) {paste(strsplit(temp,":")[[1]][1:6], collapse=":")}))), TS2)
+      function(temp) {
+	temp1 <- strsplit(temp,":")[[1]]
+	end.ind <- length(temp1) - 1
+	paste(temp1[1:end.ind], collapse=":")
+      }))), TS2)
    excluding.columns = which(colnames(TS2) %in% 
       c("scoreForSeq1", "targetInSeq1", "gRNAefficacy", "scoreDiff"))
    TS2 <- TS2[, -excluding.columns]
@@ -55,15 +50,17 @@ offTargetAnalysisOfPeakRegions <- function(gRNA, peaks,
    offTargetOffset <- do.call(rbind, lapply(as.character(TS2$offTarget),
       function(temp) 
       { 
-         as.numeric(strsplit(strsplit(temp,":")[[1]][7], "-")[[1]][1:2])
+         temp1 <- strsplit(temp,":")[[1]]
+         start.ind <- length(temp1)
+         as.numeric(strsplit(temp1[start.ind], "-")[[1]][1:2])
          }))
-   offtargets <- merge(TS2, thePeaks, by = "names")
-   offTargetOffset[, 1] <- offTargetOffset[, 1] - upstream + offtargets$peak_start
-   offTargetOffset[, 2] <- offTargetOffset[, 2] - upstream + offtargets$peak_start
-   offtargets <- cbind(offtargets, offTarget_Start = offTargetOffset[1], 
-      offTarget_end = offTargetOffset[2])
-   offtargets <- merge(offtargets, thePeaks, all = TRUE)
+   TS2 <- cbind(TS2, offTarget_Start = offTargetOffset[,1], 
+      offTarget_End = offTargetOffset[,2])
+   offtargets <- merge(TS2, thePeaks, by = "names", all = TRUE)
+   offtargets$offTarget_Start <- offtargets$offTarget_Start - upstream + offtargets$peak_start
+   offtargets$offTarget_End <- offtargets$offTarget_End - upstream + offtargets$peak_start
    
    write.table(offtargets, file = "offTargetsInPeakRegions.xls", sep="\t", row.names = FALSE)
-   list(offtargets = offtargets, TS2 = TS2, thePeaks = thePeaks)
+   #list(offtargets = offtargets, TS2 = TS2, thePeaks = thePeaks)
+   offtargets
 }
