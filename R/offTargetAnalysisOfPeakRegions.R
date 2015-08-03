@@ -1,14 +1,22 @@
-library(BSgenome.Hsapiens.UCSC.hg19)
-library(CRISPRseek)
+#library(BSgenome.Hsapiens.UCSC.hg19)
+#library(CRISPRseek)
 ### T2test100bp.bed
-offTargetAnalysisOfPeakRegions <- function(gRNA = "T2.fa", 
-   peaks = "T2test100bp.bed", 
+#offTargetAnalysisOfPeakRegions(gRNA = "T2.fa",
+#   peaks = "T2test100bp.bed",
+#   format=c("fasta", "bed"),
+#   peaks.withHeader = FALSE, BSgenomeName = Hsapiens,
+#   upstream = 50, downstream =50, PAM.size = 3, gRNA.size = 20,
+#   PAM = "NGG", PAM.pattern = "NNN$", max.mismatch = 8,
+#   outputDir="TS2bedplusminusMerged",
+#   allowed.mismatch.PAM = 3, overwrite = TRUE
+#   )
+
+offTargetAnalysisOfPeakRegions <- function(gRNA, peaks, 
    format=c("fasta", "bed"),
-   peaks.withHeader = FALSE, BSgenomeName = Hsapiens,
+   peaks.withHeader = FALSE, BSgenomeName,
    upstream = 50, downstream =50, PAM.size = 3, gRNA.size = 20,
    PAM = "NGG", PAM.pattern = "NNN$", max.mismatch = 8,
-   outputDir="TS2bedplusminusMerged",  
-   allowed.mismatch.PAM = 3, overwrite = TRUE
+   outputDir, allowed.mismatch.PAM = 3, overwrite = TRUE
    )
 {
    thePeaks <- read.table(peaks, sep="\t", header = peaks.withHeader, 
