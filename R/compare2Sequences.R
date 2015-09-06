@@ -22,19 +22,21 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	append = ifelse(overwrite, FALSE, TRUE)
 	if (class(inputFile1Path) != "DNAStringSet")
 	{
-		outputDir1 <- file.path(outputDir, basename(inputFile1Path))
+	    outputDir1 <- file.path(outputDir, paste(basename(inputFile1Path),
+               format(Sys.time(), "%b-%d-%Y"), sep="-"))
 	}
 	else
 	{
-		outputDir1 <- file.path(outputDir, "File1")
+           outputDir1 <- file.path(outputDir, "File1")
 	}
 	if (class(inputFile2Path) != "DNAStringSet")
 	{
-		outputDir2 <- file.path(outputDir, basename(inputFile2Path))
+	   outputDir2 <- file.path(outputDir, paste(basename(inputFile2Path),
+               format(Sys.time(), "%b-%d-%Y"), sep="-"))
 	}
 	else
 	{
-		outputDir2 <- file.path(outputDir, "File2")
+	   outputDir2 <- file.path(outputDir, "File2")
 	}
 	if(searchDirection == "both" || searchDirection == "1to2")
 	{
