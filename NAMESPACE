@@ -1,6 +1,6 @@
 import(Biostrings)
 import(BiocGenerics)
-import(seqinr)
+importFrom(seqinr, s2c)
 import(BSgenome)
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits, writeHits, translatePattern, getOfftargetScore, 
