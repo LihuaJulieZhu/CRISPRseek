@@ -43,11 +43,11 @@ filtergRNAs <-
     {
         pattern.name <- gsub("'", "", names(patterns)[j])
         pattern <- patterns[[j]]
-		this.pattern.size <- length(pattern)
+	this.pattern.size <- length(pattern)
         revpattern <- reverseComplement(pattern)
         if (revpattern != pattern)
         {
-			revpattern <- translatePattern(revpattern)
+	    revpattern <- translatePattern(revpattern)
             minus.gRNAs <- do.call(rbind, lapply(1:length(all.gRNAs), 
                 function(i){
                     res1  <- as.numeric(gregexpr(revpattern, seqs[i],
@@ -87,11 +87,11 @@ filtergRNAs <-
                 res1  <- as.numeric(gregexpr(pattern, seqs[i], perl = TRUE,
                     fixed = FALSE, ignore.case = TRUE)[[1]])
                 do.call(rbind, lapply(1:length(res1), function(k) {
-					if (res1[k] >0 && !overlap.allpos && 
-						((min.pStart.plus >= res1[k] && 
-						min.pStart.plus <= (res1[k] + this.pattern.size -1)) || 
-						(max.pStart.plus >= res1[k] && 
-						max.pStart.plus <= (res1[k] + this.pattern.size -1))))
+			if (res1[k] >0 && !overlap.allpos && 
+				((min.pStart.plus >= res1[k] && 
+				min.pStart.plus <= (res1[k] + this.pattern.size -1)) || 
+				(max.pStart.plus >= res1[k] && 
+				max.pStart.plus <= (res1[k] + this.pattern.size -1))))
                         c(as.character(seqs[i]), seq.names[i], pattern.name, 
                             as.character(patterns[[j]]), res1[k], 
                             res1[k] + this.pattern.size - 1)

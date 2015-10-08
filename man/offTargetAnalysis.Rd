@@ -17,6 +17,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
         package = "CRISPRseek"), minREpatternSize = 4, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
+    annotatePaired = TRUE,
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
     chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
@@ -80,6 +81,7 @@ Choose whether to only search for paired gRNAs in such an orientation that
 the first one is on minus strand called reverse gRNA and the second one is 
 on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 }
+\item{annotatePaired}{Indicate whether to output paired information, default TRUE}
   \item{min.gap}{
 Minimum distance between two oppositely oriented gRNAs to be valid paired 
 gRNAs. Default 0

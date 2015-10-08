@@ -6,13 +6,14 @@ offTargetAnalysis <-
             package = "CRISPRseek"), 
 	minREpatternSize = 4,
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
+        annotatePaired = TRUE, 
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "",
 	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
         chromToSearch = "all", 
         chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
-	 max.mismatch = 3, 
+	max.mismatch = 3, 
         PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 2,
         gRNA.pattern = "", min.score = 0.5, topN = 100, 
         topN.OfftargetTotalScore = 10, 
@@ -55,7 +56,8 @@ offTargetAnalysis <-
     {
         dir.create(outputDir)
     }
-    pairOutputFile <- paste(outputDir, "pairedgRNAs.xls", sep = "")
+    if (annotatePaired || findPairedgRNAOnly)
+       pairOutputFile <- paste(outputDir, "pairedgRNAs.xls", sep = "")
     REcutDetailFile <- paste(outputDir, "REcutDetails.xls", sep = "")
     bedFile<- paste(outputDir, "gRNAsCRISPRseek.bed", sep = "")
     if (missing(gRNAoutputName) && class(inputFilePath) == "DNAStringSet")
@@ -77,8 +79,9 @@ offTargetAnalysis <-
         cat("Searching for gRNAs ...\n")
 	    efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
 	    if (chromToSearch == "" || useEfficacyFromInputSeq)
-          potential.gRNAs <- findgRNAs(inputFilePath,
+        potential.gRNAs <- findgRNAs(inputFilePath,
             findPairedgRNAOnly = findPairedgRNAOnly,
+            annotatePaired = annotatePaired,
             pairOutputFile = pairOutputFile, PAM = PAM,
             gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
             gRNA.size = gRNA.size, min.gap = min.gap,
@@ -90,6 +93,7 @@ offTargetAnalysis <-
          else
 	        potential.gRNAs <- findgRNAs(inputFilePath,
                findPairedgRNAOnly = findPairedgRNAOnly,
+               #annotatePaired = annotatePaired,
                pairOutputFile = pairOutputFile, PAM = PAM,
 	           gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
                gRNA.size = gRNA.size, min.gap = min.gap,
@@ -241,8 +245,9 @@ offTargetAnalysis <-
 	{
 	    gRNAs <- potential.gRNAs
 	}
-	pairedInformation <- read.table(pairOutputFile, sep = "\t", 
-            header = TRUE, stringsAsFactors = FALSE)
+        if ( annotatePaired || findPairedgRNAOnly) 
+	    pairedInformation <- read.table(pairOutputFile, sep = "\t", 
+                header = TRUE, stringsAsFactors = FALSE)
     }
     else
     {
@@ -326,10 +331,19 @@ offTargetAnalysis <-
         y[is.na(y)] <- ""
 	summary[, i] = y	
     }
-    cat("Add paired information...\n")
-    if (findgRNAs)
+    n.cores <- detectCores() - 1
+    n.cores <- min(n.cores, dim(summary)[1])
+    if (n.cores < 1)
+        n.cores <- 1
+    cl <- makeCluster(n.cores)
+    clusterExport(cl, varlist = c("summary", "gsub", 
+        "pairedInformation", "REcutDetails"),
+        envir = environment())
+
+    if (findgRNAs && (annotatePaired || findPairedgRNAOnly))
     {
-        PairedgRNAName <- unlist(lapply(1:dim(summary)[1], function(i) {
+        cat("Add paired information...\n")
+        PairedgRNAName <- unlist(parLapply(cl, 1:dim(summary)[1], function(i) {
             as.character(gsub("^\\s+|\\s+$", "", 
                 paste(unique(pairedInformation[as.character(
                 pairedInformation$ForwardgRNAName) == as.character(
@@ -339,12 +353,11 @@ offTargetAnalysis <-
                 summary$names[i]),]$ForwardgRNAName),
                 collapse = " ")))
         }))
-	#cat(PairedgRNAName)
     }
     cat("Add RE information...\n")
     if (findPairedgRNAOnly && findgRNAs)
     {
-        REname <- unlist(lapply(1:dim(summary)[1], function(i) {
+        REname <- unlist(parLapply(cl, 1:dim(summary)[1], function(i) {
             gsub("^\\s+|\\s+$", "", gsub("NA", "", 
                 paste(unique(REcutDetails[as.character(
                 REcutDetails$ForwardREcutgRNAName) == as.character(
@@ -358,25 +371,15 @@ offTargetAnalysis <-
     }
     else
     {
-        REname <- unlist(lapply(1:dim(summary)[1], function(i) {
+        REname <- unlist(parLapply(cl, 1:dim(summary)[1], function(i) {
             gsub("^\\s+|\\s+$", "", gsub("NA", "", paste(unique(
                 REcutDetails[as.character(REcutDetails$REcutgRNAName) == 
                 as.character(summary$names[i]), ]$REname), collapse = " ")))
         }))
         summary <- cbind(summary, REname)
     }
+    stopCluster(cl)
 	seq <- as.character(summary$gRNAsPlusPAM)
-	#n.C <- unlist(lapply(1:length(seq), function(i) {
-	#					 table(factor(s2c(substr(seq[i],1,gRNA.size)), levels=c("C")))
-	#					 }))
-	#n.G <- unlist(lapply(1:length(seq), function(i) {
-	#					 table(factor(s2c(substr(seq[i],1,gRNA.size)), levels=c("G")))
-	#					 }))
-	#summary <- cbind(summary,GC.percent.gRNA = (n.G+n.C)/gRNA.size * 100)
-	#numberOfT.last4Position.gRNA <- unlist(lapply(1:length(seq), function(i) {
-	#	 table(factor(s2c(substr(seq[i],gRNA.size-3,gRNA.size)), levels=c("T")))
-	#	 }))
-	#summary <- cbind(summary, numberOfT.last4Position.gRNA )
 	cat("write gRNAs to bed file...\n")
 	on.target <- offTargets$offtargets
 	on.target <- unique(subset(on.target, 

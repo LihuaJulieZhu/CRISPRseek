@@ -11,11 +11,17 @@ calculategRNAEfficiency <- function(extendedSequence, baseBeforegRNA, featureWei
 	featureEnd <- featureStart + nchar(featureNames) - 1
 	featureWeights <- cbind(featureStart, featureEnd, featureNames, fWeights)
 	featureWeights <- featureWeights[order(featureWeights[,1]),]
-	n.C <- unlist(lapply(1:length(extendedSequence), function(i) {
+        n.cores <- detectCores() - 1
+    	n.cores <- min(n.cores, length(extendedSequence))
+        cl <- makeCluster(n.cores)
+        clusterExport(cl, varlist = c("extendedSequence", 
+            "substr", "s2c", "baseBeforegRNA", "gRNA.size", "featureWeights"),
+            envir = environment()) 
+	n.C <- unlist(parLapply(cl, 1:length(extendedSequence), function(i) {
 	    table(factor(s2c(substr(extendedSequence[i],baseBeforegRNA + 1,
 			 baseBeforegRNA + gRNA.size)), levels=c("C")))
 		 }))
-	n.G <- unlist(lapply(1:length(extendedSequence), function(i) {
+	n.G <- unlist(parLapply(cl, 1:length(extendedSequence), function(i) {
 	    table(factor(s2c(substr(extendedSequence[i],baseBeforegRNA + 1, 
 			baseBeforegRNA + gRNA.size)), levels=c("G")))
 		 }))
@@ -28,16 +34,17 @@ calculategRNAEfficiency <- function(extendedSequence, baseBeforegRNA, featureWei
 		GChigh.coef * ( GC.content - 10) * GChigh
 	this.features <- numeric(dim(featureWeights)[1])
 	
-	all.features <- do.call(rbind, lapply(1:length(extendedSequence), function(j) {
-		   for (i in 1:length(this.features))
-		   {
-				this.features[i] = as.numeric(substr(extendedSequence[j], 
-					as.numeric(featureWeights[i,1]), 
-					as.numeric(featureWeights[i,2])) == featureWeights[i,3])
-		   }
-		   this.features
+	all.features <- do.call(rbind, parLapply(cl, 
+            1:length(extendedSequence), function(j) {
+	    for (i in 1:length(this.features))
+	    {
+	        this.features[i] = as.numeric(substr(extendedSequence[j], 
+		   as.numeric(featureWeights[i,1]), 
+		   as.numeric(featureWeights[i,2])) == featureWeights[i,3])
+	    }
+	    this.features
 	 }))
-	
+        stopCluster(cl)	
 	efficiency <- efficiency + all.features %*% as.numeric(featureWeights[,4])
 
 	efficiency <- 1/(1 + exp(-efficiency))

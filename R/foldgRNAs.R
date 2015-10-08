@@ -12,8 +12,14 @@ foldgRNAs <- function(gRNAs.withoutPAM,
        fd1 <- fold(s = gRNA.backbone, t = temperature)	
        mfe.backbone <- round(fd1[[2]], 2)
        gRNAs <- gsub("T", "U", gRNAs.withoutPAM)
-       fd2 <- do.call(rbind, lapply(gRNAs, function(s) {
-          unlist(fold(paste(s, gRNA.backbone, sep=""), t=temperature))}))
+       fd2 <- matrix(nrow = length(gRNAs), ncol = 2)
+       #fd2 <- do.call(rbind, lapply( gRNAs, function(s) {
+       #   unlist(fold(paste(s, gRNA.backbone, sep=""), t=temperature))}))
+       for ( i in 1:length(gRNAs))
+       {
+          fd2[i,] <- unlist(fold(paste(gRNAs[i], gRNA.backbone, sep=""), 
+             t=temperature)) 
+       }
        colnames(fd2) <- c("bracket.notation", "mfe.sgRNA")
        fd2[,2] <- round(as.numeric(unlist(fd2[,2])))
        mfe.diff <- round(as.numeric(unlist(fd2[,2])) - mfe.backbone,2)

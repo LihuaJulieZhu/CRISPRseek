@@ -2,6 +2,9 @@ import(Biostrings)
 import(BiocGenerics)
 importFrom(seqinr, s2c)
 import(BSgenome)
+importFrom(data.table, rbindlist)
+import(BiocParallel)
+importFrom(parallel, makeCluster, stopCluster, detectCores)
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits, writeHits, translatePattern, getOfftargetScore, 
     buildFeatureVectorForScoring, compare2Sequences, calculategRNAEfficiency,

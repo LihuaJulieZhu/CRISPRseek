@@ -16,23 +16,31 @@ buildFeatureVectorForScoring <-
     mismatch.distance2PAM <- apply(mismatch.pos, 1, function(i) { 
         paste(gRNA.size + 1 - which(i == 1), collapse = ",")
     })
-    alignment <- unlist(lapply(1:dim(mismatch.pos)[1], function(i) {
+    n.cores <- detectCores() - 1
+    cl <- makeCluster(n.cores)
+    clusterExport(cl, varlist = c("mismatch.pos", "gRNA.size",
+        "rev", "subject", "hits",  "subseq", "mismatch.distance2PAM",
+        "strsplit"),
+        envir = environment())
+    alignment <- unlist(parLapply(cl, 1:dim(mismatch.pos)[1], function(i) {
         temp <- rep(".", gRNA.size)
         ind <- which(mismatch.pos[i,] == 1)
         for (j in ind)
             temp[j] = as.character(subseq(subject[i], start = j, width = 1))
         paste(temp, collapse = "")
     }))
-    mean.neighbor.distance.mismatch <- unlist(lapply(1:dim(hits)[1], function(i) 
+    mean.neighbor.distance.mismatch <- unlist(parLapply(cl, 1:dim(hits)[1],
+       function(i) 
     {
         positions <- rev(as.numeric(unlist(strsplit(mismatch.distance2PAM[i],
-            split=","))))
+            split = ","))))
         n.mismatch <- hits$n.mismatch[i]
         if (n.mismatch > 1)
             mean(positions[2:n.mismatch] - positions[1:(n.mismatch-1)])
         else
             gRNA.size
     }))
+    stopCluster(cl)
     features <- cbind(mismatch.distance2PAM, alignment, isCanonical.PAM,
         mean.neighbor.distance.mismatch)
     colnames(features) <- c("mismatch.distance2PAM", "alignment", "NGG", 
