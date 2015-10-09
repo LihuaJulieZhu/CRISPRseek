@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.9.12
+------------------------
+
+NEW FEATURES
+
+     o added annotatePaired parameter
+     o added parallele processing 
+
 CHANGES IN VERSION 1.9.6
 ------------------------
 

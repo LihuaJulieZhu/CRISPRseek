@@ -265,6 +265,7 @@ CRISPRseek
             package = "CRISPRseek")
 	results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+            annotatePaired = FALSE,
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
 	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 

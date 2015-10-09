@@ -59,7 +59,8 @@ findgRNAs <-
         n.cores <- detectCores() - 1
     	n.cores <- min(n.cores, x)
         cl <- makeCluster(n.cores)
-        clusterExport(cl, varlist = c("x", "subject", "subseq"),
+        clusterExport(cl, varlist = c("x", "subject", "subseq",
+            "revsubject", "gRNA.size", "PAM.size"),
             envir = environment())
         clusterExport(cl, varlist =  c("calculategRNAEfficacy",
             "baseBeforegRNA", "baseAfterPAM", "PAM", "gRNA.pattern", "cut.site"),
@@ -120,7 +121,7 @@ findgRNAs <-
             warning(paste("No paired gRNAs found in the input sequence", subjectname))
             all.gRNAs <- DNAStringSet()
         }
-	else
+	else if (annotatePaired || findPairedgRNAOnly)
 	{
             temp = matrix(nrow =0, ncol=5)
             colnames(temp)[1:5] <- c( "ReversegRNAPlusPAM",
@@ -189,13 +190,6 @@ findgRNAs <-
                         names(all.gRNAs) <- c(pos.gRNAs[plus.index,2], 
                             minus.gRNAs[minus.index,2])
                     }
-                    else
-                    {
-                        #paired[, 2] <- paste(name.prefix, paired[,2],  minus.index, 
-                        #    sep = "")
-                        #paired[, 4] <- paste(name.prefix,  paired[,4], plus.index, 
-                        #    sep = "")
-                    }
                     if (dim(paired)[1] == 1)
                         write.table(paired, file = pairOutputFile, sep = "\t", 
                             row.names = FALSE, quote = FALSE, append = toAppend,
@@ -218,27 +212,18 @@ findgRNAs <-
                 if (length(all.gRNAs) == 0)
                     warning(paste("No gRNAs found in the input sequence", 
                         subjectname))	
-                #if (n.plus.gRNAs == 0 && n.minus.gRNAs >0 )
-                    #names(all.gRNAs) <- paste(name.prefix,
-		#	c(minus.gRNAs[,2]),
-                #        c(1:dim(minus.gRNAs)[1]),
-                #        sep = "")
-                #if (n.minus.gRNAs == 0 && n.plus.gRNAs > 0)
-                #    names(all.gRNAs) <- paste(name.prefix, 
-		#	c(pos.gRNAs[,2]),
-                #        c(1:dim(pos.gRNAs)[1]), 
-                #        sep = "")
-                #if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
-                #    names(all.gRNAs) <- paste(name.prefix, 
-		#	c(pos.gRNAs[,2], minus.gRNAs[,2]),
-                #        c(1:dim(pos.gRNAs)[1], 1:dim(minus.gRNAs)[1]),
-                #        sep = "")
             }
-	 } ### no paired found and findPairedOnly   
+	 } ### annotatePaired and (no paired found or findPairedOnly)   
+         else
+         {
+             all.gRNAs <- DNAStringSet(c(pos.gRNAs[,1], minus.gRNAs[,1]))
+             if (length(all.gRNAs) == 0)
+                 warning(paste("No gRNAs found in the input sequence",
+                     subjectname))
+         }
 	 forEffi <- rbind(pos.gRNAs, minus.gRNAs)
 	 forEffi <- subset(forEffi, forEffi[,1] %in% as.character(all.gRNAs))	
 	 if (length(all.gRNAs) >0)
-	     #cbind(as.data.frame(all.gRNAs), names(all.gRNAs), forEffi)
 	     forEffi
     })) ## do call subjects
     if (calculategRNAEfficacy)

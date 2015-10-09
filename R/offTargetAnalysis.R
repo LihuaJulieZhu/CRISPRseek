@@ -93,7 +93,7 @@ offTargetAnalysis <-
          else
 	        potential.gRNAs <- findgRNAs(inputFilePath,
                findPairedgRNAOnly = findPairedgRNAOnly,
-               #annotatePaired = annotatePaired,
+               annotatePaired = annotatePaired,
                pairOutputFile = pairOutputFile, PAM = PAM,
 	           gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
                gRNA.size = gRNA.size, min.gap = min.gap,
@@ -331,19 +331,10 @@ offTargetAnalysis <-
         y[is.na(y)] <- ""
 	summary[, i] = y	
     }
-    n.cores <- detectCores() - 1
-    n.cores <- min(n.cores, dim(summary)[1])
-    if (n.cores < 1)
-        n.cores <- 1
-    cl <- makeCluster(n.cores)
-    clusterExport(cl, varlist = c("summary", "gsub", 
-        "pairedInformation", "REcutDetails"),
-        envir = environment())
-
     if (findgRNAs && (annotatePaired || findPairedgRNAOnly))
     {
         cat("Add paired information...\n")
-        PairedgRNAName <- unlist(parLapply(cl, 1:dim(summary)[1], function(i) {
+        PairedgRNAName <- unlist(lapply(1:dim(summary)[1], function(i) {
             as.character(gsub("^\\s+|\\s+$", "", 
                 paste(unique(pairedInformation[as.character(
                 pairedInformation$ForwardgRNAName) == as.character(
@@ -357,7 +348,7 @@ offTargetAnalysis <-
     cat("Add RE information...\n")
     if (findPairedgRNAOnly && findgRNAs)
     {
-        REname <- unlist(parLapply(cl, 1:dim(summary)[1], function(i) {
+        REname <- unlist(lapply(1:dim(summary)[1], function(i) {
             gsub("^\\s+|\\s+$", "", gsub("NA", "", 
                 paste(unique(REcutDetails[as.character(
                 REcutDetails$ForwardREcutgRNAName) == as.character(
@@ -371,14 +362,13 @@ offTargetAnalysis <-
     }
     else
     {
-        REname <- unlist(parLapply(cl, 1:dim(summary)[1], function(i) {
+        REname <- unlist(lapply(1:dim(summary)[1], function(i) {
             gsub("^\\s+|\\s+$", "", gsub("NA", "", paste(unique(
                 REcutDetails[as.character(REcutDetails$REcutgRNAName) == 
                 as.character(summary$names[i]), ]$REname), collapse = " ")))
         }))
         summary <- cbind(summary, REname)
     }
-    stopCluster(cl)
 	seq <- as.character(summary$gRNAsPlusPAM)
 	cat("write gRNAs to bed file...\n")
 	on.target <- offTargets$offtargets

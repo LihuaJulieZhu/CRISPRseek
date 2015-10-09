@@ -6,8 +6,8 @@ filtergRNAs <-
         minREpatternSize = 4, overlap.gRNA.positions = c(17, 18),
 		overlap.allpos = TRUE)
 {
-	if (length(all.gRNAs) == 0)
-		stop("all.gRNAs contains no gRNAs!")
+    if (length(all.gRNAs) == 0)
+	stop("all.gRNAs contains no gRNAs!")
     if (missing(REpatternFile)) {
         stop("REpatternFile containing the restriction enzyme cut pattern 
             is required!")
