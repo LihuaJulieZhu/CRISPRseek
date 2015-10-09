@@ -45,14 +45,15 @@ writeHits <-
     PAM <- gsub("N", "[A|C|G|T]", PAM)
     if (dim(hits)[1] >0)
     {
-        n.cores <- detectCores() - 1
-        n.cores <- min(n.cores, dim(hits)[1])
-        if (n.cores < 1)
-            n.cores <- 1
-        cl <- makeCluster(n.cores)
-        clusterExport(cl, varlist = c("hits", "PAM", "regexpr"),
-            envir = environment())
-        containPAM <- unlist(parLapply(cl, 1:dim(hits)[1], function(i) {
+        #n.cores <- detectCores() - 1
+        #n.cores <- min(n.cores, dim(hits)[1])
+        #if (n.cores < 1)
+        #    n.cores <- 1
+        #cl <- makeCluster(n.cores)
+        #clusterExport(cl, varlist = c("hits", "PAM", "regexpr"),
+            #envir = environment())
+        #containPAM <- unlist(parLapply(cl, 1:dim(hits)[1], function(i) {
+         containPAM <- unlist(lapply(1:dim(hits)[1], function(i) {
             pos.plus = regexpr(PAM, as.character(hits[i, ]$OffTargetSequence), 
                 perl = TRUE)[1]
             if (pos.plus > 0) {
@@ -60,7 +61,7 @@ writeHits <-
             }
             else { 0 }
         }))
-        stopCluster(cl)
+        #stopCluster(cl)
         hits <- hits[containPAM == 1,]
         if (dim(hits)[1] > 0)
         {
