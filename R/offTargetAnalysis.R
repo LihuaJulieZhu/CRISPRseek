@@ -6,7 +6,7 @@ offTargetAnalysis <-
             package = "CRISPRseek"), 
 	minREpatternSize = 4,
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
-        annotatePaired = TRUE, 
+        annotatePaired = TRUE, enable.multicore = FALSE,
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "",
 	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
         chromToSearch = "all", 
@@ -91,11 +91,12 @@ offTargetAnalysis <-
 	        baseAfterPAM = baseAfterPAM ,
     	    calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile)
          else
-	        potential.gRNAs <- findgRNAs(inputFilePath,
+	    potential.gRNAs <- findgRNAs(inputFilePath,
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
+               enable.multicore = enable.multicore,
                pairOutputFile = pairOutputFile, PAM = PAM,
-	           gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
+	       gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
                gRNA.size = gRNA.size, min.gap = min.gap,
                max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
 	if (length(potential.gRNAs) == 0)
@@ -296,7 +297,8 @@ offTargetAnalysis <-
     if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
         stop("BSgenomeName is required as BSgenome object!")
     }
-    if (annotateExon && (missing(txdb) || (class(txdb) != "TxDb" && class(txdb) != "TranscriptDb")))
+    if (annotateExon && (missing(txdb) || (class(txdb) != "TxDb" && 
+        class(txdb) != "TranscriptDb")))
     {
         stop("To indicate whether an offtarget is inside an exon, txdb is
             required as TxDb object!")
@@ -308,7 +310,8 @@ offTargetAnalysis <-
         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM) 
     cat("Building feature vectors for scoring ...\n")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
-        canonical.PAM = PAM, gRNA.size = gRNA.size)
+        canonical.PAM = PAM, gRNA.size = gRNA.size, 
+        enable.multicore = enable.multicore)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
     write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)

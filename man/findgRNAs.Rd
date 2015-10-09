@@ -10,7 +10,7 @@
 }
 \usage{
 findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
-    findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
+    findPairedgRNAOnly = FALSE, annotatePaired = TRUE, enable.multicore = FALSE,
     gRNA.pattern = "", gRNA.size = 20, 
     overlap.gRNA.positions = c(17,18), min.gap = 0, max.gap = 20,
     pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
@@ -38,6 +38,8 @@ the first one is on minus strand called reverse gRNA and the second one is
 on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 }
 \item{annotatePaired}{Indicate whether to output paired information, default TRUE}
+\item{enable.multicore}{Indicate whether enable parallel processing, default FALSE.
+For super long sequences with lots of gRNAs, suggest set it to TRUE}
 \item{gRNA.pattern}{
 Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 
 pattern, default is no restriction. To specify that the gRNA must start 

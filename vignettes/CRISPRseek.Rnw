@@ -248,7 +248,7 @@ max.mismatch = 1, outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
 
-\subsection{ Scenario 6. Quick gRNA finding  without target or off-target
+\subsection{Scenario 6. Quick gRNA finding  without target or off-target
 analysis}
 Calling the function \Rfunction{offTargetAnalysis} with chromToSearch = "" 
 results in quick gRNA search without performing on-target and off-target
@@ -263,7 +263,7 @@ REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,
 chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
-\subsection{ Scenario 7. Quick gRNA finding  with gRNA efficiency prediction 
+\subsection{Scenario 7. Quick gRNA finding  with gRNA efficiency prediction 
 }
 Calling the function \Rfunction{offTargetAnalysis} with max.mismatch = 0 
 results in quick gRNA search with gRNA efficiency prediction without off-target
@@ -292,18 +292,35 @@ seqs
 @
 \end{scriptsize}
 rs362331C.fa and rs362331T.fa are the names of the two input files. The output file will list all of the possible gRNA sequences for each of the two input sequences and provide a cleavage score for each of the two input sequences. To preferentially target one allele, select gRNA sequences that have the lowest score for the other allele. Selected gRNAs can then be examined for off-target sequences as described in Step 6.
+
+\subsection{Scenario 9. gRNA search and offTarget analysis of super long input sequence (longer than 200kb)
+}
+Calling the function \Rfunction{offTargetAnalysis} with annotatePaired = FALSE and enable.multicore = TRUE
+will improve the performance. We also suggest split the super long sequence into smaller chunks and perform
+offTarget analysis for each subsequence separately (Thank Alex Williams for sharing this use case at
+https://support.bioconductor.org/p/72994/). In addition, please remember to use repeat masked 
+sequence as input.
+\begin{scriptsize}
+<<>>=
+results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE, chromToSearch = "chrX",
+enable.multicore = TRUE, annotateExon = FALSE,
+max.mismatch = 0, BSgenomeName = Hsapiens, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
 \section{References}
 \begin{thebibliography}{99}
+\bibitem[Lihua Julie Zhu]{Zhu 2014}Lihua Julie Zhu Overview of guide 
+RNA design tools for CRISPR-Cas9 genome editing technology. Frontiers in Biology.
+August 2015, Volume 10, Issue 4, pp 289-296
 \bibitem[Mali P. et al., 2013]{Mali et al., 2013} Mali P. et al., CAS9 
 transcriptional activators for target specificity screening and paired nickases 
 for cooperative genome engineering. Nat Biotechnol. 2013. 31(9):833-8
 \bibitem[Hsu, P.D et al., 2013]{Hsu et al., 2013} Hsu, P.D. et al., DNA 
 targeting specificity of rNA-guided Cas9 nucleases. Nat Biotechnol. 
 2013. 31:827-834.
-\bibitem[Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE]{Doench et al., 2014}. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
+\bibitem[Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE]{Doench et al., 2014} Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 \bibitem[Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky]{Zhu et al., 2014}Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
 \end{thebibliography}
-
 \section{Session Info}
 <<>>=
 sessionInfo()

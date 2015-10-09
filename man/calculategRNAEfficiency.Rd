@@ -2,13 +2,15 @@
 \alias{calculategRNAEfficiency}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-	Calculate gRNA Efficiency
+    Calculate gRNA Efficiency
 }
 \description{
-	Calculate gRNA Efficiency for a given set of sequences and feature weight matrix
+    Calculate gRNA Efficiency for a given set of sequences and feature weight matrix
 }
 \usage{
-calculategRNAEfficiency(extendedSequence, baseBeforegRNA, featureWeightMatrix, gRNA.size = 20)
+calculategRNAEfficiency(extendedSequence, 
+    baseBeforegRNA, featureWeightMatrix, gRNA.size = 20,
+    enable.multicore = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +26,8 @@ Number of bases before gRNA used for calculating gRNA efficiency, default 4
     \item{gRNA.size}{
 The size of the gRNA, default 20
 }
+\item{enable.multicore}{Indicate whether enable parallel processing, default FALSE.
+For super long sequences with lots of gRNAs, suggest set it to TRUE}
  }
 
 \value{

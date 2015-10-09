@@ -1,6 +1,7 @@
 findgRNAs <-
     function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
+        enable.multicore = FALSE,
         gRNA.pattern = "", gRNA.size = 20, 
 	overlap.gRNA.positions = c(17,18),
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
@@ -56,46 +57,49 @@ findgRNAs <-
         revsubject <- reverseComplement(subject)
         seq.len <- nchar(as.character(subject))
         x <- seq.len - gRNA.size - PAM.size + 1
-        n.cores <- detectCores() - 1
-    	n.cores <- min(n.cores, x)
-        cl <- makeCluster(n.cores)
-        clusterExport(cl, varlist = c("x", "subject", "subseq",
-            "revsubject", "gRNA.size", "PAM.size"),
-            envir = environment())
-        clusterExport(cl, varlist =  c("calculategRNAEfficacy",
-            "baseBeforegRNA", "baseAfterPAM", "PAM", "gRNA.pattern", "cut.site"),
-            envir = environment())
-        pos.gRNAs <- do.call(rbind, parLapply(cl, 1:x, function(i){
-            seq <- subseq(as.character(subject), i,
-                (i + gRNA.size + PAM.size -1))
-            extendedSequence <- seq
-        if (calculategRNAEfficacy)
+        if (enable.multicore)
         {
-            extended.start <- max(1, (i - baseBeforegRNA))
-            extended.end <- i + gRNA.size + PAM.size -1 + baseAfterPAM
-            extended.end <- min(extended.end, length(subject))
-            extendedSequence <- subseq(as.character(subject), extended.start,
-                extended.end)
-         }
-        if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
+            n.cores <- detectCores() - 1
+    	    n.cores <- min(n.cores, x)
+            cl <- makeCluster(n.cores)
+            clusterExport(cl, varlist = c("x", "subject", "subseq",
+               "revsubject", "gRNA.size", "PAM.size"),
+                envir = environment())
+            clusterExport(cl, varlist =  c("calculategRNAEfficacy",
+                "baseBeforegRNA", "baseAfterPAM", "PAM", 
+                "gRNA.pattern", "cut.site"),
+                envir = environment())
+            pos.gRNAs <- do.call(rbind, parLapply(cl, 1:x, function(i){
+                seq <- subseq(as.character(subject), i,
+                   (i + gRNA.size + PAM.size -1))
+                extendedSequence <- seq
+            if (calculategRNAEfficacy)
+            {
+                extended.start <- max(1, (i - baseBeforegRNA))
+                extended.end <- i + gRNA.size + PAM.size -1 + baseAfterPAM
+                extended.end <- min(extended.end, length(subject))
+                extendedSequence <- subseq(as.character(subject), extended.start,
+                   extended.end)
+            }
+            if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
 		    (gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
 		        ignore.case = TRUE)[[1]] > 0))
                     c(seq, paste(subjectname,"_gR",(i + cut.site - 1), 
                         "f", sep = ""), i,"+", extendedSequence)
-       }))
-       minus.gRNAs <- do.call(rbind, parLapply(cl, 1:x, function(i){
-           seq <- subseq(as.character(revsubject), i,
-              (i + gRNA.size + PAM.size -1))
-            extendedSequence <- seq
-           if (calculategRNAEfficacy)
-           {
-                extended.start <- max(1, (i - baseBeforegRNA))
-                extended.end <- i + gRNA.size + PAM.size -1 + baseAfterPAM
-                extended.end <- min(extended.end, length(subject))
-                extendedSequence <- subseq(as.character(revsubject),
-                   extended.start, extended.end)
-          }
-          if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
+            }))
+           minus.gRNAs <- do.call(rbind, parLapply(cl, 1:x, function(i){
+               seq <- subseq(as.character(revsubject), i,
+                   (i + gRNA.size + PAM.size -1))
+               extendedSequence <- seq
+               if (calculategRNAEfficacy)
+               {
+                    extended.start <- max(1, (i - baseBeforegRNA))
+                    extended.end <- i + gRNA.size + PAM.size -1 + baseAfterPAM
+                    extended.end <- min(extended.end, length(subject))
+                    extendedSequence <- subseq(as.character(revsubject),
+                        extended.start, extended.end)
+                }
+                if (regexpr(PAM, seq, perl = TRUE,ignore.case = TRUE)[[1]] > 0 &&
 		    (gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
 	     	    ignore.case = TRUE)[[1]] > 0))
                     c(seq, paste( subjectname,"_gR", 
@@ -104,6 +108,51 @@ findgRNAs <-
                         (seq.len - i + 1), "-", extendedSequence)			
           }))
           stopCluster(cl)
+         } ### if enable.multicore is TRUE
+         else
+         {
+            pos.gRNAs <- do.call(rbind, lapply(1:x, function(i){
+                 seq <- subseq(as.character(subject), i,
+                    (i + gRNA.size + PAM.size -1))
+                 extendedSequence <- seq
+                 if (calculategRNAEfficacy)
+                 {
+                     extended.start <- max(1, (i - baseBeforegRNA))
+                     extended.end <- i + gRNA.size + PAM.size -1 + baseAfterPAM
+                     extended.end <- min(extended.end, length(subject))
+                     extendedSequence <- subseq(as.character(subject), 
+                        extended.start, extended.end)
+                 }
+                 if (regexpr(PAM, seq, perl = TRUE, 
+                     ignore.case = TRUE)[[1]] > 0 &&
+                     (gRNA.pattern =="" || regexpr(gRNA.pattern, seq, 
+                     perl = TRUE, ignore.case = TRUE)[[1]] > 0))
+                     c(seq, paste(subjectname,"_gR",(i + cut.site - 1), 
+                        "f", sep = ""), i,"+", extendedSequence)
+             }))
+          
+             minus.gRNAs <- do.call(rbind, lapply(1:x, function(i){
+                 seq <- subseq(as.character(revsubject), i,
+                               (i + gRNA.size + PAM.size -1))
+                 extendedSequence <- seq
+                 if (calculategRNAEfficacy)
+                 {
+                     extended.start <- max(1, (i - baseBeforegRNA))
+                     extended.end <- i + gRNA.size + PAM.size -1 + baseAfterPAM
+                     extended.end <- min(extended.end, length(subject))
+                     extendedSequence <- subseq(as.character(revsubject),
+                                                extended.start, extended.end)
+                 }
+                 if (regexpr(PAM, seq, perl = TRUE,
+                    ignore.case = TRUE)[[1]] > 0 &&
+                    (gRNA.pattern =="" || regexpr(gRNA.pattern, seq, perl = TRUE,
+                    ignore.case = TRUE)[[1]] > 0))
+                    c(seq, paste( subjectname,"_gR", 
+                        (seq.len - i + 1 - cut.site + 1), 
+                        "r", sep = ""),
+                        (seq.len - i + 1), "-", extendedSequence)			
+             }))
+	      } ### if enable.multicore is FALSE
           plus.index <- numeric()
           minus.index <- numeric()
           forward.index <- 0
@@ -231,7 +280,8 @@ findgRNAs <-
         featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
         effi <- calculategRNAEfficiency(all.gRNAs.df[,5], 
 	    baseBeforegRNA = baseBeforegRNA, 
-	    featureWeightMatrix = featureWeightMatrix, gRNA.size = gRNA.size) 
+	    featureWeightMatrix = featureWeightMatrix, 
+            enable.multicore = enable.multicore, gRNA.size = gRNA.size) 
         extendedSequences <- cbind(all.gRNAs.df, effi)
         colnames(extendedSequences)  = c("gRNAplusPAM", "name", "start", "strand", 
 	    "extendedSequence", "gRNAefficacy")
