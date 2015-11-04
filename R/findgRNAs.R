@@ -1,7 +1,7 @@
 findgRNAs <-
     function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
-        enable.multicore = FALSE,
+        enable.multicore = FALSE, n.cores.max = 6,
         gRNA.pattern = "", gRNA.size = 20, 
 	overlap.gRNA.positions = c(17,18),
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
@@ -57,10 +57,11 @@ findgRNAs <-
         revsubject <- reverseComplement(subject)
         seq.len <- nchar(as.character(subject))
         x <- seq.len - gRNA.size - PAM.size + 1
-        if (enable.multicore)
+        n.cores <- detectCores() - 1
+        n.cores <- min(n.cores, x)
+        n.cores <- min(n.cores, n.cores.max)
+        if (enable.multicore && n.cores > 1)
         {
-            n.cores <- detectCores() - 1
-    	    n.cores <- min(n.cores, x)
             cl <- makeCluster(n.cores)
             clusterExport(cl, varlist = c("x", "subject", "subseq",
                "revsubject", "gRNA.size", "PAM.size"),
@@ -281,7 +282,9 @@ findgRNAs <-
         effi <- calculategRNAEfficiency(all.gRNAs.df[,5], 
 	    baseBeforegRNA = baseBeforegRNA, 
 	    featureWeightMatrix = featureWeightMatrix, 
-            enable.multicore = enable.multicore, gRNA.size = gRNA.size) 
+            enable.multicore = enable.multicore,
+            n.cores.max = n.cores.max,
+            gRNA.size = gRNA.size) 
         extendedSequences <- cbind(all.gRNAs.df, effi)
         colnames(extendedSequences)  = c("gRNAplusPAM", "name", "start", "strand", 
 	    "extendedSequence", "gRNAefficacy")

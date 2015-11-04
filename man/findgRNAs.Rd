@@ -11,7 +11,7 @@
 \usage{
 findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
     findPairedgRNAOnly = FALSE, annotatePaired = TRUE, enable.multicore = FALSE,
-    gRNA.pattern = "", gRNA.size = 20, 
+    n.cores.max = 6, gRNA.pattern = "", gRNA.size = 20, 
     overlap.gRNA.positions = c(17,18), min.gap = 0, max.gap = 20,
     pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
@@ -40,6 +40,11 @@ on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 \item{annotatePaired}{Indicate whether to output paired information, default TRUE}
 \item{enable.multicore}{Indicate whether enable parallel processing, default FALSE.
 For super long sequences with lots of gRNAs, suggest set it to TRUE}
+\item{n.cores.max}{
+Indicating maximum number of cores to use in multi core mode, 
+    i.e., parallel processing, default 6. Please set it to 1 to disable
+    multicore processing for small dataset.
+}
 \item{gRNA.pattern}{
 Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 
 pattern, default is no restriction. To specify that the gRNA must start 

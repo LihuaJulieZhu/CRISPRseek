@@ -1,5 +1,6 @@
 calculategRNAEfficiency <- function(extendedSequence, baseBeforegRNA, 
-    featureWeightMatrix, gRNA.size = 20, enable.multicore = FALSE)
+    featureWeightMatrix, gRNA.size = 20, enable.multicore = FALSE,
+    n.cores.max = 6)
 {
    	featureWeightMatrix[,1] = toupper(featureWeightMatrix[,1])
 	efficiency <- featureWeightMatrix[featureWeightMatrix[,1] == "INTERCEPT", 2]
@@ -14,10 +15,11 @@ calculategRNAEfficiency <- function(extendedSequence, baseBeforegRNA,
 	featureEnd <- featureStart + nchar(featureNames) - 1
 	featureWeights <- cbind(featureStart, featureEnd, featureNames, fWeights)
 	featureWeights <- featureWeights[order(featureWeights[,1]),]
-    if (enable.multicore)
+    n.cores <- detectCores() - 1
+    n.cores <- min(n.cores, length(extendedSequence))
+    n.cores <- min(n.cores, n.cores.max)  
+    if (enable.multicore && n.cores > 1)
     {
-        n.cores <- detectCores() - 1
-        n.cores <- min(n.cores, length(extendedSequence))
         cl <- makeCluster(n.cores)
         clusterExport(cl, varlist = c("extendedSequence", 
             "substr", "s2c", "baseBeforegRNA", "gRNA.size", "featureWeights"),

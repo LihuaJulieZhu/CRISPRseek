@@ -1,6 +1,8 @@
 buildFeatureVectorForScoring <-
     function(hits, gRNA.size = 20, 
-    enable.multicore = FALSE, canonical.PAM = "NGG")
+    enable.multicore = FALSE, 
+    n.cores.max = 6,
+    canonical.PAM = "NGG")
 {
     #hits = read.table(hitsFile, sep = "\t", header=TRUE,
     # stringsAsFactors = FALSE)
@@ -17,9 +19,10 @@ buildFeatureVectorForScoring <-
     mismatch.distance2PAM <- apply(mismatch.pos, 1, function(i) { 
         paste(gRNA.size + 1 - which(i == 1), collapse = ",")
     })
-    if (enable.multicore)
+    n.cores <-  detectCores() - 1
+    n.cores <- min(n.cores, n.cores.max)
+    if (enable.multicore && n.cores > 1)
     {
-        n.cores <- detectCores() - 1
         cl <- makeCluster(n.cores)
         clusterExport(cl, varlist = c("mismatch.pos", "gRNA.size",
            "rev", "subject", "hits",  "subseq", "mismatch.distance2PAM",

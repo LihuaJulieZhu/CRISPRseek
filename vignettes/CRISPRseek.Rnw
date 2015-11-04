@@ -306,17 +306,18 @@ sequences as described in Step 6.
 \subsection{Scenario 9. gRNA search and offTarget analysis of super long input 
 sequence (longer than 200kb)
 }
-Calling the function \Rfunction{offTargetAnalysis} with annotatePaired = FALSE 
-and enable.multicore = TRUE will improve the performance. We also suggest split 
-the super long sequence into smaller chunks and perform offTarget analysis for
-each subsequence separately (Thank Alex Williams for sharing this use case at
+Calling the function \Rfunction{offTargetAnalysis} with annotatePaired = FALSE,
+enable.multicore = TRUE and set n.cores.max will improve the performance. 
+We also suggest split the super long sequence into smaller chunks and 
+perform offTarget analysis for each subsequence separately 
+(Thank Alex Williams for sharing this use case at
 https://support.bioconductor.org/p/72994/). In addition, please remember to use
 repeat masked sequence as input.
 \begin{scriptsize}
 <<>>=
 results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE, 
     chromToSearch = "chrX",
-    enable.multicore = TRUE, annotateExon = FALSE,
+    enable.multicore = TRUE, n.cores.max = 10, annotateExon = FALSE,
     max.mismatch = 0, BSgenomeName = Hsapiens, 
     outputDir = outputDir, overwrite = TRUE)
 @

@@ -17,7 +17,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
         package = "CRISPRseek"), minREpatternSize = 4, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
-    annotatePaired = TRUE, enable.multicore = FALSE,
+    annotatePaired = TRUE, enable.multicore = FALSE, n.cores.max,
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
     chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
@@ -88,6 +88,11 @@ gRNAs. Default 0
 }
 \item{enable.multicore}{Indicate whether enable parallel processing, default FALSE.
 For super long sequences with lots of gRNAs, suggest set it to TRUE}
+\item{n.cores.max}{
+Indicating maximum number of cores to use in multi core mode, 
+    i.e., parallel processing, default 6. Please set it to 1 to disable
+    multicore processing for small dataset.
+}
   \item{max.gap}{
 Maximum distance between two oppositely oriented gRNAs to be valid paired 
 gRNAs. Default 20

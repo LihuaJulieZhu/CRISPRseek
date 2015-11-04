@@ -6,7 +6,7 @@ offTargetAnalysis <-
             package = "CRISPRseek"), 
 	minREpatternSize = 4,
 	overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
-        annotatePaired = TRUE, enable.multicore = FALSE,
+        annotatePaired = TRUE, enable.multicore = FALSE, n.cores.max = 6,
         min.gap = 0, max.gap = 20, gRNA.name.prefix = "",
 	PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName, 
         chromToSearch = "all", 
@@ -95,6 +95,7 @@ offTargetAnalysis <-
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
                enable.multicore = enable.multicore,
+               n.cores.max = n.cores.max,
                pairOutputFile = pairOutputFile, PAM = PAM,
 	       gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
                gRNA.size = gRNA.size, min.gap = min.gap,
@@ -311,7 +312,7 @@ offTargetAnalysis <-
     cat("Building feature vectors for scoring ...\n")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
         canonical.PAM = PAM, gRNA.size = gRNA.size, 
-        enable.multicore = enable.multicore)
+        enable.multicore = enable.multicore, n.cores.max = n.cores.max)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
     write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
