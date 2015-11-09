@@ -1,1 +1,1 @@
-BiocGenerics:::testPackage("CRISPRseek")
+#BiocGenerics:::testPackage("CRISPRseek")
