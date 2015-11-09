@@ -107,7 +107,7 @@ findgRNAs <-
     all.gRNAs.df <- do.call(rbind, lapply(1:length(subjects), function(p)
    {
         subject <- subjects[[p]]
-        subjectname <- names(subject)
+        subjectname <- names(subjects)[p]
         revsubject <- reverseComplement(subject)
         plus.gRNAs <- 
            .getgRNA.cut.sites(subject, subjectname, PAM = PAM, 
