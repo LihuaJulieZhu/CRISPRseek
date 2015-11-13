@@ -264,14 +264,14 @@ REpatternFile = REpatternFile,findPairedgRNAOnly = TRUE,
 chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
-\subsection{Scenario 7. Quick gRNA finding  with gRNA efficiency prediction 
+\subsection{Scenario 7. Quick gRNA finding  with gRNA efficacy prediction 
 }
 Calling the function \Rfunction{offTargetAnalysis} with max.mismatch = 0 
-results in quick gRNA search with gRNA efficiency prediction without off-target
-analysis. Parameters findgRNAsWithREcutOnly and findPairedgRNAOnly can
-be tuned to indicate whether searching for gRNAs overlap restriction enzyme
-cut sites or not, and whether searching for gRNAs in paired configuration
-or not.
+results in quick gRNA search with gRNA efficacy prediction 
+without off-target analysis. Parameters findgRNAsWithREcutOnly and 
+findPairedgRNAOnly can be tuned to indicate whether searching for gRNAs
+overlap restriction enzyme cut sites or not, and whether searching for 
+gRNAs in paired configuration or not.
 \begin{scriptsize}
 <<>>=
 results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,

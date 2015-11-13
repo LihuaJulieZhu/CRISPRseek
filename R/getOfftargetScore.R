@@ -14,7 +14,6 @@ getOfftargetScore <-
         mismatch.pos <- fv.lessThan2Mismatch[, grep("IsMismatch.pos", 
             colnames(fv.lessThan2Mismatch))]
         mismatch.pos = apply(mismatch.pos, 1, as.numeric) 
-            # does transform also with margin =1
         fv.lessThan2Mismatch$score =  as.numeric(100 * 
             (1 - weights %*% mismatch.pos))
     }
@@ -25,7 +24,6 @@ getOfftargetScore <-
         mismatch.pos <- fv.geThan2Mismatch[,grep("IsMismatch.pos", 
             colnames(fv.geThan2Mismatch))]
         mismatch.pos <- apply(mismatch.pos, 1, as.numeric) 
-        # does transform also with margin = 1
         fv.geThan2Mismatch$score <-  100
         pos <- grep("IsMismatch.pos", colnames(fv.lessThan2Mismatch))
         min.pos <- min(pos)

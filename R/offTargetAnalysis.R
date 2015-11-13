@@ -26,7 +26,7 @@ offTargetAnalysis <-
 	featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 		package = "CRISPRseek"),
 	useScore = TRUE, useEfficacyFromInputSeq = FALSE, 
-	outputUniqueREs = TRUE, foldgRNAs = TRUE, 
+	outputUniqueREs = TRUE, foldgRNAs = FALSE, 
         gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
         temperature = 37,
         overwrite = FALSE)
