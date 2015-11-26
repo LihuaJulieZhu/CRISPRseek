@@ -1,5 +1,7 @@
-import(Biostrings)
 import(BiocGenerics)
+import(S4Vectors)
+import(IRanges)
+import(Biostrings)
 importFrom(seqinr, s2c)
 import(BSgenome)
 importFrom(data.table, rbindlist)

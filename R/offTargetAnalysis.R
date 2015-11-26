@@ -311,8 +311,7 @@ offTargetAnalysis <-
         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM) 
     cat("Building feature vectors for scoring ...\n")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
-        canonical.PAM = PAM, gRNA.size = gRNA.size, 
-        enable.multicore = enable.multicore, n.cores.max = n.cores.max)
+        canonical.PAM = PAM, gRNA.size = gRNA.size)
     cat("Calculating scores ...\n")
     scores <- getOfftargetScore(featureVectors, weights = weights)
     write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)

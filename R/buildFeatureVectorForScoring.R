@@ -1,7 +1,17 @@
+.mismatches_as_IntegerList <- function(mismatches)
+{
+    arr_ind <- which(mismatches != 0, arr.ind=TRUE)
+    ind_row <- unname(arr_ind[ , "row"])
+    ind_col <- unname(arr_ind[ , "col"])
+    oo <- S4Vectors:::orderIntegerPairs(ind_row, ind_col)
+    ind_row <- ind_row[oo]
+    ind_col <- ind_col[oo]
+    partitioning <- PartitioningByEnd(ind_row, NG=nrow(mismatches))
+    relist(ind_col, partitioning)
+}
+
 buildFeatureVectorForScoring <-
     function(hits, gRNA.size = 20, 
-    enable.multicore = FALSE, 
-    n.cores.max = 6,
     canonical.PAM = "NGG")
 {
     #hits = read.table(hitsFile, sep = "\t", header=TRUE,
@@ -11,66 +21,26 @@ buildFeatureVectorForScoring <-
         stop("Empty hits!")
     }
     subject <- DNAStringSet(as.character(hits$OffTargetSequence))
-    pattern <- DNAString(as.character(hits$gRNAPlusPAM[1]))
     isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject, 
         at = (gRNA.size + 1), fixed = FALSE))
-    #type.mismatch = matrix(nrow=dim(hits)[1], ncol=gRNA.size)
-    mismatch.pos = hits[, grep("IsMismatch.pos", colnames(hits))]
-    mismatch.distance2PAM <- apply(mismatch.pos, 1, function(i) { 
-        paste(gRNA.size + 1 - which(i == 1), collapse = ",")
-    })
-    n.cores <-  detectCores() - 1
-    n.cores <- min(n.cores, n.cores.max)
-    if (enable.multicore && n.cores > 1)
-    {
-        cl <- makeCluster(n.cores)
-        clusterExport(cl, varlist = c("mismatch.pos", "gRNA.size",
-           "rev", "subject", "hits",  "subseq", "mismatch.distance2PAM",
-           "strsplit"),
-           envir = environment())
-        alignment <- unlist(parLapply(cl, 1:dim(mismatch.pos)[1], 
-            function(i) {
-            temp <- rep(".", gRNA.size)
-            ind <- which(mismatch.pos[i,] == 1)
-            for (j in ind)
-               temp[j] <- as.character(subseq(subject[i], start = j, width = 1))
-            paste(temp, collapse = "")
-        }))
-        mean.neighbor.distance.mismatch <- unlist(parLapply(cl, 1:dim(hits)[1],
-            function(i) 
-        {
-            positions <- rev(as.numeric(unlist(strsplit(mismatch.distance2PAM[i],
-                split = ","))))
-            n.mismatch <- hits$n.mismatch[i]
-            if (n.mismatch > 1)
-               mean(positions[2:n.mismatch] - positions[1:(n.mismatch-1)])
-            else
-               gRNA.size
-        }))
-        stopCluster(cl)
-    } #### if enable.multicore is TRUE
-    else
-    {
-        alignment <- unlist(lapply(1:dim(mismatch.pos)[1], 
-            function(i) {
-                temp <- rep(".", gRNA.size)
-                ind <- which(mismatch.pos[i,] == 1)
-                for (j in ind)
-                    temp[j] <- as.character(subseq(subject[i], start = j, width = 1))
-                paste(temp, collapse = "")
-        }))
-        mean.neighbor.distance.mismatch <- unlist(lapply(1:dim(hits)[1],
-            function(i) 
-            {
-                positions <- rev(as.numeric(unlist(
-                    strsplit(mismatch.distance2PAM[i], split = ","))))
-                n.mismatch <- hits$n.mismatch[i]
-                if (n.mismatch > 1)
-                    mean(positions[2:n.mismatch] - positions[1:(n.mismatch-1)])
-                else
-                    gRNA.size
-        }))
-    } #### if enable.multicore is FALSE
+
+    mismatches = hits[, grep("IsMismatch.pos", colnames(hits))]
+    mismatch_pos <- .mismatches_as_IntegerList(mismatches)
+
+    mismatch.distance2PAM <- gRNA.size + 1L - mismatch_pos
+    mismatch.distance2PAM <- unstrsplit(as(mismatch.distance2PAM,
+                                           "CharacterList"),
+                                        sep=",")
+
+    alignment <- rep.int(DNAString("."), gRNA.size)
+    alignment <- rep.int(DNAStringSet(alignment), nrow(hits))
+    at <- IRangesList(start=mismatch_pos, end=mismatch_pos)
+    alignment <- as.character(replaceAt(alignment, at, extractAt(subject, at)))
+
+    mean.neighbor.distance.mismatch <- mean(diff(mismatch_pos))
+    no_neighbor_idx <- elementLengths(mismatch_pos) <= 1L
+    mean.neighbor.distance.mismatch[no_neighbor_idx] <- gRNA.size
+
     features <- cbind(mismatch.distance2PAM, alignment, isCanonical.PAM,
         mean.neighbor.distance.mismatch)
     colnames(features) <- c("mismatch.distance2PAM", "alignment", "NGG", 
