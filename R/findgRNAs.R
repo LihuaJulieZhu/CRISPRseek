@@ -50,6 +50,62 @@
      }
      gRNAs.cut
 }
+
+## Very inefficient (perform in quadratic time).
+.compute_pair_index <- function(plus_start, minus_start, min.gap, max.gap)
+{
+    plus.index <- minus.index <- integer(0)
+    for (j in seq_along(plus_start))
+    {
+        for (k in seq_along(minus_start))
+        {
+            d <- plus_start[j] - minus_start[k]
+            if (d > min.gap && d <= max.gap)
+            {
+                plus.index <- c(plus.index, j)
+                minus.index <- c(minus.index, k)
+            } ### if paired
+        } #for k
+    }## for j
+    list(plus.index, minus.index)
+}
+
+## A more efficient version of .compute_pair_index() that performs in linear
+## time.
+.compute_pair_index2 <- function(plus_start, minus_start, min.gap, max.gap)
+{
+    plus.index <- minus.index <- integer(0)
+    n1 <- length(plus_start)
+    n2 <- length(minus_start)
+    if (n1 == 0L || n2 == 0L)
+        return(list(plus.index, minus.index))
+    plus_oo <- order(plus_start)
+    minus_oo <- order(minus_start)
+    i2 <- 1L
+    for (i1 in seq_len(n1)) {
+        j <- plus_oo[[i1]]
+        current_plus_start <- plus_start[[j]]
+        min_minus_start <- current_plus_start - max.gap
+        max_minus_start <- current_plus_start - min.gap - 1
+        while (minus_start[[minus_oo[[i2]]]] < min_minus_start) {
+            i2 <- i2 + 1L
+            if (i2 > n2)
+                break
+        }
+        if (i2 > n2)
+            break
+        i <- i2
+        while (minus_start[[k <- minus_oo[[i]]]] <= max_minus_start) {
+            plus.index <- c(plus.index, j)
+            minus.index <- c(minus.index, k)
+            i <- i + 1L
+            if (i > n2)
+                break
+        }
+    }
+    list(plus.index, minus.index)
+}
+
 findgRNAs <-
     function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
@@ -130,10 +186,6 @@ findgRNAs <-
                baseAfterPAM = baseAfterPAM,
                reverse.subject = TRUE) 
 
-          plus.index <- numeric()
-          minus.index <- numeric()
-          forward.index <- 0
-          reverse.index <- 0
           if (length(plus.gRNAs) > 1)
             n.plus.gRNAs <- dim(plus.gRNAs)[1]
           else
@@ -163,21 +215,13 @@ findgRNAs <-
 	            col.names = colNames)
             if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
             {
-                for (j in 1:n.plus.gRNAs)
-                {
-                    for (k in 1:n.minus.gRNAs)
-                    {
-                        if ((as.numeric(as.character(plus.gRNAs[j,3])) - 1 - 
-                            as.numeric(as.character(minus.gRNAs[k,3]))) >= min.gap
-                            && (as.numeric(as.character(plus.gRNAs[j,3])) - 
-                            as.numeric(as.character(minus.gRNAs[k,3]))) <= 
-                            max.gap)
-                        {
-                            plus.index <- c(plus.index, j)
-                            minus.index <- c(minus.index, k)
-                        } ### if paired
-                    } #for k
-                }## for j
+                plus_start <- as.numeric(as.character(plus.gRNAs[ , 3L]))
+                minus_start <- as.numeric(as.character(minus.gRNAs[ , 3L]))
+                pair_index <- .compute_pair_index2(plus_start,
+                                                   minus_start,
+                                                   min.gap, max.gap)
+                plus.index <- pair_index[[1L]]
+                minus.index <- pair_index[[2L]]
                 if (length(minus.index) > 0 && length(plus.index) > 0)
                 {
                     paired <- cbind(minus.gRNAs[minus.index,1], 
