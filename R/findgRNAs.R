@@ -70,8 +70,8 @@
     list(plus.index, minus.index)
 }
 
-## A more efficient version of .compute_pair_index() that performs in linear
-## time.
+## A more efficient version of .compute_pair_index() that performs almost in
+## linear time.
 .compute_pair_index2 <- function(plus_start, minus_start, min.gap, max.gap)
 {
     plus.index <- minus.index <- integer(0)
@@ -103,7 +103,8 @@
                 break
         }
     }
-    list(plus.index, minus.index)
+    oo <- S4Vectors:::orderIntegerPairs(plus.index, minus.index)
+    list(plus.index[oo], minus.index[oo])
 }
 
 findgRNAs <-
