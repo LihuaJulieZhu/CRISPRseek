@@ -45,7 +45,7 @@
      else
      {
          gRNAs.cut <-
-             cbind(seq, paste(subjectname,"_gF", (starts.gRNA + cut.site - 1),
+             cbind(seq, paste(subjectname,"_gR", (starts.gRNA + cut.site - 1),
              "f", sep = ""), starts.gRNA, "+", extendedSequence)
      }
      gRNAs.cut
