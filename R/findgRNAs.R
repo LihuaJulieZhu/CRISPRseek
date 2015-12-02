@@ -115,10 +115,10 @@
 .compute_pair_index3 <- function(plus_start, minus_start, min.gap, max.gap)
 {
     shift <- floor((min.gap + max.gap) / 2)
-    query <- IRanges(minus_start + shift, width=1L)
+    subject <- IRanges(minus_start + shift, width=1L)
     maxgap <- ceiling((max.gap - min.gap) / 2)
-    target <- IRanges(plus_start, width=1L)
-    hits <- findOverlaps(target, query, maxgap=maxgap)
+    query <- IRanges(plus_start, width=1L)
+    hits <- findOverlaps(query, subject, maxgap=maxgap)
     d <- plus_start[queryHits(hits)] - minus_start[subjectHits(hits)]
     hits <- sort(hits[min.gap < d & d <= max.gap])
     list(queryHits(hits), subjectHits(hits))
