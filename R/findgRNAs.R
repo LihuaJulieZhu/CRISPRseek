@@ -110,6 +110,19 @@
     list(plus.index[oo], minus.index[oo])
 }
 
+## An even more efficient version of .compute_pair_index() based on
+## findOverlaps(). Hundreds times faster than .compute_pair_index2().
+.compute_pair_index3 <- function(plus_start, minus_start, min.gap, max.gap)
+{
+    shift <- floor((min.gap + max.gap) / 2)
+    query <- IRanges(minus_start + shift, width=1L)
+    maxgap <- ceiling((max.gap - min.gap) / 2)
+    hits <- findOverlaps(plus_start, query, maxgap=maxgap)
+    d <- plus_start[queryHits(hits)] - minus_start[subjectHits(hits)]
+    hits <- sort(hits[min.gap < d & d <= max.gap])
+    list(queryHits(hits), subjectHits(hits))
+}
+
 findgRNAs <-
     function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
@@ -226,7 +239,7 @@ findgRNAs <-
             {
                 plus_start <- as.numeric(as.character(plus.gRNAs[ , 3L]))
                 minus_start <- as.numeric(as.character(minus.gRNAs[ , 3L]))
-                pair_index <- .compute_pair_index2(plus_start,
+                pair_index <- .compute_pair_index3(plus_start,
                                                    minus_start,
                                                    min.gap, max.gap)
                 plus.index <- pair_index[[1L]]
