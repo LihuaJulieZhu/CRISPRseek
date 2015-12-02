@@ -7,48 +7,51 @@
      seq.len <- nchar(as.character(subject))
      pos.PAMs <- unlist(gregexpr(PAM, subject, perl = TRUE,
          ignore.case = TRUE, fixed = FALSE))
-     pos.PAMs <- pos.PAMs[pos.PAMs != -1]
-     starts.gRNA <- pos.PAMs - gRNA.size
-     ends.gRNA <- pos.PAMs - 1
-     pos.PAMs <- pos.PAMs[starts.gRNA > 0]
-     ends.gRNA <- ends.gRNA[starts.gRNA > 0]
-     starts.gRNA <- starts.gRNA[starts.gRNA > 0] 
-    
-     if (gRNA.pattern != "")
+     pos.PAMs <- pos.PAMs[pos.PAMs != -1 & pos.PAMs > gRNA.size]
+     if (length(pos.PAMs) > 0)
      {
-         gRNA.seqs <- as.character(Views(subject, 
-             start = starts.gRNA,
-             end = ends.gRNA))
-         pos.set2 <- unlist(gregexpr(gRNA.pattern, gRNA.seqs,
-             perl = TRUE, ignore.case = TRUE, fixed = FALSE))
-         pos.PAMs <- pos.PAMs[pos.set2 == 1]
-     }
-     seq <- as.character(Views(subject,
-         start = starts.gRNA,
-         end = ends.gRNA + PAM.size))
-     extendedSequence <- seq
-     if (calculategRNAEfficacy)
-     {
-         extended.starts <- starts.gRNA - baseBeforegRNA
-         extended.starts[extended.starts < 0] <- 1
-         extended.ends <- ends.gRNA + PAM.size + baseAfterPAM
-         extended.ends[extended.ends > length(subject)] <- length(subject)
-         extendedSequence <- as.character(Views(subject, start = extended.starts,
-             end = extended.ends))
-     }
-     if (reverse.subject)
-     {
-         gRNAs.cut <- cbind(seq, paste( subjectname,"_gR",
-             (seq.len - (starts.gRNA + cut.site -1 ) + 1), "r", sep = ""),
-             (seq.len - starts.gRNA + 1), "-", extendedSequence)
+        starts.gRNA <- pos.PAMs - gRNA.size
+        ends.gRNA <- pos.PAMs - 1
+        if (gRNA.pattern != "")
+        {
+            gRNA.seqs <- as.character(Views(subject, 
+               start = starts.gRNA,
+               end = ends.gRNA))
+            pos.set2 <- unlist(gregexpr(gRNA.pattern, gRNA.seqs,
+               perl = TRUE, ignore.case = TRUE, fixed = FALSE))
+            pos.PAMs <- pos.PAMs[pos.set2 == 1]
+        }
+        seq <- as.character(Views(subject,
+           start = starts.gRNA,
+           end = ends.gRNA + PAM.size))
+        extendedSequence <- seq
+        if (calculategRNAEfficacy)
+        {
+            extended.starts <- starts.gRNA - baseBeforegRNA
+            extended.starts[extended.starts < 0] <- 1
+            extended.ends <- ends.gRNA + PAM.size + baseAfterPAM
+            extended.ends[extended.ends > length(subject)] <- length(subject)
+            extendedSequence <- as.character(Views(subject, start = extended.starts,
+                end = extended.ends))
+        }
+        if (reverse.subject)
+        {
+            gRNAs.cut <- cbind(seq, paste( subjectname,"_gR",
+                (seq.len - (starts.gRNA + cut.site -1 ) + 1), "r", sep = ""),
+                (seq.len - starts.gRNA + 1), "-", extendedSequence)
+        }
+        else
+        {
+            gRNAs.cut <-
+                cbind(seq, paste(subjectname,"_gR", (starts.gRNA + cut.site - 1),
+                "f", sep = ""), starts.gRNA, "+", extendedSequence)
+        }
      }
      else
      {
-         gRNAs.cut <-
-             cbind(seq, paste(subjectname,"_gR", (starts.gRNA + cut.site - 1),
-             "f", sep = ""), starts.gRNA, "+", extendedSequence)
+        gRNAs.cut <- ""
      }
-     gRNAs.cut
+        gRNAs.cut
 }
 
 ## Very inefficient (perform in quadratic time).
@@ -140,7 +143,7 @@ findgRNAs <-
     }
     else
     {
-	subjects <- inputFilePath
+	    subjects <- inputFilePath
     }
     PAM <- translatePattern(PAM)
     PAM <- paste("(?=", PAM, ")", sep="")
@@ -187,21 +190,26 @@ findgRNAs <-
                baseAfterPAM = baseAfterPAM,
                reverse.subject = TRUE) 
 
-          if (length(plus.gRNAs) > 1)
+        if (length(plus.gRNAs) > 1)
             n.plus.gRNAs <- dim(plus.gRNAs)[1]
-          else
+        else
             n.plus.gRNAs <- 0
-          if (length(minus.gRNAs) > 1)
+        if (length(minus.gRNAs) > 1)
             n.minus.gRNAs <- dim(minus.gRNAs)[1]
-          else
+        else
             n.minus.gRNAs <- 0
-        if (findPairedgRNAOnly && (n.minus.gRNAs  * n.plus.gRNAs) == 0)
+        if (n.minus.gRNAs == 0 && n.plus.gRNAs == 0)
         {
-            warning(paste("No paired gRNAs found in the input sequence", subjectname))
+            cat(paste("No gRNAs found in the input sequence", subjectname))
             all.gRNAs <- DNAStringSet()
         }
-	else if (annotatePaired || findPairedgRNAOnly)
-	{
+        else if (findPairedgRNAOnly && (n.minus.gRNAs  * n.plus.gRNAs) == 0)
+        {
+            cat(paste("No paired gRNAs found in the input sequence", subjectname))
+            all.gRNAs <- DNAStringSet()
+        }
+	    else if (annotatePaired || findPairedgRNAOnly)
+	    {
             temp = matrix(nrow =0, ncol=5)
             colnames(temp)[1:5] <- c( "ReversegRNAPlusPAM",
                 "ReversegRNAName", "ForwardgRNAPlusPAM",
@@ -223,6 +231,12 @@ findgRNAs <-
                                                    min.gap, max.gap)
                 plus.index <- pair_index[[1L]]
                 minus.index <- pair_index[[2L]]
+                if (!findPairedgRNAOnly)
+                {
+                    all.gRNAs <- DNAStringSet(c(plus.gRNAs[,1], minus.gRNAs[,1]))
+                    names(all.gRNAs) <- c(plus.gRNAs[,2], minus.gRNAs[,2])
+                    forEffi <- rbind(plus.gRNAs, minus.gRNAs)
+                }
                 if (length(minus.index) > 0 && length(plus.index) > 0)
                 {
                     paired <- cbind(minus.gRNAs[minus.index,1], 
@@ -242,6 +256,7 @@ findgRNAs <-
                             minus.gRNAs[minus.index,1]))
                         names(all.gRNAs) <- c(plus.gRNAs[plus.index,2], 
                             minus.gRNAs[minus.index,2])
+                        forEffi <- rbind(plus.gRNAs[plus.index,], minus.gRNAs[minus.index,])
                     }
                     if (dim(paired)[1] == 1)
                         write.table(paired, file = pairOutputFile, sep = "\t", 
@@ -251,35 +266,57 @@ findgRNAs <-
                         write.table(paired[order(as.character(paired[,4])), ], 
                             file = pairOutputFile, sep = "\t", row.names = FALSE,
                             quote = FALSE, append = toAppend, col.names = colNames)
-                }
+                } ## if paired found
                 else if (findPairedgRNAOnly)
                 {
-                    warning(paste("No paired gRNAs found for sequence",
+                    cat(paste("No paired gRNAs found for sequence",
                         subjectname))
                    all.gRNAs <- DNAStringSet()
+                   forEffi <- ""
                 }
             }### if plus.gRNAs and minus.gRNAs not empty
-            if (! findPairedgRNAOnly)
+            else if (!findPairedgRNAOnly && n.plus.gRNAs > 0)
             {
-                all.gRNAs <- DNAStringSet(c(plus.gRNAs[,1], minus.gRNAs[,1]))
-                if (length(all.gRNAs) == 0)
-                    warning(paste("No gRNAs found in the input sequence", 
-                        subjectname))	
+                all.gRNAs <- DNAStringSet(plus.gRNAs[,1])
+                names(all.gRNAs) <- plus.gRNAs[,2]
+                forEffi <- plus.gRNAs
             }
-	 } ### annotatePaired and (no paired found or findPairedOnly)   
-         else
-         {
+            else if (!findPairedgRNAOnly && n.minus.gRNAs > 0)
+            {
+                all.gRNAs <- DNAStringSet(minus.gRNAs[,1])
+                names(all.gRNAs) <- minus.gRNAs[,2]
+                forEffi <- minus.gRNAs
+            }
+        } ### annotatePaired and (no paired found or findPairedOnly)
+        else if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
+        {
              all.gRNAs <- DNAStringSet(c(plus.gRNAs[,1], minus.gRNAs[,1]))
-             if (length(all.gRNAs) == 0)
-                 warning(paste("No gRNAs found in the input sequence",
-                     subjectname))
-         }
-	 forEffi <- rbind(plus.gRNAs, minus.gRNAs)
-	 forEffi <- subset(forEffi, forEffi[,1] %in% as.character(all.gRNAs))	
-	 if (length(all.gRNAs) >0)
-	     forEffi
+             names(all.gRNAs) <- c(plus.gRNAs[,2], minus.gRNAs[,2])
+             forEffi <- rbind(plus.gRNAs, minus.gRNAs)
+        }
+        else if (n.minus.gRNAs > 0 )
+        {
+             all.gRNAs <- DNAStringSet(minus.gRNAs[,1])
+             names(all.gRNAs) <- minus.gRNAs[,2]
+             forEffi <- minus.gRNAs
+        }
+        else if (n.plus.gRNAs > 0 )
+        {
+            all.gRNAs <- DNAStringSet(plus.gRNAs[,1])
+            names(all.gRNAs) <- plus.gRNAs[,2]
+            forEffi <- plus.gRNAs
+        }
+        else
+        {
+            all.gRNAs <- DNAStringSet()
+        }
+        if (length(all.gRNAs) == 0 && !findPairedgRNAOnly)
+          cat(paste("No gRNAs found in the input sequence",
+               subjectname))
+        if (length(all.gRNAs) >0)
+	       forEffi
     })) ## do call subjects
-    if (calculategRNAEfficacy)
+    if (calculategRNAEfficacy && length(all.gRNAs.df) > 4)
     {
         featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
         effi <- calculategRNAEfficiency(all.gRNAs.df[,5], 
@@ -294,7 +331,7 @@ findgRNAs <-
         extendedSequences[nchar(extendedSequences[,5]) 
 	    < baseBeforegRNA + gRNA.size + PAM.size + baseAfterPAM, 6] <- 
                 "extended sequence too short"
-	write.table(extendedSequences,
+	    write.table(extendedSequences,
              file = efficacyFile, sep="\t", row.names = FALSE)
     }
     #else

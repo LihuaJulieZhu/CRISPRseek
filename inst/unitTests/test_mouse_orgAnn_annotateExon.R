@@ -55,7 +55,7 @@ test_mouse_orgAnn_annotateExon <- function() {
         stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
-    if (checkEquals(summary.WithorgAnn, summary, tolerance = 0.01))
+        if (checkEquals(summary.WithorgAnn[,1:21], summary, tolerance = 0.01))
         cat("Summary passed test for orgAnn provided\n")
     else
         cat("Summary failed test for orgAnn provided\n")
@@ -74,7 +74,7 @@ test_mouse_orgAnn_annotateExon <- function() {
 						  stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
 							stringsAsFactors = FALSE)
-    if (checkEquals(summary.NOorgAnn, summary, tolerance = 0.01))
+    if (checkEquals(summary.NOorgAnn[,1:21], summary, tolerance = 0.01))
 	cat("Summary passed test for orgAnn not provided\n")
     else
 	cat("Summary failed test for orgAnn not provided\n")
@@ -92,7 +92,7 @@ test_mouse_orgAnn_annotateExon <- function() {
 	stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
 	stringsAsFactors = FALSE)
-    if (checkEquals(summary.NOTannotateExon, summary, tolerance = 0.01))
+    if (checkEquals(summary.NOTannotateExon[,1:21], summary, tolerance = 0.01))
 	cat("Summary passed test for NOT annotateExon\n")
     else
 	cat("Summary failed test for NOT annotateExon\n")

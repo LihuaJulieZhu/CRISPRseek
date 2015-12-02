@@ -105,7 +105,7 @@ test_offTargetAnalysis <- function() {
         cat("REcutDetails passed test for gRNA provided\n")
     else
         cat("REcutDetails failed for gRNA provided\n")
-    if (checkEquals(summary.gRNAProvided, summary, tolerance = 0.01))
+    if (checkEquals(summary.gRNAProvided[,1:21], summary, tolerance = 0.01))
         cat("Summary passed test for gRNA provided\n")
     else
         cat("Summary failed for gRNA provided\n")
@@ -143,7 +143,7 @@ test_offTargetAnalysis <- function() {
                 else
                     cat("pairedgRNAs failed for paired with RE sites\n")	
                 if (checkEquals(
-                    summary.pairedSearchRE, summary, tolerance = 0.01))
+                    summary.pairedSearchRE[,1:22], summary, tolerance = 0.01))
                     cat("Summary passed test for paired with RE sites\n")
                 else
                     cat("Summary failed for paired with RE sites\n")
@@ -170,7 +170,7 @@ test_offTargetAnalysis <- function() {
                     cat("pairedgRNAs failed for paired with or without RE 
                         sites\n")
                 if (checkEquals(
-                    summary.pairedSearchNoRE, summary, tolerance = 0.01))
+                    summary.pairedSearchNoRE[,1:22], summary, tolerance = 0.01))
                     cat("Summary passed test for paired with or without RE 
                         sites\n")
                 else
@@ -195,7 +195,7 @@ test_offTargetAnalysis <- function() {
                 else
                     cat("pairedgRNAs failed for unPaired with RE sites\n")
                 if (checkEquals(
-                    summary.unPairedSearchRE, summary, tolerance = 0.01))
+                    summary.unPairedSearchRE[,1:21], summary, tolerance = 0.01))
                     cat("Summary passed test for unPaired with RE sites\n")
                 else
                     cat("Summary failed for unPaired with RE sites\n")
@@ -224,7 +224,7 @@ test_offTargetAnalysis <- function() {
                     cat("pairedgRNAs failed unPaired with or without RE 
                         sites\n")
                 if (checkEquals(
-                    summary.unPairedSearchNoRE, summary, tolerance = 0.01))
+                    summary.unPairedSearchNoRE[,1:21], summary, tolerance = 0.01))
                     cat("Summary passed test unPaired with or without RE 
                         sites\n")
                 else
