@@ -2,7 +2,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	format = c("fasta", "fasta"), header = FALSE, findgRNAsWithREcutOnly = FALSE,
     searchDirection=c("both","1to2", "2to1"), BSgenomeName,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
-    minREpatternSize = 6, 
+    minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE), 
+    exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
@@ -12,7 +13,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 
     0.685, 0.583), overwrite = FALSE, baseBeforegRNA = 4, 
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
-       "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = TRUE, 
+       "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = FALSE, 
         gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
         temperature = 37)
 {
@@ -43,7 +44,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		cat("search for gRNAs for input file1...\n")
 		tryCatch(
 			 (gRNAs1 = offTargetAnalysis(inputFile1Path, format = format[1], 
-			     findgRNAs = TRUE, gRNAoutputName= inputNames[1],
+			     findgRNAs = findgRNAs[1], annotatePaired =  annotatePaired,
+                             exportAllgRNAs = exportAllgRNAs, gRNAoutputName= inputNames[1],
 			     findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "", 
 			     findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
 			     REpatternFile = REpatternFile, minREpatternSize = minREpatternSize, 
@@ -63,7 +65,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	{
 		cat("search for gRNAs for input file2...\n")
 		tryCatch((gRNAs2 = offTargetAnalysis(inputFile2Path, format = format[2],          
-			findgRNAs = TRUE, gRNAoutputName = inputNames[2],
+			findgRNAs = findgRNAs[2], annotatePaired =  annotatePaired,
+                        exportAllgRNAs = exportAllgRNAs, gRNAoutputName = inputNames[2],
 			findPairedgRNAOnly = findPairedgRNAOnly, chromToSearch = "",
             		findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
             		REpatternFile = REpatternFile, minREpatternSize = minREpatternSize,
@@ -398,6 +401,10 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		sep = "\t", row.names = FALSE, col.names=TRUE)
 	}
 	print("Done!")
+        if (removegRNADetails[1])
+            unlink(outputDir1, recursive = TRUE)
+        if (removegRNADetails[2])
+            unlink(outputDir2, recursive = TRUE)
 	setwd(originalDir)
 #scores
 	seqs

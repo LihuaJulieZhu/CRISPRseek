@@ -13,7 +13,8 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     format = c("fasta", "fasta"), header=FALSE, findgRNAsWithREcutOnly = FALSE, 
     searchDirection=c("both","1to2", "2to1"), BSgenomeName,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
-    minREpatternSize = 6,
+    minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE),
+    exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
@@ -23,7 +24,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
     overwrite = FALSE, baseBeforegRNA = 4, 
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
-       "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = TRUE, 
+       "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = FALSE, 
     gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
     temperature = 37)
 }
@@ -68,6 +69,21 @@ File path containing restriction enzyme cut patters
 Minimum restriction enzyme recognition pattern length required for the enzyme 
 pattern to be searched for, default 6
 }
+  \item{findgRNAs}{
+Indicate whether to find gRNAs from the sequences in the input file or skip 
+the step of finding gRNAs, default TRUE for both input sequences. 
+Set it to FALSE if the input file contains user selected gRNAs plus PAM already. 
+}
+\item{removegRNADetails}{
+Indicate whether to remove the detailed gRNA information such as efficacy file and 
+restriction enzyme cut sites, default false for both input sequences.
+Set it to TRUE if the input file contains the user selected gRNAs plus PAM already.
+}
+\item{exportAllgRNAs}{
+Indicate whether to output all potential gRNAs to a file in fasta format,
+genbank format or both. Default to no.
+}
+\item{annotatePaired}{Indicate whether to output paired information, default to FALSE}
   \item{overlap.gRNA.positions}{
 The required overlap positions of gRNA and restriction enzyme cut site, 
 default 17 and 18
@@ -136,7 +152,7 @@ Number of bases after PAM used for calculating gRNA efficiency, default 3
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
 }
 \item{foldgRNAs}{
-Default TRUE. If set to TRUE, summary file will contain minimum free energy of the secondary
+Default FALSE. If set to TRUE, summary file will contain minimum free energy of the secondary
 structure of gRNA with gRNA backbone from GeneRfold package provided that GeneRfold package has been installed.
 }
 \item{gRNA.backbone}{
