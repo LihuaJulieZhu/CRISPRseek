@@ -1,6 +1,6 @@
 compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1", "Seq2"), 
 	format = c("fasta", "fasta"), header = FALSE, findgRNAsWithREcutOnly = FALSE,
-    searchDirection=c("both","1to2", "2to1"), BSgenomeName,
+    searchDirection = c("both","1to2", "2to1"), BSgenomeName,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE), 
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
@@ -227,14 +227,19 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	cat("finish off-target search in sequence 1\n")
 	if (file.exists(outfile))
 	{
-		hits <- read.table(outfile, sep="\t", header = TRUE, 
+	    hits <- read.table(outfile, sep="\t", header = TRUE, 
         stringsAsFactors = FALSE)
 #cat(dim(hits))
 	}
 	else
 	{
-		stop("No offtarget found! You can alter your 
-			 search criteria such as increasing max.mismatch!")
+            if (removegRNADetails[1])
+                unlink(outputDir1, recursive = TRUE)
+            if (removegRNADetails[2])
+                unlink(outputDir2, recursive = TRUE)
+            unlink(outfile)
+	    stop("No offtarget found! You can alter your 
+		 search criteria such as increasing max.mismatch!")
 	}
 	unlink(outfile)
 	featureVectors <- buildFeatureVectorForScoring(hits = hits, 
