@@ -359,26 +359,43 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
         {
             outputDir2 <- paste(outputDir2, "", sep = .Platform$file.sep)
         }
-	if(searchDirection == "both")
+	if (searchDirection == "both")
 	{
+            if (findgRNAs[1])
+            {
 		eff1File <- paste(outputDir1, "gRNAefficacy.xls", sep = "")
+                gRNAeff1 <- read.table(eff1File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
+            }  
+            if (findgRNAs[2])
+            {
 		eff2File <- paste(outputDir2, "gRNAefficacy.xls", sep = "")
-		gRNAeff1 <- read.table(eff1File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
 		gRNAeff2 <- read.table(eff2File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
-		gRNAeff <- rbind(gRNAeff1, gRNAeff2)
-	}
-	if(searchDirection == "1to2")
+            }
+            if (findgRNAs[1])
+            {
+                if (findgRNAs[2])
+		    gRNAeff <- rbind(gRNAeff1, gRNAeff2) 
+                else
+                    gRNAeff <- gRNAeff1
+            }
+            else if (findgRNAs[2])
+                gRNAeff <- gRNAeff2
+        }
+	if(searchDirection == "1to2" && findgRNAs[1])
 	{
 		eff1File <- paste(outputDir1, "gRNAefficacy.xls", sep = "")
 		gRNAeff <- read.table(eff1File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
-    }
-	if(searchDirection == "2to1")
+        }
+	if(searchDirection == "2to1" && findgRNAs[2])
 	{
 		eff2File <- paste(outputDir2, "gRNAefficacy.xls", sep = "")
 		gRNAeff <- read.table(eff2File,sep="\t", header=TRUE, stringsAsFactors=FALSE)
 	}
-	m <- match(seqs$name, gRNAeff$name)
-	seqs$gRNAefficacy <- gRNAeff$gRNAefficacy[m]
+        if(exists("gRNAeff"))
+        {
+	    m <- match(seqs$name, gRNAeff$name)
+	    seqs$gRNAefficacy <- gRNAeff$gRNAefficacy[m]
+        }
 	originalDir <- getwd()
 	setwd(outputDir)
         if (foldgRNAs)
