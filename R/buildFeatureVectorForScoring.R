@@ -38,7 +38,7 @@ buildFeatureVectorForScoring <-
     alignment <- as.character(replaceAt(alignment, at, extractAt(subject, at)))
 
     mean.neighbor.distance.mismatch <- mean(diff(mismatch_pos))
-    no_neighbor_idx <- elementLengths(mismatch_pos) <= 1L
+    no_neighbor_idx <- elementNROWS(mismatch_pos) <= 1L
     mean.neighbor.distance.mismatch[no_neighbor_idx] <- gRNA.size
 
     features <- cbind(mismatch.distance2PAM, alignment, isCanonical.PAM,
