@@ -1,0 +1,2 @@
+track name="gRNA sites" description="CRISPRseek" visibility=2 useScore=1 itemRgb="On"
+chrX 48649563 48649586 Hsap_GATA1_ex2_gRNA1 106.547942216103 + 48649579 48649581
