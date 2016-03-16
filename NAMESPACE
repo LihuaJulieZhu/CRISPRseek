@@ -7,6 +7,7 @@ import(BSgenome)
 importFrom(data.table, rbindlist)
 import(BiocParallel)
 importFrom(parallel, makeCluster, stopCluster, detectCores)
+import(hash)
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits, writeHits, translatePattern, getOfftargetScore, 
     buildFeatureVectorForScoring, compare2Sequences, calculategRNAEfficiency,
