@@ -1,6 +1,7 @@
 offTargetAnalysis <-
-    function(inputFilePath, format = "fasta", header=FALSE, gRNAoutputName, findgRNAs = TRUE,
-		exportAllgRNAs = c("all", "fasta", "genbank", "no"),
+    function(inputFilePath, format = "fasta", header=FALSE, 
+        gRNAoutputName, findgRNAs = TRUE,
+        exportAllgRNAs = c("all", "fasta", "genbank", "no"),
         findgRNAsWithREcutOnly = FALSE, 
 	REpatternFile = system.file("extdata", "NEBenzymes.fa", 
             package = "CRISPRseek"), 
@@ -15,7 +16,7 @@ offTargetAnalysis <-
 "chr6_ssto_hap7"),
 	max.mismatch = 3, 
         PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 2,
-        gRNA.pattern = "", min.score = 0.5, topN = 100, 
+        gRNA.pattern = "", min.score = 0, topN = 1000, 
         topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, orgAnn, outputDir,
         fetchSequence = TRUE, upstream = 200, downstream = 200,
@@ -29,9 +30,40 @@ offTargetAnalysis <-
 	outputUniqueREs = TRUE, foldgRNAs = FALSE, 
         gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
         temperature = 37,
-        overwrite = FALSE)
+        overwrite = FALSE,
+        scoring.method = c("Hsu-Zhang", "CFDscore"),
+        subPAM.activity = hash( AA =0,
+          AC =   0,
+          AG = 0.259259259,
+          AT = 0,
+          CA = 0,
+          CC = 0,
+          CG = 0.107142857,
+          CT = 0,
+          GA = 0.069444444,
+          GC = 0.022222222,
+          GG = 1,
+          GT = 0.016129032,
+          TA = 0,
+          TC = 0,
+          TG = 0.038961039,
+          TT = 0),
+     subPAM.position = c(22, 23),
+     mismatch.activity.file = system.file("extdata", 
+         "NatureBiot2016SuppTable19DoenchRoot.csv", 
+         package = "CRISPRseek")
+)
 {
     cat("Validating input ...\n")
+    if (scoring.method ==  "CFDscore") 
+    {
+        mismatch.activity <- read.csv(mismatch.activity.file)
+        required.col <- c("Mismatch.Type", "Position", "Percent.Active")
+        if (length(intersect(colnames(mismatch.activity), required.col)) != 
+            length(required.col))  
+           stop("Please rename the mismatch activity file column to contain at least
+              these 3 column names: Mismatch.Type, Position, Percent.Active\n")
+    } 
     if(findgRNAsWithREcutOnly && findgRNAs && !file.exists(REpatternFile))
     {
         stop("Please specify an REpattern file as fasta file with 
@@ -310,11 +342,18 @@ offTargetAnalysis <-
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM) 
     cat("Building feature vectors for scoring ...\n")
+    #save(hits, file = "hits.RData")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
-        canonical.PAM = PAM, gRNA.size = gRNA.size)
+        canonical.PAM = PAM, gRNA.size = gRNA.size, 
+        subPAM.position = subPAM.position)
     cat("Calculating scores ...\n")
-    scores <- getOfftargetScore(featureVectors, weights = weights)
-    write.table(scores, file="testScore.xls", sep="\t", row.names=FALSE)
+    if ( scoring.method ==  "CFDscore")
+        scores <- getOfftargetScore2(featureVectors, 
+            subPAM.activity = subPAM.activity,
+            mismatch.activity.file = mismatch.activity.file)
+    else
+        scores <- getOfftargetScore(featureVectors, weights = weights)
+    #write.table(scores, file="testScore2.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
@@ -323,6 +362,8 @@ offTargetAnalysis <-
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 
 	    baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile)
+    #write.table(offTargets, file="testoffTargets2.xls", sep="\t", row.names=FALSE)
+   
     cat("Done annotating\n")
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 
         header = TRUE, stringsAsFactors = FALSE) 

@@ -24,7 +24,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 2, 
-    gRNA.pattern = "", min.score = 0.5, topN = 100, 
+    gRNA.pattern = "", min.score = 0, topN = 1000, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, orgAnn, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
     upstream.search = 0, downstream.search = 0,
@@ -36,7 +36,29 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     outputUniqueREs = TRUE, foldgRNAs = FALSE, 
     gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
     temperature = 37,
-    overwrite = FALSE)
+    overwrite = FALSE,
+    scoring.method = c("Hsu-Zhang", "CFDscore"),
+        subPAM.activity = hash( AA =0,
+          AC =   0,
+          AG = 0.259259259,
+          AT = 0,
+          CA = 0,
+          CC = 0,
+          CG = 0.107142857,
+          CT = 0,
+          GA = 0.069444444,
+          GC = 0.022222222,
+          GG = 1,
+          GT = 0.016129032,
+          TA = 0,
+          TC = 0,
+          TG = 0.038961039,
+          TT = 0),
+     subPAM.position = c(22, 23),
+     mismatch.activity.file = system.file("extdata", 
+         "NatureBiot2016SuppTable19DoenchRoot.csv", 
+         package = "CRISPRseek")
+    )
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -146,10 +168,10 @@ with GG for example, then set it to ^GG. Please see help(translatePattern) for
 a list of IUPAC Extended Genetic Alphabet.
 }
   \item{min.score}{
-minimum score of an off target to included in the final output, default 0.5
+minimum score of an off target to included in the final output, default 0
 }
   \item{topN}{
-top N off targets to be included in the final output, default 100
+top N off targets to be included in the final output, default 1000
 }
   \item{topN.OfftargetTotalScore}{
 top N off target used to calculate the total off target score, default 10
@@ -191,6 +213,7 @@ upstream offset from the bed input starts to search for gRNAs, default 0
 downstream offset from the bed input ends to search for gRNAs, default 0
 }
   \item{weights}{
+Applicable only when scoring.method is set to Hsu-Zhang
 a numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395, 
 0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 
 0.804, 0.685, 0.583) which is used in Hsu et al., 2013 cited in the reference 
@@ -226,7 +249,25 @@ sequence in Sp gRNA backbone.
 temperature in celsius. Default to 37 celsius. 
 }
 \item{overwrite}{
-	overwrite the existing files in the output directory or not, default FALSE
+    overwrite the existing files in the output directory or not, default FALSE
+}
+\item{scoring.method}{
+   Indicates which method to use for offtarget cleavage rate estimation, currently
+two methods are supported,  Hsu-Zhang and CFDscore
+}
+\item{subPAM.activity}{
+   Applicable only when scoring.method is set to CFDscore
+   A hash to represent the cleavage rate for each alternative sub PAM sequence relative
+to preferred PAM sequence
+}
+\item{subPAM.position}{
+   Applicable only when scoring.method is set to CFDscore
+The start and end positions of the sub PAM. Default to 22 and 23 for SP with 20bp gRNA and NGG as preferred PAM
+}
+\item{mismatch.activity.file}{
+Applicable only when scoring.method is set to CFDscore
+A comma separated (csv) file containing the cleavage rates for all possible types of
+single nucleotide mismatche at each position of the gRNA. By default, using the supplemental Table 19 from Doench et al., Nature Biotechnology 2016
 }
 }
 \details{
@@ -247,6 +288,7 @@ targeting specificity of rNA-guided Cas9 nucleases. Nature Biotechnology
 31:827-834
 Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
+Doench JG et al., Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology Jan 18th 2016
 }
 \author{
 Lihua Julie Zhu

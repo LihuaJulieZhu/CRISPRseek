@@ -1,6 +1,6 @@
 getOfftargetScore2 <-
     function(featureVectors, 
-        PAM.activity = hash( AA =0,
+        subPAM.activity = hash( AA =0,
           AC =   0,
           AG = 0.259259259,
           AT = 0,
@@ -16,7 +16,10 @@ getOfftargetScore2 <-
           TC = 0,
           TG = 0.038961039,
           TT = 0),
-        mismatch.activity.file = system.file("NatureBiot2016SuppTable19DoenchRoot.csv"))
+        mismatch.activity.file = system.file("extdata", 
+            "NatureBiot2016SuppTable19DoenchRoot.csv", 
+            package = "CRISPRseek")
+)
 {
     mismatch.activity <- read.csv(mismatch.activity.file)
     required.col <- c("Mismatch.Type", "Position", "Percent.Active")
@@ -35,18 +38,9 @@ getOfftargetScore2 <-
     ##### the mismatch activity  is given as pos 20, 19, 18,....1 distance from PAM,    ##### Position named as 1, 2, 3, .....20 though 
     ##### and the featureVectors is in the same order now
     ##### so no need to reverse any more. weights = rev(weights)
-    #fv.lessThan1Mismatch <- subset(featureVectors, as.numeric(as.character(
-    #    featureVectors$n.mismatch)) < 1)
-    #if (dim(fv.lessThan1Mismatch)[1] > 0)
-    #{
-        #mismatch.pos <- fv.lessThan2Mismatch[, grep("IsMismatch.pos", 
-        #    colnames(fv.lessThan2Mismatch))]
-        #mismatch.pos = apply(mismatch.pos, 1, as.numeric) 
-        #fv.lessThan2Mismatch$score =  as.numeric(100 * 
-        #    (1 - weights %*% mismatch.pos))
-    featureVectors$score = 100 * as.numeric(values(
-        PAM.activity, keys = as.character(featureVectors$subPAM))) 
-    #}
+    featureVectors$score <- 1
+    featureVectors$score <- as.numeric(values(
+        subPAM.activity, keys = as.character(featureVectors$subPAM))) 
     fv.geThan1Mismatch <- subset(featureVectors, as.numeric(as.character(
         featureVectors$n.mismatch)) >= 1)
     fv.lessThan1Mismatch <- subset(featureVectors, as.numeric(as.character(
@@ -63,13 +57,13 @@ getOfftargetScore2 <-
             mismatch.index <- pos[fv.geThan1Mismatch[i,pos] == 1] - min.pos + 1
             thisMismatch <- unlist(strsplit(as.character(
                 fv.geThan1Mismatch[i,]$mismatch.type), ","))
-            score.new <- fv.geThan1Mismatch[i, ]$score
+            score.new1 <- fv.geThan1Mismatch[i, ]$score
             for (j in 1:length(mismatch.index))
-                score.new <- score.new *
+                score.new1 <- score.new1 *
                     weights[position == 
                         mismatch.index[j] & 
                         r.nu.d.nu == thisMismatch[j]]
-            score.new
+            score.new1
         }))
         fv.geThan1Mismatch$score <- score.new
     }
@@ -84,7 +78,7 @@ getOfftargetScore2 <-
         score <- fv.lessThan1Mismatch
     }
     score$alignment <- as.character(score$alignment)
-    score$score <- round(score$score, 1)
+    score$score <- round(score$score, 6)
     score  <- score[order(c(score$name,score$score),decreasing = TRUE), ]
     unique(score[!is.na(score$score), ])
 }

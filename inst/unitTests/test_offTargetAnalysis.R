@@ -93,7 +93,8 @@ test_offTargetAnalysis <- function() {
         findgRNAsWithREcutOnly = FALSE, REpatternFile = REpatternFile, 
         findPairedgRNAOnly = FALSE, BSgenomeName = Hsapiens, 
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-		orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
+	orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
+        min.score = 0.5, topN = 100,
         outputDir = outputDir, overwrite = TRUE)
     REcutDetails <- read.table("REcutDetails.xls", sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
@@ -121,7 +122,8 @@ test_offTargetAnalysis <- function() {
                 findgRNAsWithREcutOnly = isRE, REpatternFile = REpatternFile,
                 findPairedgRNAOnly = isPaired, BSgenomeName = Hsapiens, 
                 txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, 
-				orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
+		orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
+                min.score = 0.5, topN = 100,
                 outputDir= outputDir, overwrite = TRUE)
             REcutDetails <- read.table("REcutDetails.xls", sep = "\t", 
                 header = TRUE, stringsAsFactors = FALSE)

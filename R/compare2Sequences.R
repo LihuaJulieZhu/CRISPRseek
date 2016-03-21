@@ -15,11 +15,42 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
        "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = FALSE, 
         gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
-        temperature = 37)
+        temperature = 37,
+        scoring.method = c("Hsu-Zhang", "CFDscore"),
+        subPAM.activity = hash( AA =0,
+          AC =   0,
+          AG = 0.259259259,
+          AT = 0,
+          CA = 0,
+          CC = 0,
+          CG = 0.107142857,
+          CT = 0,
+          GA = 0.069444444,
+          GC = 0.022222222,
+          GG = 1,
+          GT = 0.016129032,
+          TA = 0,
+          TC = 0,
+          TG = 0.038961039,
+          TT = 0),
+     subPAM.position = c(22, 23),
+     mismatch.activity.file = system.file("extdata", 
+         "NatureBiot2016SuppTable19DoenchRoot.csv", 
+         package = "CRISPRseek")
+    )
 {
 	if ((format[1] == "bed" || format[2] == "bed") && 
             (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome"))
             stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
+        if (scoring.method ==  "CFDscore")
+        {
+            mismatch.activity <- read.csv(mismatch.activity.file)
+            required.col <- c("Mismatch.Type", "Position", "Percent.Active")
+            if (length(intersect(colnames(mismatch.activity), required.col)) !=
+                length(required.col))
+                stop("Please rename the mismatch activity file column to contain at least
+                   these 3 column names: Mismatch.Type, Position, Percent.Active\n")
+        }
 	append = ifelse(overwrite, FALSE, TRUE)
 	if (class(inputFile1Path) != "DNAStringSet")
 	{
@@ -58,7 +89,10 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 			     weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
 			     featureWeightMatrixFile = featureWeightMatrixFile, 
             		     baseBeforegRNA = baseBeforegRNA, BSgenomeName = BSgenomeName,
-            		     baseAfterPAM = baseAfterPAM, header = header)), 
+            		     baseAfterPAM = baseAfterPAM, header = header,
+                             subPAM.position = subPAM.position,
+                             subPAM.activity = subPAM.activity,
+                             mismatch.activity.file = mismatch.activity.file)), 
 			 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
 	}
 	if(searchDirection == "both" || searchDirection == "2to1")
@@ -79,7 +113,10 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
             		weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
                         featureWeightMatrixFile = featureWeightMatrixFile,
                         baseBeforegRNA = baseBeforegRNA, BSgenomeName = BSgenomeName,
-                        baseAfterPAM = baseAfterPAM, header = header)), 
+                        baseAfterPAM = baseAfterPAM, header = header, 
+                        subPAM.position = subPAM.position,
+                        subPAM.activity = subPAM.activity,
+                        mismatch.activity.file = mismatch.activity.file)), 
 			error=function(e) {print(e); gRNAs2 = DNAStringSet()})
 	}
     print("Scoring ...")
@@ -243,14 +280,30 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	}
 	unlink(outfile)
 	featureVectors <- buildFeatureVectorForScoring(hits = hits, 
-		canonical.PAM = PAM, gRNA.size = gRNA.size)
+	    canonical.PAM = PAM, gRNA.size = gRNA.size,
+            subPAM.position = subPAM.position)
 	cat("finish feature vector building\n")
-	scores <- getOfftargetScore(featureVectors, weights = weights)
+        if ( scoring.method ==  "CFDscore")
+            scores <- getOfftargetScore2(featureVectors,
+                subPAM.activity = subPAM.activity,
+                mismatch.activity.file = mismatch.activity.file)
+        else
+	    scores <- getOfftargetScore(featureVectors, weights = weights)
 	cat("finish score calculation\n")
 	targetInSeq1 <- scores$gRNAPlusPAM
 	targetInSeq2 <- scores$gRNAPlusPAM
-	scoreForSeq1 <- rep(100, dim(scores)[1])
-	scoreForSeq2 <- rep(100, dim(scores)[1])
+        if ( scoring.method ==  "CFDscore")
+        {	
+            scoreForSeq1 <- rep(1, dim(scores)[1])
+	    scoreForSeq2 <- rep(1, dim(scores)[1])
+            max.score <- 1
+        }
+        else
+        {
+            scoreForSeq1 <- rep(100, dim(scores)[1])
+            scoreForSeq2 <- rep(100, dim(scores)[1])
+            max.score <- 100
+        }
 	if(length(subjects1) == 1 && length(subjects2) == 1)
 	{
 		scoreForSeq1[scores$chrom == names(subjects1)] <- 
@@ -302,7 +355,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	    offTargetStrand = scores$strand,
 		scoreForSeq1 = scoreForSeq1,
 		scoreForSeq2 = scoreForSeq2,
-		mismatch.distance2PAM = as.character(scores$mismatche.distance2PAM),
+		mismatch.distance2PAM = as.character(scores$mismatch.distance2PAM),
 		n.mismatch = scores$n.mismatch,
 		offTarget = scores$forViewInUCSC,
 		targetSeqName = targetSeqName
@@ -321,7 +374,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 			targetInSeq2 = "NA",
 		    guideAlignment2OffTarget = "NA",
 		    offTargetStrand = "NA",
-			scoreForSeq1 = 100,
+			scoreForSeq1 = max.score,
 			scoreForSeq2 = 0,
 			mismatch.distance2PAM = "NA",
 			n.mismatch = "NA",
@@ -345,7 +398,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		    guideAlignment2OffTarget = "NA",
             offTargetStrand = "NA",
             scoreForSeq1 = 0,
-			scoreForSeq2 = 100,
+			scoreForSeq2 = max.score,
 			mismatch.distance2PAM = "NA",
 			n.mismatch = "NA",
 			offTarget = "NA",

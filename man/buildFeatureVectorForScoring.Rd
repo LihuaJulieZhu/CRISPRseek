@@ -8,7 +8,9 @@ Build feature vectors
 Build feature vectors for calculating scores of off targets
 }
 \usage{
-buildFeatureVectorForScoring(hits, gRNA.size = 20, canonical.PAM = "NGG")
+buildFeatureVectorForScoring(hits, gRNA.size = 20,
+    canonical.PAM = "NGG",
+    subPAM.position = c(22,23))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,7 +33,10 @@ gRNA size, default 20
   \item{canonical.PAM}{
 Canonical PAM, default NGG
 }
-
+\item{subPAM.position}{
+The start and end positions of the sub PAM to fetch.
+Default to 22 and 23 for SP with 20bp gRNA and NGG as preferred PAM
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~

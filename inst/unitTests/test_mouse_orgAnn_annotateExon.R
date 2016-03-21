@@ -47,7 +47,8 @@ test_mouse_orgAnn_annotateExon <- function() {
     cat("Testing for mouse with orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 	  findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
-	  BSgenomeName = Mmusculus, annotateExon=TRUE, outputDir = outputDir, 
+	  BSgenomeName = Mmusculus, annotateExon=TRUE, 
+          min.score = 0.5, topN = 100, outputDir = outputDir, 
 	  overwrite = TRUE, max.mismatch=1, txdb = TxDb.Mmusculus.UCSC.mm10.knownGene,
 	  orgAnn = org.Mm.egSYMBOL)
 	
@@ -66,7 +67,8 @@ test_mouse_orgAnn_annotateExon <- function() {
 	cat("Testing for mouse without orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 	  findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
-	  BSgenomeName = Mmusculus, annotateExon=TRUE, outputDir = outputDir, 
+	  BSgenomeName = Mmusculus, annotateExon=TRUE, 
+          min.score = 0.5, topN = 100, outputDir = outputDir, 
 	  overwrite = TRUE, max.mismatch=1, 
 	  txdb = TxDb.Mmusculus.UCSC.mm10.knownGene	)
 	
@@ -85,7 +87,8 @@ test_mouse_orgAnn_annotateExon <- function() {
 	cat("Testing for mouse without orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
   	findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
-        BSgenomeName = Mmusculus, annotateExon=FALSE, outputDir = outputDir, 
+        BSgenomeName = Mmusculus, annotateExon=FALSE, 
+         min.score = 0.5, topN = 100, outputDir = outputDir, 
 	  overwrite = TRUE, max.mismatch=1)
 	
     summary <- read.table("Summary.xls", sep = "\t", header = TRUE, 

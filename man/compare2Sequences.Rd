@@ -26,7 +26,29 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
        "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = FALSE, 
     gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
-    temperature = 37)
+    temperature = 37,
+    scoring.method = c("Hsu-Zhang", "CFDscore"),
+        subPAM.activity = hash( AA =0,
+          AC =   0,
+          AG = 0.259259259,
+          AT = 0,
+          CA = 0,
+          CC = 0,
+          CG = 0.107142857,
+          CT = 0,
+          GA = 0.069444444,
+          GC = 0.022222222,
+          GG = 1,
+          GT = 0.016129032,
+          TA = 0,
+          TC = 0,
+          TG = 0.038961039,
+          TT = 0),
+     subPAM.position = c(22, 23),
+     mismatch.activity.file = system.file("extdata",
+         "NatureBiot2016SuppTable19DoenchRoot.csv",
+         package = "CRISPRseek")    
+    )
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -162,6 +184,24 @@ sequence in Sp gRNA backbone.
   \item{temperature}{
 temperature in celsius. Default to 37 celsius. 
 }
+\item{scoring.method}{
+   Indicates which method to use for offtarget cleavage rate estimation, currently
+two methods are supported,  Hsu-Zhang and CFDscore
+}
+\item{subPAM.activity}{
+   Applicable only when scoring.method is set to CFDscore
+   A hash to represent the cleavage rate for each alternative sub PAM sequence relative
+to preferred PAM sequence
+}
+\item{subPAM.position}{
+   Applicable only when scoring.method is set to CFDscore
+The start and end positions of the sub PAM. Default to 22 and 23 for SP with 20bp gRNA and NGG as preferred PAM
+}
+\item{mismatch.activity.file}{
+Applicable only when scoring.method is set to CFDscore
+A comma separated (csv) file containing the cleavage rates for all possible types of
+single nucleotide mismatche at each position of the gRNA. By default, using the supplemental Table 19 from Doench et al., Nature Biotechnology 2016
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -193,7 +233,7 @@ sequence (off-target sequence)}
 \item{bracket.notation}{folded gRNA in bracket notation}
 \item{mfe.sgRNA}{minimum free energy of sgRNA}
 \item{mfe.diff}{mfe.sgRNA-mfe.backbone}
-\item{ mfe.backbone}{minimum free energy of the gRNA backbone by itself}
+\item{mfe.backbone}{minimum free energy of the gRNA backbone by itself}
 }
 \references{
 Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran, Silvana 
