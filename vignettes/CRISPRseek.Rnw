@@ -85,9 +85,10 @@ utilize Streptococcus pyogenes CRISPR-Cas9 nucleases and their derivatives.
 The package can also be readily modified to accept different gRNA and PAM 
 sequence requirements for CRISPR-Cas9 complexes from other bacterial species 
 that can be used to target alternative genomic sequences. The package can also 
-be modified to incorporate improved weight matrices for scoring off-target 
-sequences as new experimental and computational results become available for 
-CRISPR-Cas9 nucleases for Streptococcus pyogenes and other species.
+be modified to incorporate improved weight matrices or scoring.method for 
+scoring off-target sequences as new experimental and computational results
+become available for CRISPR-Cas9 nucleases for Streptococcus pyogenes and 
+other species.
 \section{Examples of using CRISPRseek}
 In this guide, we will illustrate five different gRNA search scenarios with a 
 human sequence. First load \Biocpkg{CRISPRseek}, 
@@ -322,6 +323,23 @@ results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE,
     outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
+\subsection{Scenario 10. Output cutting frerquency determiniation (CFD)
+ score for offtargets}
+Calling the function \Rfunction{offTargetAnalysis} with scoring.method
+set to CFDscore will output CFD score using the algorithm by Doench 
+et al., 2016, which models the effects of both mismatch position and 
+mimatch type on cutting frequency. By default, scoring.method 
+is set to Hsu-Zhang, which only models the effect of mismatch position.
+\begin{scriptsize}
+<<>>=
+results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE,
+    scoring.method = "CFDscore",
+    chromToSearch = "chrX",
+    annotateExon = FALSE,
+    max.mismatch = 2, BSgenomeName = Hsapiens,
+    outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
 \section{References}
 \begin{thebibliography}{5}
 \bibitem[Lihua Julie Zhu, 2015]{Zhu, 2015} Lihua Julie Zhu. Overview of guide 
@@ -342,6 +360,9 @@ Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 {Zhu et al., 2014} Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael
 Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide
 RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
+\bibitem[Doench JG et al., 2016]{Doench et al., 2016} Doench et al. Optimized sgRNA
+design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nat Biotechnol.
+2016 Jan 18. doi:10.1038/nbt.3437
 \end{thebibliography}
 \section{Session Info}
 <<>>=
