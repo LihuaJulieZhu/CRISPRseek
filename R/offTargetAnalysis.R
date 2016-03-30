@@ -55,6 +55,8 @@ offTargetAnalysis <-
 )
 {
     cat("Validating input ...\n")
+    scoring.method <- match.arg(scoring.method)
+    exportAllgRNAs <- match.arg(exportAllgRNAs)
     if (scoring.method ==  "CFDscore") 
     {
         mismatch.activity <- read.csv(mismatch.activity.file)

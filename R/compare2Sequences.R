@@ -39,6 +39,9 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
          package = "CRISPRseek")
     )
 {
+        scoring.method <- match.arg(scoring.method)
+        exportAllgRNAs <- match.arg(exportAllgRNAs)
+        searchDirection <- match.arg(searchDirection)
 	if ((format[1] == "bed" || format[2] == "bed") && 
             (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome"))
             stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
