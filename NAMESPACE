@@ -1,6 +1,6 @@
 import(BiocGenerics)
-import(S4Vectors)
-import(IRanges)
+import(S4Vectors, except=c(fold, values))
+import(IRanges, except=values)
 import(Biostrings)
 importFrom(seqinr, s2c)
 import(BSgenome)
@@ -8,6 +8,7 @@ importFrom(data.table, rbindlist)
 import(BiocParallel)
 importFrom(parallel, makeCluster, stopCluster, detectCores)
 importFrom(hash, values, hash)
+importFrom("utils", "read.csv", "read.table", "write.table")
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits, writeHits, translatePattern, getOfftargetScore, 
     buildFeatureVectorForScoring, compare2Sequences, calculategRNAEfficiency,
