@@ -106,7 +106,7 @@
                 break
         }
     }
-    oo <- S4Vectors:::orderIntegerPairs(plus.index, minus.index)
+    oo <- orderIntegerPairs(plus.index, minus.index)
     list(plus.index[oo], minus.index[oo])
 }
 
