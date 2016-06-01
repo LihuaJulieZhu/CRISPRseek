@@ -148,7 +148,11 @@ offTargetAnalysis <-
 		else
 			subjects <- readDNAStringSet(inputFilePath, format=format,
 				use.names = TRUE)
+                names(subjects) <- gsub( "\t", "", names(subjects))
+                names(subjects) <- gsub( "\n", "", names(subjects))
+                names(subjects) <- gsub( " ", "", names(subjects))
    	        locuses <- names(subjects)
+                
 		names.gRNA <- names(potential.gRNAs)
 		for (i in 1:length(locuses))
 		{
@@ -338,6 +342,10 @@ offTargetAnalysis <-
         stop("To indicate whether an offtarget is inside an exon, txdb is
             required as TxDb object!")
     }
+    names(gRNAs) <- gsub( "\t", "", names(gRNAs))
+    names(gRNAs) <- gsub( "\n", "", names(gRNAs))
+    names(gRNAs) <- gsub( " ", "", names(gRNAs))
+
     hits <- searchHits(gRNAs = gRNAs, PAM = PAM.pattern, 
         BSgenomeName = BSgenomeName, chromToSearch = chromToSearch,
 	chromToExclude = chromToExclude,

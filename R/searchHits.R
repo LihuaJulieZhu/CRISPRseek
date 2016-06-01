@@ -79,7 +79,8 @@ searchHits <-
     }
     if (file.exists(outfile))
     {
-        hits <- read.table(outfile, sep="\t", header = TRUE, stringsAsFactors = FALSE)
+        hits <- read.table(outfile, sep="\t", header = TRUE, 
+            stringsAsFactors = FALSE)
         unlink(outfile)
         hits
     }
