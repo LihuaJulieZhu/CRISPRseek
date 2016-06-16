@@ -129,16 +129,16 @@ offTargetAnalysis
         pairOutputFile = "testpairedgRNAs.xls",
         findPairedgRNAOnly = TRUE)               
     findgRNAs(inputFilePath = system.file("extdata", 
-        "cfp1.fa", package = "CRISPRseek"), 
+        "cpf1.fa", package = "CRISPRseek"), 
         findPairedgRNAOnly=FALSE, 
-        pairOutputFile = "testpairedgRNAs-cfp1.xls", 
+        pairOutputFile = "testpairedgRNAs-cpf1.xls", 
         PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
         overlap.gRNA.positions = c(19,23),
         baseBeforegRNA = 8, baseAfterPAM = 23,
         calculategRNAEfficacy= TRUE, 
         featureWeightMatrixFile = system.file("extdata", 
             "DoenchNBT2014.csv", package = "CRISPRseek"),
-       efficacyFile = "testcfp1Efficacy.xls")
+       efficacyFile = "testcpf1Efficacy.xls")
  }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
