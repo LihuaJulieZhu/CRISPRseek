@@ -2,16 +2,24 @@
     gRNA.pattern = "", gRNA.size = 20, cut.site = 17,
     PAM.size = 3, calculategRNAEfficacy = TRUE, baseBeforegRNA = 4,
     baseAfterPAM = 3,
-    reverse.subject = FALSE)
+    reverse.subject = FALSE,
+    PAM.location = "3prime")
 {
      seq.len <- nchar(as.character(subject))
      pos.PAMs <- unlist(gregexpr(PAM, subject, perl = TRUE,
          ignore.case = TRUE, fixed = FALSE))
-     pos.PAMs <- pos.PAMs[pos.PAMs != -1 & pos.PAMs > gRNA.size]
+     if (PAM.location == "3prime")
+         pos.PAMs <- pos.PAMs[pos.PAMs != -1 & pos.PAMs > gRNA.size]
+     else
+         pos.PAMs <- pos.PAMs[pos.PAMs != -1]
      if (length(pos.PAMs) > 0)
      {
-        starts.gRNA <- pos.PAMs - gRNA.size
-        ends.gRNA <- pos.PAMs - 1
+        if (PAM.location == "3prime")
+            starts.gRNA <- pos.PAMs - gRNA.size
+        else
+            starts.gRNA <- pos.PAMs + PAM.size 
+        starts.gRNA <- subset(starts.gRNA, starts.gRNA <= (seq.len - gRNA.size + 1)) 
+        ends.gRNA <- starts.gRNA + gRNA.size - 1
         if (gRNA.pattern != "")
         {
             gRNA.seqs <- as.character(Views(subject, 
@@ -21,15 +29,23 @@
                perl = TRUE, ignore.case = TRUE, fixed = FALSE))
             pos.PAMs <- pos.PAMs[pos.set2 == 1]
         }
-        seq <- as.character(Views(subject,
-           start = starts.gRNA,
-           end = ends.gRNA + PAM.size))
+        if (PAM.location == "3prime")
+            seq <- as.character(Views(subject,
+                start = starts.gRNA,
+                end = ends.gRNA + PAM.size))
+        else
+            seq <- as.character(Views(subject,
+                start = starts.gRNA - PAM.size,
+                end = ends.gRNA))
         extendedSequence <- seq
         if (calculategRNAEfficacy)
         {
             extended.starts <- starts.gRNA - baseBeforegRNA
             extended.starts[extended.starts < 0] <- 1
-            extended.ends <- ends.gRNA + PAM.size + baseAfterPAM
+            if (PAM.location == "3prime")
+                extended.ends <- ends.gRNA + PAM.size + baseAfterPAM
+            else
+                extended.ends <- starts.gRNA + baseAfterPAM - 1
             extended.ends[extended.ends > length(subject)] <- length(subject)
             extendedSequence <- as.character(Views(subject, start = extended.starts,
                 end = extended.ends))
@@ -134,7 +150,8 @@ findgRNAs <-
 	    featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
 	    baseAfterPAM = 3,
-	    calculategRNAEfficacy = FALSE, efficacyFile) 
+	    calculategRNAEfficacy = FALSE, efficacyFile,
+         PAM.location = "3prime") 
 {
     if (missing(inputFilePath)) {
         stop("inputFilePath containing the searching sequence 
@@ -191,7 +208,8 @@ findgRNAs <-
                PAM.size = PAM.size, 
                calculategRNAEfficacy = calculategRNAEfficacy,
                baseBeforegRNA = baseBeforegRNA,
-               baseAfterPAM = baseAfterPAM)
+               baseAfterPAM = baseAfterPAM,
+               PAM.location = PAM.location)
        
        minus.gRNAs <-
            .getgRNA.cut.sites(revsubject, subjectname, PAM = PAM,
@@ -202,7 +220,8 @@ findgRNAs <-
                calculategRNAEfficacy = calculategRNAEfficacy,
                baseBeforegRNA = baseBeforegRNA,
                baseAfterPAM = baseAfterPAM,
-               reverse.subject = TRUE) 
+               reverse.subject = TRUE,
+               PAM.location = PAM.location) 
 
         if (length(plus.gRNAs) > 1)
             n.plus.gRNAs <- dim(plus.gRNAs)[1]
@@ -342,10 +361,15 @@ findgRNAs <-
         extendedSequences <- cbind(all.gRNAs.df, effi)
         colnames(extendedSequences)  <- c("gRNAplusPAM", "name", "start", "strand", 
 	    "extendedSequence", "gRNAefficacy")
-        extendedSequences[nchar(extendedSequences[,5]) 
-	    < baseBeforegRNA + gRNA.size + PAM.size + baseAfterPAM, 6] <- 
+        if (PAM.location == "3prime")
+            extendedSequences[nchar(extendedSequences[,5]) 
+	        < baseBeforegRNA + gRNA.size + PAM.size + baseAfterPAM, 6] <- 
                 "extended sequence too short"
-	    write.table(extendedSequences,
+        else
+            extendedSequences[nchar(extendedSequences[,5])
+                < baseBeforegRNA + baseAfterPAM , 6] <-
+                "extended sequence too short"
+        write.table(extendedSequences,
              file = efficacyFile, sep="\t", row.names = FALSE)
     }
     #else

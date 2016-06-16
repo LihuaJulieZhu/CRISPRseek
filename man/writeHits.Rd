@@ -10,7 +10,8 @@ searchHits
 }
 \usage{
 writeHits(gRNA, seqname, matches, strand, file, gRNA.size = 20, 
-    PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE)
+    PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE,
+    PAM.location = "3prime", PAM.size = 3)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +35,8 @@ file path where the hits is written to
 gRNA size, default 20
 }
   \item{PAM}{
-PAM as regular expression for filtering the hits, default N[A|G]G$
+PAM as regular expression for filtering the hits, default N[A|G]G$ for spCas9.
+For cpf1, ^TTTN since it is a 5 prime PAM sequence.
 }
   \item{max.mismatch}{
 maximum mismatch allowed within the gRNA (excluding PAM portion) for 
@@ -45,6 +47,13 @@ length of the matched chromosome
 }
   \item{append}{
 TRUE if append to existing file, false if start a new file
+}
+\item{PAM.location}{
+PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
+cpf1 PAM is located on the 5 prime
+}
+\item{PAM.size}{
+Size of PAM, default 3
 }
 }
 \details{

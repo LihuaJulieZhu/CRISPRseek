@@ -17,7 +17,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     REpatternFile = system.file("extdata", "NEBenzymes.fa",
         package = "CRISPRseek"), minREpatternSize = 4, 
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
-    annotatePaired = TRUE, enable.multicore = FALSE, n.cores.max,
+    annotatePaired = TRUE, enable.multicore = FALSE, n.cores.max = 6,
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "", PAM.size = 3, 
     gRNA.size = 20,  PAM = "NGG",  BSgenomeName, chromToSearch = "all", 
     chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
@@ -55,6 +55,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
           TG = 0.038961039,
           TT = 0),
      subPAM.position = c(22, 23),
+     PAM.location = "3prime",
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -156,7 +157,8 @@ Maximum mismatch allowed in off target search, default 3. Warning: will be
 considerably slower if set > 3
 }
   \item{PAM.pattern}{
-Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$
+Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$ for spCas9.
+For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
 Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
@@ -221,9 +223,13 @@ section
 }
 \item{baseBeforegRNA}{
 Number of bases before gRNA used for calculating gRNA efficiency, default 4
+Please note, for PAM located on the 5 prime, need to specify the number of bases before the PAM
+sequence plus PAM size.
 }
 \item{baseAfterPAM}{
-Number of bases after PAM used for calculating gRNA efficiency, default 3
+Number of bases after PAM used for calculating gRNA efficiency, default 3 for spCas9
+Please note, for PAM located on the 5 prime, need to include the length of the gRNA plus
+the extended sequence on the 3 prime
 }
 \item{featureWeightMatrixFile}{
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
@@ -262,7 +268,11 @@ to preferred PAM sequence
 }
 \item{subPAM.position}{
    Applicable only when scoring.method is set to CFDscore
-The start and end positions of the sub PAM. Default to 22 and 23 for SP with 20bp gRNA and NGG as preferred PAM
+The start and end positions of the sub PAM. Default to 22 and 23 for spCas9 with 20bp gRNA and NGG as preferred PAM
+}
+\item{PAM.location}{
+PAM location relative to gRNA. For example, default to 3prime for spCas9 PAM. 
+Please set to 5prime for cpf1 PAM since it's PAM is located on the 5 prime end
 }
 \item{mismatch.activity.file}{
 Applicable only when scoring.method is set to CFDscore
@@ -319,6 +329,16 @@ CRISPRseek
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
 	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
             outputDir = outputDir, overwrite = TRUE)
+  
+       ######## PAM is on the 5 prime side
+       results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
+            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+            annotatePaired = FALSE,
+            BSgenomeName = Hsapiens, chromToSearch = "chrX",
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+            orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
+            outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
+        PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

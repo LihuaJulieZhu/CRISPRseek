@@ -11,7 +11,8 @@
 }
 
 .searchHitsInOneSeq <- function(gRNAs, seq, seqname, PAM, PAM.size,
-                                max.mismatch, outfile, allowed.mismatch.PAM)
+                                max.mismatch, outfile, allowed.mismatch.PAM,
+                                PAM.location = "3prime")
 {
     if (.preprocess_me(gRNAs, max.mismatch)) {
         patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
@@ -36,7 +37,8 @@
             writeHits(pattern, seqname, plus_matches, strand = "+",
                 file = outfile, gRNA.size = length(pattern) - PAM.size,
                 PAM = PAM, max.mismatch = max.mismatch - allowed.mismatch.PAM,
-                chrom.len = length(seq), append = TRUE)
+                chrom.len = length(seq), append = TRUE, PAM.location = PAM.location,
+                PAM.size = PAM.size)
         }
         if (reverseComplement(pattern) != pattern) {
             minus_matches <- Views(revseq, all_minus_macthes[[i]])
@@ -46,7 +48,8 @@
                 writeHits(pattern, seqname, minus_matches, strand = "-",
                     file = outfile, gRNA.size = length(pattern) - PAM.size,
                     PAM = PAM, max.mismatch = max.mismatch - allowed.mismatch.PAM,
-                    chrom.len = length(seq), append = TRUE)
+                    chrom.len = length(seq), append = TRUE, 
+                    PAM.location = PAM.location, PAM.size = PAM.size)
             }
         }
     }
@@ -54,7 +57,8 @@
 
 searchHits <-
     function (gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "", 
-	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$", allowed.mismatch.PAM = 2) 
+	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$",
+        allowed.mismatch.PAM = 2, PAM.location = "3prime") 
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")
@@ -73,8 +77,9 @@ searchHits <-
     for (seqname in seqnames) {
         cat(">>> Finding all hits in sequence", seqname, "...\n")
         subject <- BSgenomeName[[seqname]]
-        .searchHitsInOneSeq(gRNAs, subject, seqname, PAM, PAM.size,
-                            max.mismatch, outfile, allowed.mismatch.PAM)
+        .searchHitsInOneSeq(gRNAs, subject, seqname, PAM, PAM.size = PAM.size,
+                            max.mismatch, outfile, allowed.mismatch.PAM,
+                            PAM.location = PAM.location)
         cat(">>> DONE searching\n")
     }
     if (file.exists(outfile))

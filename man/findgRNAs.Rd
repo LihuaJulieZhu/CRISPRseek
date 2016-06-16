@@ -15,7 +15,8 @@ findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
     overlap.gRNA.positions = c(17,18), min.gap = 0, max.gap = 20,
     pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
-        baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile)
+        baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile,
+    PAM.location = "3prime")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -74,10 +75,14 @@ The prefix used when assign name to found gRNAs, default gRNA, short for
 guided RNA.
 }
  \item{baseBeforegRNA}{
-Number of bases before gRNA used for calculating gRNA efficiency, default 4
+Number of bases before gRNA used for calculating gRNA efficiency, default 4 for spCas9
+Please note, for PAM located on the 5 prime, need to specify the number of bases before the PAM
+sequence plus PAM size.
 }
 \item{baseAfterPAM}{
-Number of bases after PAM used for calculating gRNA efficiency, default 3
+Number of bases after PAM used for calculating gRNA efficiency, default 3 for spCas9
+Please note, for PAM located on the 5 prime, need to include the length of the gRNA plus
+the extended sequence on the 3 prime
 }
 \item{featureWeightMatrixFile}{
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
@@ -87,6 +92,10 @@ Default to FALSE, not to calculate gRNA efficacy
 }
 \item{efficacyFile}{
 File path to write gRNA efficacies
+}
+\item{PAM.location}{
+PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
+cpf1 PAM is located on the 5 prime
 }
 }
 \details{
@@ -119,6 +128,17 @@ offTargetAnalysis
         "inputseq.fa", package = "CRISPRseek"),
         pairOutputFile = "testpairedgRNAs.xls",
         findPairedgRNAOnly = TRUE)               
+    findgRNAs(inputFilePath = system.file("extdata", 
+        "cfp1.fa", package = "CRISPRseek"), 
+        findPairedgRNAOnly=FALSE, 
+        pairOutputFile = "testpairedgRNAs-cfp1.xls", 
+        PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+        overlap.gRNA.positions = c(19,23),
+        baseBeforegRNA = 8, baseAfterPAM = 23,
+        calculategRNAEfficacy= TRUE, 
+        featureWeightMatrixFile = system.file("extdata", 
+            "DoenchNBT2014.csv", package = "CRISPRseek"),
+       efficacyFile = "testcfp1Efficacy.xls")
  }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -10,7 +10,8 @@ Search for off targets for given gRNAs, BSgenome and maximum mismatches
 \usage{
 searchHits(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
     max.mismatch = 3, 
-    PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$", allowed.mismatch.PAM = 2)
+    PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$", 
+    allowed.mismatch.PAM = 2, PAM.location = "3prime")
 }
 \arguments{
   \item{gRNAs}{
@@ -47,11 +48,17 @@ Size of PAM, default 3
 Size of gRNA, default 20
 }
   \item{PAM}{
-Regular expression of PAM, default N[A|G]G$
+Regular expression of PAM, default N[A|G]G$ for spCas9.
+For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
  \item{allowed.mismatch.PAM}{
 Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
-}}
+}
+\item{PAM.location}{
+PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
+cpf1 PAM is located on the 5 prime
+}
+}
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
@@ -91,6 +98,21 @@ offTargetAnalysis
     ### all variants of PAM
     hits <- searchHits(all.gRNAs[1], BSgenomeName = Hsapiens,
         max.mismatch = 0, chromToSearch = "chrX")
+    colnames(hits)
+
+    ### test PAM located at 5 prime
+    all.gRNAs <- findgRNAs(inputFilePath = 
+             system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
+             pairOutputFile = "pairedgRNAs.xls",
+             findPairedgRNAOnly = FALSE,
+             PAM = "TGT", PAM.location = "5prime")
+     
+    library("BSgenome.Hsapiens.UCSC.hg19")
+         ### for speed reason, use max.mismatch = 0 for finding all targets with 
+         ### all variants of PAM
+    hits <- searchHits(all.gRNAs[1], BSgenomeName = Hsapiens, PAM.size = 3,
+        max.mismatch = 0, chromToSearch = "chrX", PAM.location = "5prime",
+        PAM = "^T[A|G]N", allowed.mismatch.PAM = 2)
     colnames(hits)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

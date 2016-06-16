@@ -45,6 +45,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
           TG = 0.038961039,
           TT = 0),
      subPAM.position = c(22, 23),
+     PAM.location = "3prime",
      mismatch.activity.file = system.file("extdata",
          "NatureBiot2016SuppTable19DoenchRoot.csv",
          package = "CRISPRseek")    
@@ -137,7 +138,8 @@ The size of the gRNA, default 20
 PAM sequence after the gRNA, default NGG
 }
   \item{PAM.pattern}{
-Regular expression of PAM, default N[A|G]G$
+Regular expression of PAM, default N[A|G]G$ for spCas9.
+For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
 Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
@@ -166,9 +168,13 @@ overwrite the existing files in the output directory or not, default TRUE
 }
 \item{baseBeforegRNA}{
 Number of bases before gRNA used for calculating gRNA efficiency, default 4
+Please note, for PAM located on the 5 prime, need to specify the number of bases before the PAM
+sequence plus PAM size.
 }
 \item{baseAfterPAM}{
-Number of bases after PAM used for calculating gRNA efficiency, default 3
+Number of bases after PAM used for calculating gRNA efficiency, default 3 for spCas9
+Please note, for PAM located on the 5 prime, need to include the length of the gRNA plus
+the extended sequence on the 3 prime
 }
 \item{featureWeightMatrixFile}{
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
@@ -196,6 +202,10 @@ to preferred PAM sequence
 \item{subPAM.position}{
    Applicable only when scoring.method is set to CFDscore
 The start and end positions of the sub PAM. Default to 22 and 23 for SP with 20bp gRNA and NGG as preferred PAM
+}
+\item{PAM.location}{
+PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime (3prime) while
+cpf1 PAM is located on the 5 prime (5prime)
 }
 \item{mismatch.activity.file}{
 Applicable only when scoring.method is set to CFDscore

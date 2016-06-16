@@ -1,6 +1,7 @@
 writeHits <-
     function (gRNA, seqname, matches, strand, file, gRNA.size = 20, 
-        PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE) 
+        PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE,
+        PAM.location = "3prime", PAM.size = 3) 
 {
     if (missing(gRNA) || class(gRNA) != "DNAString") {
         stop("gRNA is required as a DNAString object!")
@@ -27,7 +28,16 @@ writeHits <-
         Lmismatch <- as.data.frame(t(Lmismatch))
     }
     #print(max.mismatch)
-    Lmismatch <- Lmismatch[, 1:gRNA.size]
+    if (PAM.location == "3prime")
+    {
+        Lmismatch <- Lmismatch[, 1:gRNA.size]
+    }
+    else
+    {
+        start.pos <- PAM.size + 1
+        end.pos <- PAM.size + gRNA.size
+        Lmismatch <- Lmismatch[, start.pos:end.pos]
+    }
     n.mismatch <- apply(Lmismatch, 1, sum)
     colnames(Lmismatch) <- paste("IsMismatch.pos", 1:gRNA.size, sep = "")
 	OffTargetSequence <- toString(as(matches, "DNAStringSet"))

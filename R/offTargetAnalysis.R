@@ -49,6 +49,7 @@ offTargetAnalysis <-
           TG = 0.038961039,
           TT = 0),
      subPAM.position = c(22, 23),
+     PAM.location = "3prime",
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -117,6 +118,7 @@ offTargetAnalysis <-
             findPairedgRNAOnly = findPairedgRNAOnly,
             annotatePaired = annotatePaired,
             pairOutputFile = pairOutputFile, PAM = PAM,
+            PAM.location = PAM.location,
             gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
             gRNA.size = gRNA.size, min.gap = min.gap,
             max.gap = max.gap, name.prefix = gRNA.name.prefix,
@@ -132,6 +134,7 @@ offTargetAnalysis <-
                n.cores.max = n.cores.max,
                pairOutputFile = pairOutputFile, PAM = PAM,
 	       gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
+               PAM.location = PAM.location,
                gRNA.size = gRNA.size, min.gap = min.gap,
                max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
 	if (length(potential.gRNAs) == 0)
@@ -350,7 +353,8 @@ offTargetAnalysis <-
         BSgenomeName = BSgenomeName, chromToSearch = chromToSearch,
 	chromToExclude = chromToExclude,
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
-        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM) 
+        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
+        PAM.location = PAM.location) 
     cat("Building feature vectors for scoring ...\n")
     #save(hits, file = "hits.RData")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 

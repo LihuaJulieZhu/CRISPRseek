@@ -34,6 +34,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
           TG = 0.038961039,
           TT = 0),
      subPAM.position = c(22, 23),
+     PAM.location = "3prime",
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -95,6 +96,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
             		     baseAfterPAM = baseAfterPAM, header = header,
                              subPAM.position = subPAM.position,
                              subPAM.activity = subPAM.activity,
+                             PAM.location = PAM.location,
                              mismatch.activity.file = mismatch.activity.file)), 
 			 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
 	}
@@ -119,6 +121,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                         baseAfterPAM = baseAfterPAM, header = header, 
                         subPAM.position = subPAM.position,
                         subPAM.activity = subPAM.activity,
+                        PAM.location = PAM.location,
                         mismatch.activity.file = mismatch.activity.file)), 
 			error=function(e) {print(e); gRNAs2 = DNAStringSet()})
 	}
@@ -182,7 +185,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 				writeHits(pattern, seqname[j], plus_matches, strand = "+", 
 				   file = outfile, gRNA.size = gRNA.size,
 				   PAM = PAM.pattern, max.mismatch = max.mismatch - allowed.mismatch.PAM,
-				   chrom.len = as.numeric(chrom.len[j]), append = append)
+				   chrom.len = as.numeric(chrom.len[j]), append = append,
+                                   PAM.location = PAM.location)
 				append <- TRUE
 				plus_matches <- ""
 			}
@@ -199,7 +203,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 					writeHits(pattern, seqname[j], minus_matches, strand = "-", 
 						file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
 						max.mismatch = max.mismatch - allowed.mismatch.PAM, 
-						chrom.len = as.numeric(chrom.len[j]), append = append)
+						chrom.len = as.numeric(chrom.len[j]), append = append,
+                                                PAM.location = PAM.location)
 					append <- TRUE
 					minus_mathes <- ""
 				}
@@ -239,7 +244,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 				writeHits(pattern, seqname[j], plus_matches, strand = "+", 
 				   file = outfile, gRNA.size = gRNA.size,
 				   PAM = PAM.pattern, max.mismatch = max.mismatch - allowed.mismatch.PAM,
-				   chrom.len = as.numeric(chrom.len[j]), append = append)
+				   chrom.len = as.numeric(chrom.len[j]), append = append,
+                                   PAM.location = PAM.location)
 			        append <- TRUE
 				plus_matches <- ""
 			}
@@ -256,7 +262,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 					writeHits(pattern, seqname[j], minus_matches, strand = "-", 
 						file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
 						max.mismatch = max.mismatch - allowed.mismatch.PAM, 
-						chrom.len = as.numeric(chrom.len[j]), append = append)
+						chrom.len = as.numeric(chrom.len[j]), append = append,
+                                                PAM.location = PAM.location)
 					append <- TRUE
 					minus_matches <- ""
 				}
