@@ -13,7 +13,8 @@
 buildFeatureVectorForScoring <-
     function(hits, gRNA.size = 20, 
     canonical.PAM = "NGG",
-    subPAM.position = c(22,23))
+    subPAM.position = c(22,23),
+    PAM.size = 3, PAM.location = "3prime")
 {
     #hits = read.table(hitsFile, sep = "\t", header=TRUE,
     # stringsAsFactors = FALSE)
@@ -22,8 +23,16 @@ buildFeatureVectorForScoring <-
         stop("Empty hits!")
     }
     subject <- DNAStringSet(as.character(hits$OffTargetSequence))
-    isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject, 
-        at = (gRNA.size + 1), fixed = FALSE))
+    if (PAM.location == "3prime")
+    {
+        isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject, 
+            at = (gRNA.size + 1), fixed = FALSE))
+    }
+    else
+    {
+        isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject,
+            at = 1, fixed = FALSE))
+    }
     PAM <- substring(subject, subPAM.position[1], subPAM.position[2])
     mismatches = hits[, grep("IsMismatch.pos", colnames(hits))]
     mismatch_pos <- .mismatches_as_IntegerList(mismatches)
@@ -31,7 +40,16 @@ buildFeatureVectorForScoring <-
     ### reverse complement of the offtarget sequence
     #r.nucleotide is the gRNA sequence,except T is converted to U)
 
-    at <- IRangesList(start=mismatch_pos, end=mismatch_pos)
+    if (PAM.location == "3prime") 
+    {
+        at <- IRangesList(start = mismatch_pos, end = mismatch_pos) 
+    }
+    else
+    {
+        at.old <- IRangesList(start = mismatch_pos, end = mismatch_pos)
+        at <- IRangesList(start = mismatch_pos + PAM.size, 
+            end = mismatch_pos + PAM.size) 
+    }
     if (sum(hits$n.mismatch) > 0)
     {
         d.nucleotide <- extractAt(complement(subject), at)
@@ -50,14 +68,28 @@ buildFeatureVectorForScoring <-
     {
         d.nu.r.nu = ""
     }
-    mismatch.distance2PAM <- gRNA.size + 1L - mismatch_pos
+   
+    if (PAM.location == "3prime")
+    { 
+        mismatch.distance2PAM <- gRNA.size + 1L - mismatch_pos
+    }
+    else
+    {
+        mismatch.distance2PAM <- mismatch_pos
+    }
     mismatch.distance2PAM <- unstrsplit(as(mismatch.distance2PAM,
                                "CharacterList"), sep = ",")
 
     alignment <- rep.int(DNAString("."), gRNA.size)
     alignment <- rep.int(DNAStringSet(alignment), nrow(hits))
-    alignment <- as.character(replaceAt(alignment, at, extractAt(subject, at)))
-
+    if (PAM.location == "3prime")
+    {
+        alignment <- as.character(replaceAt(alignment, at, extractAt(subject, at)))
+    }
+    else
+    {
+        alignment <- as.character(replaceAt(alignment, at.old, extractAt(subject, at)))
+    }
     mean.neighbor.distance.mismatch <- mean(diff(mismatch_pos))
     no_neighbor_idx <- elementNROWS(mismatch_pos) <= 1L
     mean.neighbor.distance.mismatch[no_neighbor_idx] <- gRNA.size

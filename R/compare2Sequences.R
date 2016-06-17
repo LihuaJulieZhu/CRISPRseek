@@ -245,7 +245,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 				   file = outfile, gRNA.size = gRNA.size,
 				   PAM = PAM.pattern, max.mismatch = max.mismatch - allowed.mismatch.PAM,
 				   chrom.len = as.numeric(chrom.len[j]), append = append,
-                                   PAM.location = PAM.location)
+                                   PAM.location = PAM.location, PAM.size = PAM.size)
 			        append <- TRUE
 				plus_matches <- ""
 			}
@@ -263,7 +263,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 						file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
 						max.mismatch = max.mismatch - allowed.mismatch.PAM, 
 						chrom.len = as.numeric(chrom.len[j]), append = append,
-                                                PAM.location = PAM.location)
+                                                PAM.location = PAM.location, PAM.size = PAM.size)
 					append <- TRUE
 					minus_matches <- ""
 				}

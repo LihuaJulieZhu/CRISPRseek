@@ -12,7 +12,8 @@
 
 buildFeatureVectorForScoring2 <-
     function(hits, gRNA.size = 20, 
-    canonical.PAM = "NGG")
+    canonical.PAM = "NGG",
+     PAM.size = 3, PAM.location = "3prime")
 {
     #hits = read.table(hitsFile, sep = "\t", header=TRUE,
     # stringsAsFactors = FALSE)
@@ -21,8 +22,12 @@ buildFeatureVectorForScoring2 <-
         stop("Empty hits!")
     }
     subject <- DNAStringSet(as.character(hits$OffTargetSequence))
-    isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject, 
-        at = (gRNA.size + 1), fixed = FALSE))
+    if (PAM.location == "3prime")
+        isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject, 
+            at = (gRNA.size + 1), fixed = FALSE))
+    else
+        isCanonical.PAM <- as.numeric(isMatchingAt(canonical.PAM, subject,
+            at =  1, fixed = FALSE))
     PAM <- substring(subject, gRNA.size+2)
     mismatches = hits[, grep("IsMismatch.pos", colnames(hits))]
     mismatch_pos <- .mismatches_as_IntegerList(mismatches)

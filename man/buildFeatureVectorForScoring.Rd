@@ -10,7 +10,7 @@ Build feature vectors for calculating scores of off targets
 \usage{
 buildFeatureVectorForScoring(hits, gRNA.size = 20,
     canonical.PAM = "NGG",
-    subPAM.position = c(22,23))
+    subPAM.position = c(22,23), PAM.size = 3, PAM.location = "3prime")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,11 +31,18 @@ score (set to 100, and will be calculated in getOfftargetScore)
 gRNA size, default 20
 }
   \item{canonical.PAM}{
-Canonical PAM, default NGG
+Canonical PAM, default NGG for spCas9, TTTN for Cpf1
 }
 \item{subPAM.position}{
 The start and end positions of the sub PAM to fetch.
 Default to 22 and 23 for SP with 20bp gRNA and NGG as preferred PAM
+}
+\item{PAM.size}{
+Size of PAM, default to 3 for spCas9, 4 for Cpf1
+}
+\item{PAM.location}{
+PAM location relative to gRNA. For example, default to 3prime for spCas9 PAM. 
+Please set to 5prime for cpf1 PAM since it's PAM is located on the 5 prime end
 }
 }
 \details{

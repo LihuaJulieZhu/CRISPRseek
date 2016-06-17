@@ -268,7 +268,7 @@ to preferred PAM sequence
 }
 \item{subPAM.position}{
    Applicable only when scoring.method is set to CFDscore
-The start and end positions of the sub PAM. Default to 22 and 23 for spCas9 with 20bp gRNA and NGG as preferred PAM
+The start and end positions of the sub PAM. Default to 22 and 23 for spCas9 with 20bp gRNA and NGG as preferred PAM. For Cpf1, it could be c(1,2).
 }
 \item{PAM.location}{
 PAM location relative to gRNA. For example, default to 3prime for spCas9 PAM. 
@@ -338,7 +338,8 @@ CRISPRseek
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
             orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
             outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
-        PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2)
+            PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
+            subPAM.position = c(1,2))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

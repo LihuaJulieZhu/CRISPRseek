@@ -359,7 +359,8 @@ offTargetAnalysis <-
     #save(hits, file = "hits.RData")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
         canonical.PAM = PAM, gRNA.size = gRNA.size, 
-        subPAM.position = subPAM.position)
+        subPAM.position = subPAM.position, 
+        PAM.location = PAM.location, PAM.size = PAM.size)
     cat("Calculating scores ...\n")
     if ( scoring.method ==  "CFDscore")
         scores <- getOfftargetScore2(featureVectors, 
