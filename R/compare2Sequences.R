@@ -291,7 +291,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	unlink(outfile)
 	featureVectors <- buildFeatureVectorForScoring(hits = hits, 
 	    canonical.PAM = PAM, gRNA.size = gRNA.size,
-            subPAM.position = subPAM.position)
+            subPAM.position = subPAM.position, PAM.location = PAM.location)
 	cat("finish feature vector building\n")
         if ( scoring.method ==  "CFDscore")
             scores <- getOfftargetScore2(featureVectors,

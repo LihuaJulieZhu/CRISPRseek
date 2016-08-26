@@ -52,7 +52,8 @@ writeHits <-
     )
     hits <- cbind(Lmismatch,hits)
     hits <- hits[hits$n.mismatch <= max.mismatch,]
-    PAM <- gsub("N", "[A|C|G|T]", PAM)
+    PAM <- translatePattern(PAM)
+    #PAM <- gsub("N", "[A|C|G|T]", PAM)
     if (dim(hits)[1] >0)
     {
          containPAM <- unlist(lapply(1:dim(hits)[1], function(i) {
