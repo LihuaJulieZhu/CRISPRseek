@@ -107,13 +107,29 @@ writeHits2 <-
         hits <- hits[containPAM == 1,]
         if (dim(hits)[1] > 0)
         {
-            forViewInUCSC <- hits$chrom
-            score <- rep(100, dim(hits)[1])
-            hits <- hits[, -grep("chrom.len", colnames(hits))]
-            hits <- cbind(hits, forViewInUCSC, score)
-            hits$forViewInUCSC <- paste(paste(hits$chrom, hits$chromStart, 
+            if (PAM.location == "3prime")
+            {
+                PAM.sequence <- substr(hits$OffTargetSequence,
+                    gRNA.size + 1, gRNA.size + PAM.size)
+            }
+            else
+            {
+                PAM.sequence <- substr(hits$OffTargetSequence,
+                    1,  PAM.size)
+             }
+
+             n.PAM.mismatch <- unlist(lapply(DNAStringSet(PAM.sequence), function(i) {
+                  neditAt(i, DNAString(PAM), fixed=FALSE)
+                  }))
+             
+             hits <- hits[n.PAM.mismatch <= allowed.mismatch.PAM,]
+             forViewInUCSC <- hits$chrom
+             score <- rep(100, dim(hits)[1])
+             hits <- hits[, -grep("chrom.len", colnames(hits))]
+             hits <- cbind(hits, forViewInUCSC, score)
+             hits$forViewInUCSC <- paste(paste(hits$chrom, hits$chromStart, 
                 sep = ":"), hits$chromEnd, sep = "-")
-            write.table(hits, file = file, append = append, quote = FALSE, 
+             write.table(hits, file = file, append = append, quote = FALSE, 
                 sep = "\t", row.names = FALSE, col.names = ! append)
         }
     }
