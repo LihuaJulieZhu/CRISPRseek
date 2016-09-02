@@ -13,6 +13,8 @@ inputFilePath = system.file("extdata", "RIPK1stop.fa", package = "CRISPRseek")
 ## org.Dr.egSYMBOL
 ## org.Hs.egSYMBOL
 
+test.gRNAPlusPAM <- FALSE
+
 outputDir <- getwd();
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
 
@@ -43,6 +45,21 @@ offtarget.NOTannotateExon  <- read.table(
 	"OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
 	header = TRUE, stringsAsFactors = FALSE)
 
+summary.WithorgAnn <- summary.WithorgAnn[,1:21]
+summary.NOorgAnn <- summary.NOorgAnn [,1:21]
+summary.NOTannotateExon <- summary.NOTannotateExon[,1:21]
+
+if (!test.gRNAPlusPAM)
+{
+     exclude.sum.col <-  grep("gRNAsPlusPAM", colnames(summary.WithorgAnn))
+     exclude.oft.col <- grep("gRNAPlusPAM", colnames(offtarget.WithorgAnn)) 
+     offtarget.NOTannotateExon <- offtarget.NOTannotateExon[, -exclude.oft.col]
+     summary.NOTannotateExon <- summary.NOTannotateExon[, -exclude.sum.col]
+     offtarget.WithorgAnn <- offtarget.WithorgAnn[, -exclude.oft.col]
+     summary.WithorgAnn <- summary.WithorgAnn[, -exclude.sum.col]
+     summary.NOorgAnn <- summary.NOorgAnn[, -exclude.sum.col]
+     offtarget.NOorgAnn <- offtarget.NOorgAnn[, -exclude.oft.col]
+}
 test_mouse_orgAnn_annotateExon <- function() {
     cat("Testing for mouse with orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
@@ -56,7 +73,12 @@ test_mouse_orgAnn_annotateExon <- function() {
         stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
-        if (checkEquals(summary.WithorgAnn[,1:21], summary, tolerance = 0.01))
+   if (!test.gRNAPlusPAM)
+   {
+       summary <- summary[, -exclude.sum.col]
+       offtarget <- offtarget[, -exclude.oft.col]
+   }
+    if (checkEquals(summary.WithorgAnn, summary, tolerance = 0.01))
         cat("Summary passed test for orgAnn provided\n")
     else
         cat("Summary failed test for orgAnn provided\n")
@@ -64,7 +86,7 @@ test_mouse_orgAnn_annotateExon <- function() {
         cat("off target analysis details passed test for orgAnn provided\n")
     else
         cat("off target anlalysis details failed test for orgAnn provided\n")
-	cat("Testing for mouse without orgAnn...\n")
+    cat("Testing for mouse without orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 	  findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
 	  BSgenomeName = Mmusculus, annotateExon=TRUE, 
@@ -76,7 +98,12 @@ test_mouse_orgAnn_annotateExon <- function() {
 						  stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
 							stringsAsFactors = FALSE)
-    if (checkEquals(summary.NOorgAnn[,1:21], summary, tolerance = 0.01))
+    if (!test.gRNAPlusPAM)
+   {
+       summary <- summary[, -exclude.sum.col]
+       offtarget <- offtarget[, -exclude.oft.col]
+   }
+    if (checkEquals(summary.NOorgAnn, summary, tolerance = 0.01))
 	cat("Summary passed test for orgAnn not provided\n")
     else
 	cat("Summary failed test for orgAnn not provided\n")
@@ -84,7 +111,7 @@ test_mouse_orgAnn_annotateExon <- function() {
 	cat("off target analysis details passed test for orgAnn not provided\n")
     else
 	cat("off target anlalysis details failed test for orgAnn not provided\n")
-	cat("Testing for mouse without orgAnn...\n")
+    cat("Testing for mouse without orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
   	findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
         BSgenomeName = Mmusculus, annotateExon=FALSE, 
@@ -95,7 +122,12 @@ test_mouse_orgAnn_annotateExon <- function() {
 	stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
 	stringsAsFactors = FALSE)
-    if (checkEquals(summary.NOTannotateExon[,1:21], summary, tolerance = 0.01))
+    if (!test.gRNAPlusPAM)
+   {
+       summary <- summary[, -exclude.sum.col]
+       offtarget <- offtarget[, -exclude.oft.col]
+   }
+    if (checkEquals(summary.NOTannotateExon, summary, tolerance = 0.01))
 	cat("Summary passed test for NOT annotateExon\n")
     else
 	cat("Summary failed test for NOT annotateExon\n")

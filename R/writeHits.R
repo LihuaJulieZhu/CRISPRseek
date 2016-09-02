@@ -40,7 +40,7 @@ writeHits <-
     }
     n.mismatch <- apply(Lmismatch, 1, sum)
     colnames(Lmismatch) <- paste("IsMismatch.pos", 1:gRNA.size, sep = "")
-	OffTargetSequence <- toString(as(matches, "DNAStringSet"))
+    OffTargetSequence <- toString(as(matches, "DNAStringSet"))
     hits <- data.frame(strand = rep.int(strand, length(matches)),
         chrom = rep.int(seqname, length(matches)), 
         chromStart = start(matches), chromEnd = end(matches), 

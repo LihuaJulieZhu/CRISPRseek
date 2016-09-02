@@ -3,6 +3,9 @@ library("BSgenome.Hsapiens.UCSC.hg19")
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(org.Hs.eg.db)
 outputDir <- getwd();
+
+test.gRNAPlusPAM <- FALSE
+
 inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
 gRNAFilePath <- system.file("extdata", "testHsap_GATA1_ex2_gRNA1.fa",
@@ -87,6 +90,27 @@ offtarget.gRNAProvided  <- read.table(
     "OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
     header = TRUE, stringsAsFactors = FALSE)
 
+summary.gRNAProvided <- summary.gRNAProvided[,1:21]
+summary.unPairedSearchNoRE <- summary.unPairedSearchNoRE[,1:21]
+summary.pairedSearchRE <- summary.pairedSearchRE[,1:22]
+summary.pairedSearchNoRE <- summary.pairedSearchNoRE[,1:22]
+summary.unPairedSearchRE <- summary.unPairedSearchRE[,1:21]
+
+if (!test.gRNAPlusPAM)
+{
+     exclude.sum.col <-  grep("gRNAsPlusPAM", colnames(summary.gRNAProvided))
+     exclude.oft.col <- grep("gRNAPlusPAM", colnames(offtarget.gRNAProvided))
+     offtarget.gRNAProvided <- offtarget.gRNAProvided[, -exclude.oft.col]
+     summary.gRNAProvided <- summary.gRNAProvided[, -exclude.sum.col]
+     offtarget.unPairedSearchNoRE <- offtarget.unPairedSearchNoRE[, -exclude.oft.col]
+     summary.unPairedSearchNoRE <- summary.unPairedSearchNoRE[, -exclude.sum.col]
+     summary.pairedSearchRE <- summary.pairedSearchRE[, -exclude.sum.col]
+     offtarget.pairedSearchRE <- offtarget.pairedSearchRE[, -exclude.oft.col]
+     offtarget.unPairedSearchRE <- offtarget.unPairedSearchRE[, -exclude.oft.col]
+     summary.unPairedSearchRE <- summary.unPairedSearchRE[, -exclude.sum.col]
+     summary.pairedSearchNoRE <- summary.pairedSearchNoRE[, -exclude.sum.col]
+     offtarget.pairedSearchNoRE <- offtarget.pairedSearchNoRE[, -exclude.oft.col]
+}
 test_offTargetAnalysis <- function() {
     cat("Testing for findgRNAs = FALSE...\n")
     offTargetAnalysis(inputFilePath = gRNAFilePath, findgRNAs = FALSE, 
@@ -102,11 +126,18 @@ test_offTargetAnalysis <- function() {
         stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
         stringsAsFactors = FALSE)
+
+    if (!test.gRNAPlusPAM)
+   {
+       summary <- summary[, -exclude.sum.col]
+       offtarget <- offtarget[, -exclude.oft.col]
+   }
+
     if (checkEquals(REcutDetails.gRNAProvided, REcutDetails ))
         cat("REcutDetails passed test for gRNA provided\n")
     else
         cat("REcutDetails failed for gRNA provided\n")
-    if (checkEquals(summary.gRNAProvided[,1:21], summary, tolerance = 0.01))
+    if (checkEquals(summary.gRNAProvided, summary, tolerance = 0.01))
         cat("Summary passed test for gRNA provided\n")
     else
         cat("Summary failed for gRNA provided\n")
@@ -133,6 +164,12 @@ test_offTargetAnalysis <- function() {
                 stringsAsFactors = FALSE)
             offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", 
                 header = TRUE, stringsAsFactors = FALSE)
+            if (!test.gRNAPlusPAM)
+   {
+       summary <- summary[, -exclude.sum.col]
+       offtarget <- offtarget[, -exclude.oft.col]
+   }
+
             if (isPaired && isRE)
             {
                 cat("Testing for paired with RE sites...\n")
@@ -145,7 +182,7 @@ test_offTargetAnalysis <- function() {
                 else
                     cat("pairedgRNAs failed for paired with RE sites\n")	
                 if (checkEquals(
-                    summary.pairedSearchRE[,1:22], summary, tolerance = 0.01))
+                    summary.pairedSearchRE, summary, tolerance = 0.01))
                     cat("Summary passed test for paired with RE sites\n")
                 else
                     cat("Summary failed for paired with RE sites\n")
@@ -172,7 +209,7 @@ test_offTargetAnalysis <- function() {
                     cat("pairedgRNAs failed for paired with or without RE 
                         sites\n")
                 if (checkEquals(
-                    summary.pairedSearchNoRE[,1:22], summary, tolerance = 0.01))
+                    summary.pairedSearchNoRE, summary, tolerance = 0.01))
                     cat("Summary passed test for paired with or without RE 
                         sites\n")
                 else
@@ -197,7 +234,7 @@ test_offTargetAnalysis <- function() {
                 else
                     cat("pairedgRNAs failed for unPaired with RE sites\n")
                 if (checkEquals(
-                    summary.unPairedSearchRE[,1:21], summary, tolerance = 0.01))
+                    summary.unPairedSearchRE, summary, tolerance = 0.01))
                     cat("Summary passed test for unPaired with RE sites\n")
                 else
                     cat("Summary failed for unPaired with RE sites\n")
@@ -226,7 +263,7 @@ test_offTargetAnalysis <- function() {
                     cat("pairedgRNAs failed unPaired with or without RE 
                         sites\n")
                 if (checkEquals(
-                    summary.unPairedSearchNoRE[,1:21], summary, tolerance = 0.01))
+                    summary.unPairedSearchNoRE, summary, tolerance = 0.01))
                     cat("Summary passed test unPaired with or without RE 
                         sites\n")
                 else

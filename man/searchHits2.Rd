@@ -1,5 +1,5 @@
-\name{searchHits}
-\alias{searchHits}
+\name{searchHits2}
+\alias{searchHits2}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Search for off targets
@@ -8,10 +8,10 @@ Search for off targets
 Search for off targets for given gRNAs, BSgenome and maximum mismatches
 }
 \usage{
-searchHits(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
+searchHits2(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
     max.mismatch = 3, 
-    PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$", 
-    allowed.mismatch.PAM = 2, PAM.location = "3prime")
+    PAM.size = 3, gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", 
+    allowed.mismatch.PAM = 1, PAM.location = "3prime")
 }
 \arguments{
   \item{gRNAs}{
@@ -48,11 +48,15 @@ Size of PAM, default 3
 Size of gRNA, default 20
 }
   \item{PAM}{
+Regular expression of protospacer-adjacent motif (PAM), default NGG for spCas9.
+For cpf1, ^TTTN
+}
+  \item{PAM.pattern}{
 Regular expression of PAM, default N[A|G]G$ for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
  \item{allowed.mismatch.PAM}{
-Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
+Number of degenerative bases in the PAM sequence, default to 1 for N[A|G]G PAM
 }
 \item{PAM.location}{
 PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
@@ -88,8 +92,6 @@ Lihua Julie Zhu
 offTargetAnalysis
 }
 \examples{
- if(interactive())
- {
     all.gRNAs <- findgRNAs(inputFilePath = 
         system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
         pairOutputFile = "pairedgRNAs.xls",
@@ -98,7 +100,7 @@ offTargetAnalysis
     library("BSgenome.Hsapiens.UCSC.hg19")
     ### for speed reason, use max.mismatch = 0 for finding all targets with 
     ### all variants of PAM
-    hits <- searchHits(all.gRNAs[1], BSgenomeName = Hsapiens,
+    hits <- searchHits2(all.gRNAs[1], BSgenomeName = Hsapiens,
         max.mismatch = 0, chromToSearch = "chrX")
     colnames(hits)
 
@@ -112,11 +114,11 @@ offTargetAnalysis
     library("BSgenome.Hsapiens.UCSC.hg19")
          ### for speed reason, use max.mismatch = 0 for finding all targets with 
          ### all variants of PAM
-    hits <- searchHits(all.gRNAs[1], BSgenomeName = Hsapiens, PAM.size = 3,
+    hits <- searchHits2(all.gRNAs[1], BSgenomeName = Hsapiens, PAM.size = 3,
         max.mismatch = 0, chromToSearch = "chrX", PAM.location = "5prime",
-        PAM = "^T[A|G]N", allowed.mismatch.PAM = 2)
+        PAM = "NGG", 
+        PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2)
     colnames(hits)
-}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
