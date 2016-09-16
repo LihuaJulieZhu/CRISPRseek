@@ -7,7 +7,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
-    allowed.mismatch.PAM = 2, max.mismatch = 3, 
+    allowed.mismatch.PAM = 1, max.mismatch = 3, 
     outputDir, upstream =0, downstream = 0,
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 
     0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 
@@ -77,7 +77,9 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	if(searchDirection == "both" || searchDirection == "1to2")
 	{
 		cat("search for gRNAs for input file1...\n")
-		tryCatch(
+                if (findgRNAs[1])
+                {
+		    tryCatch(
 			 (gRNAs1 = offTargetAnalysis(inputFile1Path, format = format[1], 
 			     findgRNAs = findgRNAs[1], annotatePaired =  annotatePaired,
                              exportAllgRNAs = exportAllgRNAs, gRNAoutputName= inputNames[1],
@@ -100,9 +102,25 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                              PAM.location = PAM.location,
                              mismatch.activity.file = mismatch.activity.file)), 
 			 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
+             }
+             else if (class(inputFile1Path) == "DNAStringSet") 
+             {
+                gRNAs1 <- inputFile1Path
+             }
+            else  if (format[1] == "fasta" || format[1] == "fastq")
+            {
+                gRNAs1 <- readDNAStringSet(inputFile1Path, format[1],
+                      use.names = TRUE)
+            }
+            else
+            {
+                stop("format needs to be either fasta or fastq for gRNA file!")
+            }
 	}
 	if(searchDirection == "both" || searchDirection == "2to1")
 	{
+             if(findgRNAs[2])
+             {
 		cat("search for gRNAs for input file2...\n")
 		tryCatch((gRNAs2 = offTargetAnalysis(inputFile2Path, format = format[2],          
 			findgRNAs = findgRNAs[2], annotatePaired =  annotatePaired,
@@ -126,6 +144,20 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                         PAM.location = PAM.location,
                         mismatch.activity.file = mismatch.activity.file)), 
 			error=function(e) {print(e); gRNAs2 = DNAStringSet()})
+            }
+            else if (class(inputFile2Path) == "DNAStringSet")
+            {
+                gRNAs2 <- inputFile2Path
+            }
+            else  if (format[2] == "fasta" || format[2] == "fastq")
+            {
+                gRNAs2 <- readDNAStringSet(inputFile2Path, format[2],
+                      use.names = TRUE)
+            }
+            else
+            {
+                stop("format needs to be either fasta or fastq for gRNA file!")
+            }
 	}
     print("Scoring ...")
     if (class(inputFile1Path) != "DNAStringSet")
@@ -155,142 +187,65 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	   subjects2 <- inputFile2Path
    }
     outfile <- tempfile(tmpdir = getwd())
-    max.mismatch <- max.mismatch + allowed.mismatch.PAM 
     seqname <- names(subjects2)
     seqname <- gsub("'", "", seqname)
     seqname <- gsub(" ", "", seqname)
     seqname <- gsub("\t", ":", seqname)
     names(subjects2) <- seqname
-#revsubject <- reverseComplement(subjects2[[1]])
-    revsubject <- reverseComplement(subjects2)
-    chrom.len <- nchar(as.character(subjects2))
+    #revsubject <- reverseComplement(subjects2)
+    #chrom.len <- nchar(as.character(subjects2))
     if(searchDirection == "both" || searchDirection == "1to2")
 	{
-    for (i in 1:length(gRNAs1))
-    {
-	    patternID <- gsub("'", "", names(gRNAs1)[i])
-	    patternID <- gsub(" ", "", patternID)
-	    patternID <- gsub("\t", ":", patternID)
-        if (length(patternID) < 1) {
-           patternID <- paste("pattern", i, sep = "")
-        }
-        pattern <- DNAString(toupper(gRNAs1[[i]]))
-        ### by default PAM is NGG or NAG
-		for (j in 1:length(subjects2))
-		{
-			plus_matches <- matchPattern(pattern, subjects2[[j]],
-#plus_matches <- vmatchPattern(pattern, subjects2,
-			    max.mismatch = max.mismatch, min.mismatch = 0, 
-                            with.indels = FALSE, fixed = TRUE, algorithm = "auto")
-			if (length(plus_matches) > 0) {
-				names(plus_matches) <- rep.int(patternID, length(plus_matches))
-				writeHits(pattern, seqname[j], plus_matches, strand = "+", 
-				   file = outfile, gRNA.size = gRNA.size,
-				   PAM = PAM.pattern, max.mismatch = max.mismatch - allowed.mismatch.PAM,
-				   chrom.len = as.numeric(chrom.len[j]), append = append,
-                                   PAM.location = PAM.location)
-				append <- TRUE
-				plus_matches <- ""
-			}
-		}
-		if (reverseComplement(pattern) != pattern) {
-			for (j in 1:length(subjects2))
-			{
-				minus_matches <- matchPattern(pattern, revsubject[[j]], 
-					max.mismatch = max.mismatch, min.mismatch = 0, 
-					with.indels = FALSE, fixed = TRUE, algorithm = "auto")
-				if (length(minus_matches) > 0) {
-					names(minus_matches) <- rep.int(patternID,
-						length(minus_matches))
-					writeHits(pattern, seqname[j], minus_matches, strand = "-", 
-						file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
-						max.mismatch = max.mismatch - allowed.mismatch.PAM, 
-						chrom.len = as.numeric(chrom.len[j]), append = append,
-                                                PAM.location = PAM.location)
-					append <- TRUE
-					minus_mathes <- ""
-				}
-            }
-        }
-	} #### end of for loop for gRNAs1
+	   for (j in 1:length(subjects2))
+	   {
+                if (j == 1)
+                    hits <- searchHits(gRNAs = gRNAs1, PAM = PAM, PAM.pattern = PAM.pattern, 
+                        seqs = subjects2[[j]], seqname = names(subjects2)[j],
+                        max.mismatch = max.mismatch, PAM.size = PAM.size, 
+                        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
+                        PAM.location = PAM.location, outfile = outfile) 
+                else
+                    hits <- rbind(hits, searchHits(gRNAs = gRNAs1, PAM = PAM, 
+                        PAM.pattern = PAM.pattern,
+                        seqs = subjects2[[j]], seqname = names(subjects2)[j],
+                        max.mismatch = max.mismatch, PAM.size = PAM.size,
+                        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
+                        PAM.location = PAM.location, outfile = outfile))
+           }
 	} # end of if searchDirection == "both" or searchDirection == "1to2"
 	cat("finish off-target search in sequence 2\n") 
    	seqname <- names(subjects1)
 	seqname <- gsub("'", "", seqname)
 	seqname <- gsub(" ", "", seqname)
 	seqname <- gsub("\t", ":", seqname)
-	revsubject <- reverseComplement(subjects1)
+	#revsubject <- reverseComplement(subjects1)
 	#revsubject <- reverseComplement(subjects1[[1]])
 	names(subjects1) <- seqname
-
-	chrom.len = nchar(as.character(subjects1))
+	#chrom.len = nchar(as.character(subjects1))
 	if(searchDirection == "both" || searchDirection == "2to1")
 	{
-    for (i in 1:length(gRNAs2))
-    {
-	    patternID <- gsub("'", "", names(gRNAs2)[i])
-            patternID <- gsub(" ", "", patternID)
-            patternID <- gsub("\t", ":", patternID)
-	    if (length(patternID) < 1) {
-		    patternID <- paste("pattern", i, sep = "")
+	    for (j in 1:length(subjects1))
+	    {
+                if (j == 1  && !exists("hits"))
+                    hits <- searchHits(gRNAs = gRNAs2, PAM = PAM, PAM.pattern = PAM.pattern, 
+                       seqs = subjects1[[j]], seqname = names(subjects1)[j],
+                       max.mismatch = max.mismatch, PAM.size = PAM.size, 
+                       gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
+                       PAM.location = PAM.location, outfile = outfile) 
+               else
+                   hits <- rbind(hits, searchHits(gRNAs = gRNAs2, PAM = PAM, 
+                       PAM.pattern = PAM.pattern,
+                       seqs = subjects1[[j]], seqname = names(subjects1)[j],
+                       max.mismatch = max.mismatch, PAM.size = PAM.size, 
+                       gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
+                       PAM.location = PAM.location, outfile = outfile))
 	    }
-	    pattern <- DNAString(toupper(gRNAs2[[i]]))
-        ### by default PAM is NGG or NAG
-		for (j in 1:length(subjects1))
-		{
-			plus_matches <- matchPattern(pattern, subjects1[[j]],
-				max.mismatch = max.mismatch, min.mismatch = 0, 
-				with.indels = FALSE, fixed = TRUE, algorithm = "auto")
-			if (length(plus_matches) > 0) {
-				names(plus_matches) <- rep.int(patternID, length(plus_matches))
-				writeHits(pattern, seqname[j], plus_matches, strand = "+", 
-				   file = outfile, gRNA.size = gRNA.size,
-				   PAM = PAM.pattern, max.mismatch = max.mismatch - allowed.mismatch.PAM,
-				   chrom.len = as.numeric(chrom.len[j]), append = append,
-                                   PAM.location = PAM.location, PAM.size = PAM.size)
-			        append <- TRUE
-				plus_matches <- ""
-			}
-	    }            
-	    if (reverseComplement(pattern) != pattern) {
-			for (j in 1:length(subjects1))
-			{				
-				minus_matches <- matchPattern(pattern, revsubject[[j]], 
-					max.mismatch = max.mismatch, min.mismatch = 0, 
-					with.indels = FALSE, fixed = TRUE, algorithm = "auto")
-				if (length(minus_matches) > 0) {
-					names(minus_matches) <- rep.int(patternID,
-				    length(minus_matches))
-					writeHits(pattern, seqname[j], minus_matches, strand = "-", 
-						file = outfile, gRNA.size = gRNA.size, PAM = PAM.pattern,
-						max.mismatch = max.mismatch - allowed.mismatch.PAM, 
-						chrom.len = as.numeric(chrom.len[j]), append = append,
-                                                PAM.location = PAM.location, PAM.size = PAM.size)
-					append <- TRUE
-					minus_matches <- ""
-				}
-		    }
-	    }
-   } #### end of for loop for gRNAs2
-	} # if searchDirection == "both" or searchDirection == "1to2"
+	} # if searchDirection == "both" or searchDirection == "2to1"
 	cat("finish off-target search in sequence 1\n")
-	if (file.exists(outfile))
-	{
-	    hits <- read.table(outfile, sep="\t", header = TRUE, 
-        stringsAsFactors = FALSE)
-#cat(dim(hits))
-	}
-	else
-	{
-            if (removegRNADetails[1])
-                unlink(outputDir1, recursive = TRUE)
-            if (removegRNADetails[2])
-                unlink(outputDir2, recursive = TRUE)
-            unlink(outfile)
-	    stop("No offtarget found! You can alter your 
-		 search criteria such as increasing max.mismatch!")
-	}
-	unlink(outfile)
+        if (removegRNADetails[1])
+            unlink(outputDir1, recursive = TRUE)
+        if (removegRNADetails[2])
+            unlink(outputDir2, recursive = TRUE)
 	featureVectors <- buildFeatureVectorForScoring(hits = hits, 
 	    canonical.PAM = PAM, gRNA.size = gRNA.size,
             subPAM.position = subPAM.position, PAM.location = PAM.location)
@@ -421,6 +376,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	}
 	seqs <- as.data.frame(unique(cbind(seqs.new, gRNAefficacy = 0, 
             scoreDiff = round(as.numeric(seqs.new[,7]) - as.numeric(seqs.new[,8]),4))))
+#save(seqs, file="seqs")
         if (substr(outputDir1, nchar(outputDir1), nchar(outputDir1)) != .Platform$file.sep)
     	{
        	    outputDir1 <- paste(outputDir1, "", sep = .Platform$file.sep)

@@ -161,7 +161,8 @@ Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$ for spC
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
-Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
+Maximum number of mismatches allowed in the PAM sequence, 
+default to 1 for N[A|G]G PAM pattern
 }
 \item{gRNA.pattern}{
 Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 

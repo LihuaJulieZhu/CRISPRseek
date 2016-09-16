@@ -2,16 +2,16 @@
 \alias{searchHits}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Search for off targets
+Search for off targets in a sequence as DNAString
 }
 \description{
-Search for off targets for given gRNAs, BSgenome and maximum mismatches
+Search for off targets for given gRNAs, sequence and maximum mismatches
 }
 \usage{
-searchHits(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
-    max.mismatch = 3, 
-    PAM.size = 3, gRNA.size = 20, PAM = "N[A|G]G$", 
-    allowed.mismatch.PAM = 2, PAM.location = "3prime")
+searchHits(gRNAs, seqs, seqname, max.mismatch = 3, PAM.size = 3,
+                 gRNA.size = 20, PAM = "NGG", PAM.pattern = "NNN$",
+                 allowed.mismatch.PAM = 2, PAM.location = "3prime",
+                 outfile)
 }
 \arguments{
   \item{gRNAs}{
@@ -19,24 +19,12 @@ DNAStringSet object containing a set of gRNAs. Please note the sequences
 must contain PAM appended after gRNAs, e.g., ATCGAAATTCGAGCCAATCCCGG where 
 ATCGAAATTCGAGCCAATCC is the gRNA and CGG is the PAM
 }
-  \item{BSgenomeName}{
-BSgenome object. Please refer to available.genomes in BSgenome package. 
-For example, BSgenome.Hsapiens.UCSC.hg19 for hg19, BSgenome.Mmusculus.UCSC.mm10 
-for mm10, BSgenome.Celegans.UCSC.ce6 for ce6, BSgenome.Rnorvegicus.UCSC.rn5 
-for rn5, and BSgenome.Dmelanogaster.UCSC.dm3 for dm3
+  \item{seqs}{
+DNAString object containing a DNA sequence.
 }
-\item{chromToSearch}{
-Specify the chromosome to search, default to all, meaning search all 
-chromosomes. For example, chrX indicates searching for matching in 
-chromosome X only
+\item{seqname}{
+Specify the name of the sequence 
 }
-\item{chromToExclude}{
-Specify the chromosome not to search, default to none, meaning to search chromosomes 
-specified by chromToSearch. For example, to exclude haplotype blocks from offtarget search
-in hg19, set chromToExclude to c(""chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
-"chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
-"chr6_ssto_hap7")
-} 
   \item{max.mismatch}{
 Maximum mismatch allowed in off target search, default 3. Warning: will be 
 considerably slower if it is set to greater than 3 
@@ -47,16 +35,24 @@ Size of PAM, default 3
   \item{gRNA.size}{
 Size of gRNA, default 20
 }
-  \item{PAM}{
+\item{PAM}{
+PAM as regular expression for appending to the gRNA, default NGG for SpCas9,
+change to TTTN for cpf1.
+}
+\item{PAM.pattern}{
 Regular expression of PAM, default N[A|G]G$ for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
  \item{allowed.mismatch.PAM}{
-Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
+Maximum number of mismatches allowed in the offtargets comparing
+to the PAM sequence. Default to 2 for NGG PAM
 }
 \item{PAM.location}{
 PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
 cpf1 PAM is located on the 5 prime
+}
+\item{outfile}{
+File path to temporarily store the search results
 }
 }
 \details{

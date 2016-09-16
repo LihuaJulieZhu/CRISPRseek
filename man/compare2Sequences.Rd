@@ -18,7 +18,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
-    allowed.mismatch.PAM = 2, max.mismatch = 3,
+    allowed.mismatch.PAM = 1, max.mismatch = 3,
     outputDir, upstream = 0, downstream = 0, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
     0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583), 
@@ -142,7 +142,8 @@ Regular expression of PAM, default N[A|G]G$ for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
-Number of degenerative bases in the PAM sequence, default to 2 for N[A|G]G PAM
+Maximum number of mismatches allowed to the PAM sequence,
+default to 1 for PAM.pattern N[A|G]G PAM
 }
   \item{max.mismatch}{
 Maximum mismatch allowed to search the off targets in the other sequence,

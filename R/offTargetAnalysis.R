@@ -96,7 +96,7 @@ offTargetAnalysis <-
     REcutDetailFile <- paste(outputDir, "REcutDetails.xls", sep = "")
     bedFile<- paste(outputDir, "gRNAsCRISPRseek.bed", sep = "")
     if (missing(gRNAoutputName) && class(inputFilePath) == "DNAStringSet")
-	    stop("Please enter a name for the gRNA ouput file name!")
+	    stop("Please enter a name for the gRNA ouput file name when DNAStringSet instead of file path provided!")
     if (class(inputFilePath) != "DNAStringSet" && missing(gRNAoutputName))
 	    gRNAoutputName = strsplit(basename(inputFilePath), split=".", 
 		    fixed=TRUE)[[1]][1]

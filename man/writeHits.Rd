@@ -2,16 +2,19 @@
 \alias{writeHits}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Write the hits of sequence search to a file
+Write the hits of sequence search from a sequence to a file
 }
 \description{
-write the hits of sequence search to a file, internal function used by 
+write the hits of sequence search from a sequence instead of BSgenome to a file,
+internal function used by 
 searchHits
 }
 \usage{
-writeHits(gRNA, seqname, matches, strand, file, gRNA.size = 20, 
-    PAM = "N[A|G]G$", max.mismatch = 4, chrom.len, append = FALSE,
-    PAM.location = "3prime", PAM.size = 3)
+writeHits(gRNA, seqname, matches, strand, file, gRNA.size = 20L,
+     PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 4L,
+     chrom.len, append = FALSE, PAM.location = "3prime", 
+     PAM.size = 3L, allowed.mismatch.PAM = 1L,
+     seqs)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +23,7 @@ DNAString object with gRNA sequence with PAM appended immediately after,e.g.,
 ACGTACGTACGTACTGACGTCGG with 20bp gRNA sequence plus 3bp PAM sequence CGG
 }
   \item{seqname}{
-chromosome name as character, e.g., chr1
+sequence name as character 
 }
   \item{matches}{
 XStringViews object storing matched chromosome locations
@@ -34,7 +37,11 @@ file path where the hits is written to
   \item{gRNA.size}{
 gRNA size, default 20
 }
-  \item{PAM}{
+\item{PAM}{
+PAM as regular expression for appending to the gRNA, default NGG for SpCas9,
+change to TTTN for cpf1.
+}
+  \item{PAM.pattern}{
 PAM as regular expression for filtering the hits, default N[A|G]G$ for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence.
 }
@@ -54,6 +61,13 @@ cpf1 PAM is located on the 5 prime
 }
 \item{PAM.size}{
 Size of PAM, default 3
+}
+\item{allowed.mismatch.PAM}{
+Maximum number of mismatches allowed in the offtargets comparing
+to the PAM sequence. Default to 1 for NGG PAM
+}
+\item{seqs}{
+DNAString object containing a DNA sequence.
 }
 }
 \details{
