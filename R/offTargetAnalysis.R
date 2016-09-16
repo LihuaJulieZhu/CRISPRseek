@@ -112,20 +112,20 @@ offTargetAnalysis <-
     if (findgRNAs)
     {
         cat("Searching for gRNAs ...\n")
-	    efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
-	    if (chromToSearch == "" || useEfficacyFromInputSeq)
-        potential.gRNAs <- findgRNAs(inputFilePath,
-            findPairedgRNAOnly = findPairedgRNAOnly,
-            annotatePaired = annotatePaired,
-            pairOutputFile = pairOutputFile, PAM = PAM,
-            PAM.location = PAM.location,
-            gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
-            gRNA.size = gRNA.size, min.gap = min.gap,
-            max.gap = max.gap, name.prefix = gRNA.name.prefix,
-            format = format, featureWeightMatrixFile = featureWeightMatrixFile, 
-            baseBeforegRNA = baseBeforegRNA, 
-	        baseAfterPAM = baseAfterPAM ,
-    	    calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile)
+	efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
+	if (chromToSearch == "" || useEfficacyFromInputSeq)
+            potential.gRNAs <- findgRNAs(inputFilePath,
+               findPairedgRNAOnly = findPairedgRNAOnly,
+               annotatePaired = annotatePaired,
+               pairOutputFile = pairOutputFile, PAM = PAM,
+               PAM.location = PAM.location,
+               gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
+               gRNA.size = gRNA.size, min.gap = min.gap,
+               max.gap = max.gap, name.prefix = gRNA.name.prefix,
+               format = format, featureWeightMatrixFile = featureWeightMatrixFile, 
+               baseBeforegRNA = baseBeforegRNA, 
+	       baseAfterPAM = baseAfterPAM ,
+    	       calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile)
          else
 	    potential.gRNAs <- findgRNAs(inputFilePath,
                findPairedgRNAOnly = findPairedgRNAOnly,
@@ -312,6 +312,8 @@ offTargetAnalysis <-
         else
         {
             potential.gRNAs <- inputFilePath
+            if (length(names(potential.gRNAs)) == 0)
+               names(potential.gRNAs) <- paste("gRNAs", 1:length(potential.gRNAs), sep="")
         }
 	gRNAs.RE <- filtergRNAs(potential.gRNAs, 
             REpatternFile = REpatternFile, format = format, 

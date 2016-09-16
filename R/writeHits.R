@@ -140,5 +140,5 @@ writeHits <-
                 sep = "\t", row.names = FALSE, col.names = ! append)
         }
     }
-    list(hits, OffTargetSequence)
+    hits
 }
