@@ -93,6 +93,7 @@ writeHits2 <-
     )
     hits <- cbind(Lmismatch,hits)
     hits <- hits[hits$n.mismatch <= max.mismatch,]
+    hits <- hits[nchar(OffTargetSequence) == (gRNA.size + PAM.size),]
     PAM.pattern <- translatePattern(PAM.pattern)
     if (dim(hits)[1] >0)
     {
