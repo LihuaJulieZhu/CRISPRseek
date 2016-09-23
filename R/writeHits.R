@@ -97,11 +97,11 @@ writeHits <-
         n.mismatch = n.mismatch,
         chrom.len = rep(chrom.len, length(matches))
     )
-    #write.table(hits,file="testHits", sep="\t")
     hits <- cbind(Lmismatch,hits)
-    hits <- hits[hits$n.mismatch <= max.mismatch,]
+    hits <- subset(hits, n.mismatch <= max.mismatch & 
+        (ends - starts + 1) == (gRNA.size + PAM.size))
     PAM.pattern <- translatePattern(PAM.pattern)
-    hits <- hits[nchar(OffTargetSequence) == (gRNA.size + PAM.size),]
+  
     if (dim(hits)[1] >0)
     {
          containPAM <- unlist(lapply(1:dim(hits)[1], function(i) {

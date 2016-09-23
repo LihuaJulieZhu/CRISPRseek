@@ -192,6 +192,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     seqname <- gsub(" ", "", seqname)
     seqname <- gsub("\t", ":", seqname)
     names(subjects2) <- seqname
+    #write.table(subjects2, file="testSeqs")
     #revsubject <- reverseComplement(subjects2)
     #chrom.len <- nchar(as.character(subjects2))
     if(searchDirection == "both" || searchDirection == "1to2")
