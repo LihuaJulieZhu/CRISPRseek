@@ -1,7 +1,7 @@
 Package: CRISPRseek
 Type: Package
 Title: Design of target-specific guide RNAs in CRISPR-Cas9, genome-editing systems
-Version: 1.13.14
+Version: 1.14.0
 Date: 2016-09-23
 Author: Lihua Julie Zhu, Benjamin R. Holmes, Herve Pages, Michael Lawrence, Isana Veksler-Lublinsky, Victor Ambros, Neil Aronin and Michael Brodsky
 Maintainer: Lihua Julie Zhu <julie.zhu@umassmed.edu>
