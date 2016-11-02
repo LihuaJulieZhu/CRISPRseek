@@ -8,6 +8,7 @@ getSeqFromBed <- function(inputFilePath, header=FALSE, BSgenomeName, upstream = 
       if (dim(bed)[2] >=6)
       {
            strand <- bed[,6]
+           strand[!strand %in% c("+", "-", "*")] <- "*"
       }
       else
       {
@@ -34,6 +35,7 @@ getSeqFromBed <- function(inputFilePath, header=FALSE, BSgenomeName, upstream = 
       ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
       seq <- BSgenome::getSeq(BSgenomeName, names = chr, start = starts,
             end = ends, strand = strand, width = NA, as.character = FALSE)
+      seq <- DNAStringSet(seq)
       names(seq) <- names
       seq
 }
