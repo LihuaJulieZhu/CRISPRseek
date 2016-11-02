@@ -92,8 +92,6 @@ writeHits2 <-
         chrom.len = rep(chrom.len, length(matches))
     )
     hits <- cbind(Lmismatch,hits)
-    #hits <- hits[hits$n.mismatch <= max.mismatch,]
-    #hits <- hits[nchar(OffTargetSequence) == (gRNA.size + PAM.size),]
     hits <- subset(hits, n.mismatch <= max.mismatch & 
          (ends - starts + 1) == (gRNA.size + PAM.size))
  
