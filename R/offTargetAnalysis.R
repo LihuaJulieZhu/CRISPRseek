@@ -67,6 +67,12 @@ offTargetAnalysis <-
            stop("Please rename the mismatch activity file column to contain at least
               these 3 column names: Mismatch.Type, Position, Percent.Active\n")
     } 
+    else if (scoring.method == "Hsu-Zhang")
+    {
+         if (length(weights) !=  gRNA.size)
+             stop("Please make sure the size of weights vector 
+                 equals to the gRNA.size!\n")
+    }
     if(findgRNAsWithREcutOnly && findgRNAs && !file.exists(REpatternFile))
     {
         stop("Please specify an REpattern file as fasta file with 

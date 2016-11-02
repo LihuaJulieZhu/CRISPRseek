@@ -43,13 +43,13 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
         scoring.method <- match.arg(scoring.method)
         exportAllgRNAs <- match.arg(exportAllgRNAs)
         searchDirection <- match.arg(searchDirection)
-        if (class(inputFile1Path) != "DNAStringSet" || class(inputFile2Path) != "DNAStringSet")
+        if (scoring.method == "Hsu-Zhang")
         {
-	    if ((format[1] == "bed" || format[2] == "bed") && 
-                (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome"))
-                   stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
+             if (length(weights) !=  gRNA.size)
+                 stop("Please make sure the size of weights vector 
+                     equals to the gRNA.size!\n")
         }
-        if (scoring.method ==  "CFDscore")
+        else if (scoring.method ==  "CFDscore")
         {
             mismatch.activity <- read.csv(mismatch.activity.file)
             required.col <- c("Mismatch.Type", "Position", "Percent.Active")
@@ -57,6 +57,12 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                 length(required.col))
                 stop("Please rename the mismatch activity file column to contain at least
                    these 3 column names: Mismatch.Type, Position, Percent.Active\n")
+        }
+        if (class(inputFile1Path) != "DNAStringSet" || class(inputFile2Path) != "DNAStringSet")
+        {
+	    if ((format[1] == "bed" || format[2] == "bed") && 
+                (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome"))
+                   stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
         }
 	append = ifelse(overwrite, FALSE, TRUE)
 	if (class(inputFile1Path) != "DNAStringSet")
