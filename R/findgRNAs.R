@@ -28,6 +28,11 @@
             pos.set2 <- unlist(gregexpr(gRNA.pattern, gRNA.seqs,
                perl = TRUE, ignore.case = TRUE, fixed = FALSE))
             pos.PAMs <- pos.PAMs[pos.set2 == 1]
+            if (PAM.location == "3prime")
+                starts.gRNA <- pos.PAMs - gRNA.size
+            else
+                starts.gRNA <- pos.PAMs + PAM.size 
+            ends.gRNA <- starts.gRNA + gRNA.size - 1
         }
         if (PAM.location == "3prime")
             seq <- as.character(Views(subject,
