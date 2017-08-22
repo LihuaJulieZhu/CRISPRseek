@@ -46,7 +46,7 @@
         if (calculategRNAEfficacy)
         {
             extended.starts <- starts.gRNA - baseBeforegRNA
-            extended.starts[extended.starts < 0] <- 1
+            extended.starts[extended.starts < 1] <- 1
             if (PAM.location == "3prime")
                 extended.ends <- ends.gRNA + PAM.size + baseAfterPAM
             else
