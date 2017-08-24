@@ -5,7 +5,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE), 
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
-    min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
+    min.gap = 0, max.gap = 20, gRNA.name.prefix = "_gR", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
     allowed.mismatch.PAM = 1, max.mismatch = 3, 
     outputDir, upstream =0, downstream = 0,
@@ -313,8 +313,6 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		fileIndex <- c(rep(1, length(subjects1)), rep(2, length(subjects2)))
 		offTargetFiles <- fileIndex[match(scores$chrom,seqNames)]
 		targetSeqName <- scores$name
-		targetSeqName <- gsub(paste(gRNA.name.prefix, "[f|r][0-9]+", sep=""), "", targetSeqName)
-		targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)		
 		scoreForSeq1[offTargetFiles == 1] <- 
 			scores[offTargetFiles == 1, ]$score
 		scoreForSeq2[offTargetFiles == 2] <- 
@@ -323,8 +321,11 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 			scores[offTargetFiles == 1,]$OffTargetSequence
 		targetInSeq2[offTargetFiles == 2] <- 
 			scores[offTargetFiles == 2,]$OffTargetSequence
-	}	
-	seqs.new <- cbind(name = scores$name,
+	}
+	targetSeqName <- gsub(paste(gRNA.name.prefix, "[0-9]+[f|r]", sep=""), "", targetSeqName)
+	targetSeqName <- gsub(paste("_gR", "[0-9]+[f|r]", sep=""), "", targetSeqName)
+	targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)		
+	seqs.new <- as.data.frame(cbind(name = scores$name,
 		gRNAPlusPAM = scores$gRNAPlusPAM,
 		targetInSeq1 = targetInSeq1,
 		targetInSeq2 = targetInSeq2,
@@ -335,7 +336,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 		mismatch.distance2PAM = as.character(scores$mismatch.distance2PAM),
 		n.mismatch = scores$n.mismatch,
 		offTarget = scores$forViewInUCSC,
-		targetSeqName = targetSeqName
+		targetSeqName = targetSeqName)
 	)
 	 
 	if(searchDirection == "both" || searchDirection == "1to2")
@@ -343,20 +344,21 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	if (length(setdiff(names(gRNAs1),seqs.new[,1])) >0)
 	{
 		gRNAnames <- names(gRNAs1)[!names(gRNAs1) %in% seqs.new[,1]]
-		targetSeqName <- gsub(paste(gRNA.name.prefix, "[f|r][0-9]+", sep=""), "", gRNAnames)
+		targetSeqName <- gsub(paste(gRNA.name.prefix, "[0-9]+[f|r]", sep=""), "", gRNAnames)
+		targetSeqName <- gsub(paste("_gR", "[0-9]+[f|r]", sep=""), "", targetSeqName)
 		targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)		
-		seqs1.only <- cbind(name = gRNAnames,
-			gRNAPlusPAM = as.character(gRNAs1)[!as.character(gRNAs1) %in% seqs.new[,2]],
-			targetInSeq1 = as.character(gRNAs1)[!as.character(gRNAs1) %in% seqs.new[,2]],
-			targetInSeq2 = "NA",
-		    guideAlignment2OffTarget = "NA",
-		    offTargetStrand = "NA",
-			scoreForSeq1 = max.score,
-			scoreForSeq2 = 0,
-			mismatch.distance2PAM = "NA",
-			n.mismatch = "NA",
-			offTarget = "NA",
-			targetSeqName = targetSeqName
+		seqs1.only <- as.data.frame(cbind(name = gRNAnames,
+			gRNAPlusPAM = as.character(gRNAs1)[names(gRNAs1) %in% gRNAnames],
+			targetInSeq1 = as.character(gRNAs1)[names(gRNAs1) %in% gRNAnames],
+			targetInSeq2 = rep("NA", length(targetSeqName)),
+		  guideAlignment2OffTarget = rep("NA", length(targetSeqName)),
+		  offTargetStrand = rep("NA", length(targetSeqName)),
+			scoreForSeq1 = rep(max.score, length(targetSeqName)),
+			scoreForSeq2 = rep(0, length(targetSeqName)),
+			mismatch.distance2PAM = rep("NA", length(targetSeqName)),
+			n.mismatch = rep("NA", length(targetSeqName)),
+			offTarget = rep("NA", length(targetSeqName)),
+			targetSeqName = targetSeqName)
 			)
 		seqs.new <- rbind(seqs.new, seqs1.only)
 	}
@@ -366,26 +368,30 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	if (length(setdiff(names(gRNAs2),seqs.new[,1])) >0)
 	{
 		gRNAnames <- names(gRNAs2)[!names(gRNAs2) %in% seqs.new[,1]]
-		targetSeqName <- gsub(paste(gRNA.name.prefix, "[f|r][0-9]+", sep=""), "", gRNAnames)
-		targetSeqName <- gsub( "Start[0-9]+End[0-9]+", "", targetSeqName)	
-		seqs2.only <- cbind(name = gRNAnames,
-    		gRNAPlusPAM = as.character(gRNAs2)[!as.character(gRNAs2) %in% seqs.new[,2]],
-		    targetInSeq1 = "NA",
-			targetInSeq2 = as.character(gRNAs2)[!as.character(gRNAs2) %in% seqs.new[,2]],
-		    guideAlignment2OffTarget = "NA",
-            offTargetStrand = "NA",
-            scoreForSeq1 = 0,
-			scoreForSeq2 = max.score,
-			mismatch.distance2PAM = "NA",
-			n.mismatch = "NA",
-			offTarget = "NA",
-			targetSeqName = targetSeqName
+		targetSeqName <- gsub(paste(gRNA.name.prefix, "[0-9]+[f|r]", sep=""), "",gRNAnames)
+		targetSeqName <- gsub(paste("_gR", "[0-9]+[f|r]", sep=""), "", targetSeqName)
+		targetSeqName <- gsub( "_Start[0-9]+End[0-9]+", "", targetSeqName)
+		seqs2.only <- as.data.frame(cbind(name = gRNAnames,
+    		gRNAPlusPAM = as.character(gRNAs2)[names(gRNAs2) %in% gRNAnames],
+		    targetInSeq1 = rep("NA", length(targetSeqName)),
+			  targetInSeq2 = as.character(gRNAs2)[names(gRNAs2) %in% gRNAnames],
+		    guideAlignment2OffTarget = rep("NA", length(targetSeqName)),
+        offTargetStrand = rep("NA", length(targetSeqName)),
+        scoreForSeq1 = rep(0, length(targetSeqName)),
+			  scoreForSeq2 = rep(max.score, length(targetSeqName)),
+			  mismatch.distance2PAM = rep("NA", length(targetSeqName)),
+			  n.mismatch = rep("NA", length(targetSeqName)),
+			  offTarget = rep("NA", length(targetSeqName)),
+			  targetSeqName = targetSeqName)
 		)
 		seqs.new <- rbind(seqs.new, seqs2.only)
 	}
 	}
-	seqs <- as.data.frame(unique(cbind(seqs.new, gRNAefficacy = 0, 
-            scoreDiff = round(as.numeric(seqs.new[,7]) - as.numeric(seqs.new[,8]),4))))
+	seqs <- unique(cbind(seqs.new, gRNAefficacy = 0, 
+        scoreDiff = round(as.numeric(as.character(seqs.new[,7])) - 
+                            as.numeric(as.character(seqs.new[,8]),4), 3)))
+#	rownames(seqs) <- seqs[,1]
+#	seqs <- as.data.frame(seqs)
 #save(seqs, file="seqs")
         if (substr(outputDir1, nchar(outputDir1), nchar(outputDir1)) != .Platform$file.sep)
     	{

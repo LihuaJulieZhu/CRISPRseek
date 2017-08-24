@@ -16,7 +16,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE),
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
-    min.gap = 0, max.gap = 20, gRNA.name.prefix = "gRNA", PAM.size = 3, 
+    min.gap = 0, max.gap = 20, gRNA.name.prefix = "_gR", PAM.size = 3, 
     gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
     allowed.mismatch.PAM = 1, max.mismatch = 3,
     outputDir, upstream = 0, downstream = 0, 
@@ -125,7 +125,7 @@ Maximum distance between two oppositely oriented gRNAs to be valid paired
 gRNAs. Default 20
 }
   \item{gRNA.name.prefix}{
-The prefix used when assign name to found gRNAs, default gRNA, short for 
+The prefix used when assign name to found gRNAs, default _gR, short for 
 guided RNA.
 }
   \item{PAM.size}{
@@ -276,6 +276,17 @@ CRISPRseek
     seqs <- compare2Sequences(inputFile1Path, inputFile2Path,
         outputDir = getwd(), 
         REpatternFile = REpatternFile, overwrite = TRUE)
+    inputFile1Path <- DNAStringSet("TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG")
+    names(inputFile1Path) <- "seq1"
+    
+    inputFile2Path <- DNAStringSet("TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG")
+    names(inputFile2Path) <- "seq2"
+
+    seqs <- compare2Sequences(inputFile1Path, inputFile2Path,
+          inputNames=c("Seq1", "Seq2"),
+          scoring.method = "CFDscore",
+          outputDir = getwd(), 
+          overwrite = TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
