@@ -299,13 +299,13 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 	{
 		scoreForSeq2 = scores$score
 		targetInSeq2 = scores$OffTargetSequence
-		targetSeqName = names(subjects1)
+		targetSeqName = scores$name
 	}
 	else if (searchDirection == "2to1")
 	{
 		scoreForSeq1 = scores$score
 		targetInSeq1 = scores$OffTargetSequence
-		targetSeqName = names(subjects2)
+		targetSeqName = scores$name
 	}
 	else
 	{	
