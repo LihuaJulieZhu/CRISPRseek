@@ -19,6 +19,7 @@
         else
             starts.gRNA <- pos.PAMs + PAM.size 
         starts.gRNA <- subset(starts.gRNA, starts.gRNA <= (seq.len - gRNA.size + 1)) 
+        starts.gRNA <- subset(starts.gRNA, starts.gRNA > 0)
         ends.gRNA <- starts.gRNA + gRNA.size - 1
         if (gRNA.pattern != "")
         {

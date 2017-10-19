@@ -52,26 +52,42 @@ filterOffTarget <-
         maxN <- min(topN+1, dim(this.score)[1])
         this.score <- this.score[1:maxN,]
         maxN.totalScore <- min(maxN, (topN.OfftargetTotalScore + 1))
-        if (maxN < 6)
-            temp[i,3] <- sum(this.score$score[2:maxN])
+        if (this.score$n.mismatch == 0 && as.numeric(as.character(this.score$NGG)) == 1)
+        {
+           start.ind <- 2
+           end.ind <- min(maxN, 6)
+           end.forSummary <- 11
+        }
         else
-            temp[i,3] <- sum(this.score$score[2:6]) 
+        {
+           start.ind <- 1
+           maxN <- maxN - 1
+           maxN.totalScore <- maxN.totalScore - 1
+           end.forSummary <- 10
+           end.ind <- min(maxN, 5) 
+        }
+        temp[i,3] <- sum(this.score$score[start.ind:end.ind])
+        #if (maxN < 6)
+        #    temp[i,3] <- sum(this.score$score[2:maxN])
+        #else
+        #    temp[i,3] <- sum(this.score$score[2:6]) 
+        
         if (maxN < maxN.totalScore)
-            temp[i,4] <- sum(this.score$score[2:maxN])
+            temp[i,4] <- sum(this.score$score[start.ind:maxN])
 	else
-            temp[i,4] <- sum(this.score$score[2:maxN.totalScore])
+            temp[i,4] <- sum(this.score$score[start.ind:maxN.totalScore])
         temp[i,2] <- unique(this.score$gRNAPlusPAM)
 	forSummary <- this.score[1:11,]
 	forSummary <- forSummary[order(forSummary$n.mismatch),]
         mismatch.distance2PAM[i,] <- 
 	   ifelse(as.character(forSummary$mismatch.distance2PAM) == "", "NMM",
             as.character(forSummary$mismatch.distance2PAM))
-        forSummary <- this.score[2:11,]
+        forSummary <- this.score[start.ind:end.forSummary,]
 	forSummary <- forSummary[order(forSummary$score, decreasing=TRUE),]
-	mismatch.distance2PAM[i,2:11] <-
+	mismatch.distance2PAM[i,start.ind:end.forSummary] <-
            as.character(forSummary$mismatch.distance2PAM)
-	if (dim(this.score)[1] < 11)
-	   mismatch.distance2PAM[i, (dim(this.score)[1]+1):11] <- "NA"
+	if (dim(this.score)[1] < end.forSummary)
+	   mismatch.distance2PAM[i, (dim(this.score)[1]+1):end.forSummary] <- "NA"
 	this.score <- cbind(name = this.score$name, 
                 gRNAPlusPAM = this.score$gRNAPlusPAM,
                 OffTargetSequence = this.score$OffTargetSequence,

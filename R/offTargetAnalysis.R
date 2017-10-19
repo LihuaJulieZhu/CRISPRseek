@@ -484,7 +484,8 @@ offTargetAnalysis <-
 			gRNAefficacy = inputEfficacy$gRNAefficacy))
 		on.target <- merge(on.target, inputEfficacy, by.x="names", by.y ="name")
 	  }
-	  summary <- unique(merge(on.target, summary, by="names", all=TRUE))
+          if(dim(on.target)[1] >0)
+	     summary <- unique(merge(on.target, summary, by="names", all=TRUE))
 	  write.table(summary[order(as.character(summary$names)), ],
              file = paste(outputDir, "Summary.xls", sep = ""),
              sep = "\t", row.names = FALSE)
@@ -532,10 +533,14 @@ offTargetAnalysis <-
     #write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
     ### even there is no perfect target for a gRNA, it will be kept in the summary file
     ### need to calculate the topN offtarget score and distance correctly yet if include those gRNAs without target
-     #write.table(summary,
-     write.table(summary[order(as.character(summary$forViewInUCSC)), ],
-        file = paste(outputDir, "Summary.xls", sep = ""), 
-        sep = "\t", row.names = FALSE)
+     if (dim(on.target)[1] == 0)
+        write.table(summary[order(as.character(summary$names)), ],
+           file = paste(outputDir, "Summary.xls", sep = ""),
+           sep = "\t", row.names = FALSE)
+     else
+        write.table(summary[order(as.character(summary$forViewInUCSC)), ],
+           file = paste(outputDir, "Summary.xls", sep = ""), 
+           sep = "\t", row.names = FALSE)
     cat("Done. Please check output files in directory ", outputDir, "\n")
     list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
 		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,

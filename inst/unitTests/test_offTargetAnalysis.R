@@ -4,7 +4,7 @@ library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(org.Hs.eg.db)
 outputDir <- getwd();
 
-test.gRNAPlusPAM <- FALSE
+test.gRNAPlusPAM <-FALSE
 
 inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
