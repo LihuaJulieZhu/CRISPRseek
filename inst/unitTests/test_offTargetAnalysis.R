@@ -3,6 +3,8 @@ library("BSgenome.Hsapiens.UCSC.hg19")
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(org.Hs.eg.db)
 outputDir <- getwd();
+chroms <- c("chr22", "chrX", "chr15", "chr18", "chr20", "chr5", "chr17", "chr19", "chr16", "chr10", "chr9", "chr1", "chr8", "chr12", "chrY", "chr2", "chr14", "chr11", "chr3", "chr7", "chr13", "chr4", "chr6")
+
 
 test.gRNAPlusPAM <-FALSE
 
@@ -118,6 +120,7 @@ test_offTargetAnalysis <- function() {
         findPairedgRNAOnly = FALSE, BSgenomeName = Hsapiens, 
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
 	orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
+        chromToSearch = c("chrX", "chr11", "chr4", "chr5", "chr6", "chr8", "chr15", "chr3"),
         min.score = 0.5, topN = 100,
         outputDir = outputDir, overwrite = TRUE)
     REcutDetails <- read.table("REcutDetails.xls", sep = "\t", header = TRUE, 
@@ -153,6 +156,7 @@ test_offTargetAnalysis <- function() {
                 findgRNAsWithREcutOnly = isRE, REpatternFile = REpatternFile,
                 findPairedgRNAOnly = isPaired, BSgenomeName = Hsapiens, 
                 txdb=TxDb.Hsapiens.UCSC.hg19.knownGene, 
+                chromToSearch = chroms,
 		orgAnn = org.Hs.egSYMBOL, max.mismatch = 3, 
                 min.score = 0.5, topN = 100,
                 outputDir= outputDir, overwrite = TRUE)

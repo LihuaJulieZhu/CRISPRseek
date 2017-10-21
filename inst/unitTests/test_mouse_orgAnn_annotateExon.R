@@ -13,7 +13,7 @@ inputFilePath = system.file("extdata", "RIPK1stop.fa", package = "CRISPRseek")
 ## org.Dr.egSYMBOL
 ## org.Hs.egSYMBOL
 
-test.gRNAPlusPAM <- FALSE
+test.gRNAPlusPAM <- TRUE
 
 outputDir <- getwd();
 REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
@@ -60,11 +60,14 @@ if (!test.gRNAPlusPAM)
      summary.NOorgAnn <- summary.NOorgAnn[, -exclude.sum.col]
      offtarget.NOorgAnn <- offtarget.NOorgAnn[, -exclude.oft.col]
 }
+chroms <- c("chr1", "chr5", "chr13")
+
 test_mouse_orgAnn_annotateExon <- function() {
     cat("Testing for mouse with orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 	  findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
 	  BSgenomeName = Mmusculus, annotateExon=TRUE, 
+          chromToSearch = chroms,
           min.score = 0.5, topN = 100, outputDir = outputDir, 
 	  overwrite = TRUE, max.mismatch=1, txdb = TxDb.Mmusculus.UCSC.mm10.knownGene,
 	  orgAnn = org.Mm.egSYMBOL)
@@ -90,6 +93,7 @@ test_mouse_orgAnn_annotateExon <- function() {
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
 	  findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
 	  BSgenomeName = Mmusculus, annotateExon=TRUE, 
+          chromToSearch = chroms,
           min.score = 0.5, topN = 100, outputDir = outputDir, 
 	  overwrite = TRUE, max.mismatch=1, 
 	  txdb = TxDb.Mmusculus.UCSC.mm10.knownGene	)
@@ -115,6 +119,7 @@ test_mouse_orgAnn_annotateExon <- function() {
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
   	findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
         BSgenomeName = Mmusculus, annotateExon=FALSE, 
+        chromToSearch = chroms,
          min.score = 0.5, topN = 100, outputDir = outputDir, 
 	  overwrite = TRUE, max.mismatch=1)
 	

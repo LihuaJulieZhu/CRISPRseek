@@ -339,7 +339,7 @@ offTargetAnalysis <-
 	}
 	pairedInformation <- ""
     }
-    if (chromToSearch == "")
+    if (length(chromToSearch) == 1 && chromToSearch == "")
     {
 	cat("Done. Please check output files in directory ", outputDir, "\n")
         return(gRNAs)	
