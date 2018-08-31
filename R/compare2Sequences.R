@@ -35,6 +35,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -43,6 +44,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
         scoring.method <- match.arg(scoring.method)
         exportAllgRNAs <- match.arg(exportAllgRNAs)
         searchDirection <- match.arg(searchDirection)
+        rule.set <- match.arg(rule.set)
         if (scoring.method == "Hsu-Zhang")
         {
              if (length(weights) !=  gRNA.size)
@@ -109,6 +111,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                              subPAM.position = subPAM.position,
                              subPAM.activity = subPAM.activity,
                              PAM.location = PAM.location,
+                             rule.set = rule.set,
                              mismatch.activity.file = mismatch.activity.file)), 
 			 error = function(e) {print(e); gRNAs1 = DNAStringSet()})
              }
@@ -151,6 +154,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                         subPAM.position = subPAM.position,
                         subPAM.activity = subPAM.activity,
                         PAM.location = PAM.location,
+                        rule.set = rule.set,
                         mismatch.activity.file = mismatch.activity.file)), 
 			error=function(e) {print(e); gRNAs2 = DNAStringSet()})
             }

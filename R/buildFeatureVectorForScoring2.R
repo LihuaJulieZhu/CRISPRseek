@@ -3,7 +3,7 @@
     arr_ind <- which(mismatches != 0, arr.ind=TRUE)
     ind_row <- unname(arr_ind[ , "row"])
     ind_col <- unname(arr_ind[ , "col"])
-    oo <- S4Vectors:::orderIntegerPairs(ind_row, ind_col)
+    oo <- S4Vectors::orderIntegerPairs(ind_row, ind_col)
     ind_row <- ind_row[oo]
     ind_col <- ind_col[oo]
     partitioning <- PartitioningByEnd(ind_row, NG=nrow(mismatches))

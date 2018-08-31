@@ -153,12 +153,15 @@ findgRNAs <-
         gRNA.pattern = "", gRNA.size = 20, 
 	overlap.gRNA.positions = c(17,18),
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
-	    featureWeightMatrixFile = system.file("extdata", 
-        "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
-	    baseAfterPAM = 3,
-	    calculategRNAEfficacy = FALSE, efficacyFile,
-         PAM.location = "3prime") 
+	featureWeightMatrixFile = system.file("extdata", 
+           "DoenchNBT2014.csv", package = "CRISPRseek"), 
+        baseBeforegRNA = 4, 
+        baseAfterPAM = 3,
+	calculategRNAEfficacy = FALSE, efficacyFile,
+        PAM.location = "3prime",
+        rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
 {
+    rule.set <- match.arg(rule.set)
     if (missing(inputFilePath)) {
         stop("inputFilePath containing the searching sequence 
 	   or a DNAStringSet object is required!")
@@ -358,12 +361,19 @@ findgRNAs <-
     if (calculategRNAEfficacy && length(all.gRNAs.df) > 4)
     {
         featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
-        effi <- calculategRNAEfficiency(all.gRNAs.df[,5], 
+        if(rule.set == "Root_RuleSet1_2014")
+        {
+          effi <- calculategRNAEfficiency(all.gRNAs.df[,5], 
 	    baseBeforegRNA = baseBeforegRNA, 
 	    featureWeightMatrix = featureWeightMatrix, 
             enable.multicore = enable.multicore,
             n.cores.max = n.cores.max,
             gRNA.size = gRNA.size) 
+        }
+        else if (rule.set == "Root_RuleSet2_2016")
+        {
+          effi <- calculategRNAEfficiency2(all.gRNAs.df[,5])
+        }
         extendedSequences <- cbind(all.gRNAs.df, effi)
         colnames(extendedSequences)  <- c("gRNAplusPAM", "name", "start", "strand", 
 	    "extendedSequence", "gRNAefficacy")

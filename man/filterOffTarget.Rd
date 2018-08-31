@@ -10,13 +10,14 @@ filter off targets and generate reports.
  is set to TRUE
 }
 \usage{
-filterOffTarget(scores, min.score = 0.5, topN = 100, 
-    topN.OfftargetTotalScore = 10,
+filterOffTarget(scores, min.score = 0.01, topN = 200, 
+    topN.OfftargetTotalScore = 20,
     annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE, 
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
-	package = "CRISPRseek"))
+	package = "CRISPRseek"),
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -93,6 +94,9 @@ Number of bases after PAM used for calculating gRNA efficiency, default 3
 }
 \item{featureWeightMatrixFile}{
 Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
+}
+\item{rule.set}{
+Specify a rule set scoring system for calculating gRNA efficacy.
 }
 }
 \details{

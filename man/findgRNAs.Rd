@@ -16,7 +16,7 @@ findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
     pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
         baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile,
-    PAM.location = "3prime")
+    PAM.location = "3prime", rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -96,6 +96,9 @@ File path to write gRNA efficacies
 \item{PAM.location}{
 PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
 cpf1 PAM is located on the 5 prime
+}
+\item{rule.set}{
+Specify a rule set scoring system for calculating gRNA efficacy.
 }
 }
 \details{

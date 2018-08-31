@@ -46,6 +46,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
      mismatch.activity.file = system.file("extdata",
          "NatureBiot2016SuppTable19DoenchRoot.csv",
          package = "CRISPRseek")    
@@ -207,6 +208,14 @@ The start and end positions of the sub PAM. Default to 22 and 23 for SP with 20b
 \item{PAM.location}{
 PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime (3prime) while
 cpf1 PAM is located on the 5 prime (5prime)
+}
+\item{rule.set}{
+Specify a rule set scoring system for calculating gRNA efficacy. Please note that Root_RuleSet2_2016 requires the following python packages with specified verion and python 2.7.  
+1. scikit-learn 0.16.1
+2. pickle
+3. pandas
+4. numpy
+5. scipy
 }
 \item{mismatch.activity.file}{
 Applicable only when scoring.method is set to CFDscore

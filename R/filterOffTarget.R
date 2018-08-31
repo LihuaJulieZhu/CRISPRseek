@@ -1,11 +1,14 @@
 filterOffTarget <-
-    function(scores, min.score = 0.5, topN = 100, topN.OfftargetTotalScore = 10,
+    function(scores, min.score = 0.01, topN = 200, topN.OfftargetTotalScore = 20,
     annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE,
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
-	baseBeforegRNA = 4, baseAfterPAM = 3,
-	featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
-		package = "CRISPRseek"))
+    baseBeforegRNA = 4, baseAfterPAM = 3,
+    featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
+	package = "CRISPRseek"),
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016")      
+)
 {
+    rule.set <- match.arg(rule.set)
     if (featureWeightMatrixFile != ""  & file.exists(featureWeightMatrixFile))
 	{
 		featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
@@ -147,9 +150,16 @@ filterOffTarget <-
         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
            end = ends, strand = strand, width = NA, as.character = TRUE)
 	Offtargets <- cbind(Offtargets, extendedSequence = extendedSequence)
-	gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
+        if (rule.set == "Root_RuleSet1_2014")
+	{
+            gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
 		baseBeforegRNA = baseBeforegRNA,
 		featureWeightMatrix = featureWeightMatrix)
+        }
+        else if (rule.set == "Root_RuleSet2_2016")
+        {
+            gRNAefficiency <- calculategRNAEfficiency2(extendedSequence)
+        }
 	Offtargets <- cbind(Offtargets, gRNAefficacy = gRNAefficiency)
 	if (fetchSequence)
 	{

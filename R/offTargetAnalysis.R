@@ -50,6 +50,7 @@ offTargetAnalysis <-
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -58,6 +59,7 @@ offTargetAnalysis <-
     cat("Validating input ...\n")
     scoring.method <- match.arg(scoring.method)
     exportAllgRNAs <- match.arg(exportAllgRNAs)
+    rule.set <- match.arg(rule.set)
     if (scoring.method ==  "CFDscore") 
     {
         mismatch.activity <- read.csv(mismatch.activity.file)
@@ -131,7 +133,8 @@ offTargetAnalysis <-
                format = format, featureWeightMatrixFile = featureWeightMatrixFile, 
                baseBeforegRNA = baseBeforegRNA, 
 	       baseAfterPAM = baseAfterPAM ,
-    	       calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile)
+    	       calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile,
+               rule.set = rule.set)
          else
 	    potential.gRNAs <- findgRNAs(inputFilePath,
                findPairedgRNAOnly = findPairedgRNAOnly,
@@ -142,7 +145,8 @@ offTargetAnalysis <-
 	       gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
                PAM.location = PAM.location,
                gRNA.size = gRNA.size, min.gap = min.gap,
-               max.gap = max.gap, name.prefix = gRNA.name.prefix, format = format)
+               max.gap = max.gap, name.prefix = gRNA.name.prefix, 
+               format = format,  rule.set = rule.set)
 	if (length(potential.gRNAs) == 0)
 		stop("no gRNAs found!")
 	if (length(potential.gRNAs) > 0 && (exportAllgRNAs == "fasta" || exportAllgRNAs == "all"))
@@ -384,7 +388,8 @@ offTargetAnalysis <-
             topN.OfftargetTotalScore = topN.OfftargetTotalScore, 
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 
-	    baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile)
+	    baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile,
+            rule.set = rule.set)
     #write.table(offTargets, file="testoffTargets2.xls", sep="\t", row.names=FALSE)
    
     cat("Done annotating\n")
@@ -446,7 +451,7 @@ offTargetAnalysis <-
         {
 	   gRNA.bed <- unique(cbind(as.character(on.target$chrom),as.character(on.target$chromStart),
 		as.character(on.target$chromEnd), as.character(on.target$name), 
-		on.target$gRNAefficacy * 1000, 
+		as.numeric(as.character(on.target$gRNAefficacy)) * 1000, 
 		as.character(on.target$strand), 
 		as.character(on.target$chromStart), 
 		as.character(on.target$chromEnd)))
@@ -471,7 +476,7 @@ offTargetAnalysis <-
 	  on.target <- unique(cbind(as.character(on.target$name),
 			as.character(on.target$forViewInUCSC),
 			as.character(on.target$extendedSequence), 
-			on.target$gRNAefficacy
+			as.character(on.target$gRNAefficacy)
                         )) 
 	  colnames(on.target) = c("names", "forViewInUCSC", "extendedSequence", "gRNAefficacy")
 	  if (useEfficacyFromInputSeq)
