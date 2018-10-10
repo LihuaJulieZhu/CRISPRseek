@@ -15,7 +15,7 @@ calculategRNAEfficiency2 <- function(extendedSequence,
     {	
 	unlink("pythonVersion.txt")
 	origDir <- getwd()
-	pythonDir <- system.file("extdata/Rule_Set_2_scoring_v1/analysis/", package = "CRISPRseek")
+	pythonDir <- system.file("extdata/Rule_Set_2_scoring_v1/analysis/",package = "CRISPRseek")
         origDir <- getwd()
         if (dir.exists(pythonDir))
         {
