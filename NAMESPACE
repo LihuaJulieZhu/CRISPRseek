@@ -12,5 +12,5 @@ importFrom("utils", "read.csv", "read.table", "write.table")
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits2, writeHits2, searchHits, writeHits, translatePattern, getOfftargetScore, 
     buildFeatureVectorForScoring, compare2Sequences, calculategRNAEfficiency,
-    annotateOffTargets, isPatternUnique,uniqueREs, foldgRNAs 
+    annotateOffTargets, isPatternUnique,uniqueREs 
     )
