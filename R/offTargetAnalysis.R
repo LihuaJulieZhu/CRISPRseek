@@ -367,6 +367,8 @@ offTargetAnalysis <-
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
         PAM.location = PAM.location) 
+if (dim(hits)[1] > 0)
+{
     cat("Building feature vectors for scoring ...\n")
     #save(hits, file = "hits.RData")
     featureVectors <- buildFeatureVectorForScoring(hits = hits, 
@@ -550,4 +552,15 @@ offTargetAnalysis <-
     list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
 		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
 		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
+}
+else
+{
+  summary <- cbind(names = names(gRNAs), gRNAsPlusPAM = as.character(gRNAs),top5OfftargetTotalScore = rep("NA", length(gRNAs)),
+   	top10OfftargetTotalScore =  rep("NA", length(gRNAs)),
+	top1Hit.onTarget.MMdistance2PAM =  rep("NA", length(gRNAs))
+      ) 
+  write.table(summary,  file = paste(outputDir, "Summary.xls", sep = ""),
+        sep = "\t", row.names = FALSE) 
+  summary
+}
 }
