@@ -540,6 +540,17 @@ if (dim(hits)[1] > 0)
     #write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
     ### even there is no perfect target for a gRNA, it will be kept in the summary file
     ### need to calculate the topN offtarget score and distance correctly yet if include those gRNAs without target
+     
+     gRNAs.notInGenome <- setdiff(names(gRNAs), summary$names)
+     if (length(gRNAs.notInGenome) > 0)
+     {
+         dat2 <- data.frame(matrix(nrow = length(gRNAs.notInGenome), ncol = dim(summary)[2]))
+         colnames(dat2) <- colnames(summary)
+         dat2$names <- gRNAs.notInGenome
+         
+         dat2$gRNAsPlusPAM <- paste(substr(as.character(gRNAs[names(gRNAs) %in% gRNAs.notInGenome]), 1, gRNA.size), PAM, sep ="")
+         summary <- rbind(summary, dat2)
+     }
      if (dim(on.target)[1] == 0)
         write.table(summary[order(as.character(summary$names)), ],
            file = paste(outputDir, "Summary.xls", sep = ""),
@@ -555,7 +566,9 @@ if (dim(hits)[1] > 0)
 }
 else
 {
-  summary <- cbind(names = names(gRNAs), gRNAsPlusPAM = as.character(gRNAs),top5OfftargetTotalScore = rep("NA", length(gRNAs)),
+  x <- paste(substr(as.character(gRNAs), 1, gRNA.size), PAM, sep ="")
+
+  summary <- cbind(names = names(gRNAs), gRNAsPlusPAM = x,top5OfftargetTotalScore = rep("NA", length(gRNAs)),
    	top10OfftargetTotalScore =  rep("NA", length(gRNAs)),
 	top1Hit.onTarget.MMdistance2PAM =  rep("NA", length(gRNAs))
       ) 
