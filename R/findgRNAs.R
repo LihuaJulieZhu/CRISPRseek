@@ -292,8 +292,8 @@ findgRNAs <-
                      minus.index <- pair_index[[1L]]
                      gap <- pair_index[[3]]
 		}
-cat("plus.index:", plus.index, "minus.index:", minus.index, "gap:", gap);
-cat("minus_start:", minus_start, "plus_start:", plus_start, "minus_end:", minus_end, "plus_end:", plus_end);
+#cat("plus.index:", plus.index, "minus.index:", minus.index, "gap:", gap);
+#cat("minus_start:", minus_start, "plus_start:", plus_start, "minus_end:", minus_end, "plus_end:", plus_end);
                 if (!findPairedgRNAOnly)
                 {
                     all.gRNAs <- DNAStringSet(c(plus.gRNAs[,1], minus.gRNAs[,1]))
