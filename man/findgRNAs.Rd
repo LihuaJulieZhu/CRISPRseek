@@ -10,7 +10,8 @@
 }
 \usage{
 findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
-    findPairedgRNAOnly = FALSE, annotatePaired = TRUE, enable.multicore = FALSE,
+    findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
+    paired.orientation = c("PAMout", "PAMin"), enable.multicore = FALSE,
     n.cores.max = 6, gRNA.pattern = "", gRNA.size = 20, 
     overlap.gRNA.positions = c(17,18), min.gap = 0, max.gap = 20,
     pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
@@ -39,6 +40,9 @@ the first one is on minus strand called reverse gRNA and the second one is
 on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 }
 \item{annotatePaired}{Indicate whether to output paired information, default TRUE}
+\item{paired.orientation}{PAMin orientation means the two adjacent PAMs on the sense and 
+antisense strands face inwards towards each other like N21GG and CCN21 whereas PAMout orientation
+means they face away from each other like CCN21 and N21GG}
 \item{enable.multicore}{Indicate whether enable parallel processing, default FALSE.
 For super long sequences with lots of gRNAs, suggest set it to TRUE}
 \item{n.cores.max}{

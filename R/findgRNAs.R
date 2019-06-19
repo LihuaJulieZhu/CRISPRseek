@@ -136,19 +136,22 @@
 ## findOverlaps(). Hundreds times faster than .compute_pair_index2().
 .compute_pair_index3 <- function(plus_start, minus_start, min.gap, max.gap)
 {
-    shift <- floor((min.gap + max.gap) / 2)
-    subject <- IRanges(minus_start + shift, width=1L)
-    maxgap <- ceiling((max.gap - min.gap) / 2)
+    #shift <- floor((min.gap + max.gap) / 2)
+    #subject <- IRanges(minus_start + shift, width=1L)
+    #maxgap <- ceiling((max.gap - min.gap) / 2)
+    subject <- IRanges(minus_start, width = 1L)
     query <- IRanges(plus_start, width=1L)
-    hits <- findOverlaps(query, subject, maxgap=maxgap)
+    hits <- findOverlaps(query, subject, maxgap=max.gap)
     d <- plus_start[queryHits(hits)] - minus_start[subjectHits(hits)]
-    hits <- sort(hits[min.gap < d & d <= max.gap])
-    list(queryHits(hits), subjectHits(hits))
+    hits <- sort(hits[min.gap <= d & d <= max.gap])
+    gap <- plus_start[queryHits(hits)] - minus_start[subjectHits(hits)]
+    list(queryHits(hits), subjectHits(hits), gap)
 }
 
 findgRNAs <-
     function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
+        paired.orientation = c("PAMout", "PAMin"),
         enable.multicore = FALSE, n.cores.max = 6,
         gRNA.pattern = "", gRNA.size = 20, 
 	overlap.gRNA.positions = c(17,18),
@@ -162,6 +165,7 @@ findgRNAs <-
         rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
 {
     rule.set <- match.arg(rule.set)
+    paired.orientation <- match.arg(paired.orientation)
     if (missing(inputFilePath)) {
         stop("inputFilePath containing the searching sequence 
 	   or a DNAStringSet object is required!")
@@ -267,12 +271,29 @@ findgRNAs <-
             if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
             {
                 plus_start <- as.numeric(as.character(plus.gRNAs[ , 3L]))
-                minus_start <- as.numeric(as.character(minus.gRNAs[ , 3L]))
-                pair_index <- .compute_pair_index3(plus_start,
-                                                   minus_start,
+                minus_end <- as.numeric(as.character(minus.gRNAs[ , 3L]))
+                plus_end <- plus_start + gRNA.size + PAM.size - 1L
+                minus_start <- minus_end - gRNA.size - PAM.size + 1L
+		if (paired.orientation == "PAMout")
+		{
+                      pair_index <- .compute_pair_index3(plus_start,
+                                                   minus_end,
                                                    min.gap, max.gap)
-                plus.index <- pair_index[[1L]]
-                minus.index <- pair_index[[2L]]
+                      plus.index <- pair_index[[1L]]
+                      minus.index <- pair_index[[2L]]
+            	      gap <- pair_index[[3]]
+                }
+		else
+		{
+		     pair_index <- .compute_pair_index3(minus_start,
+                                                   plus_end,
+                                                   min.gap, max.gap)
+                     plus.index <- pair_index[[2L]]
+                     minus.index <- pair_index[[1L]]
+                     gap <- pair_index[[3]]
+		}
+cat("plus.index:", plus.index, "minus.index:", minus.index, "gap:", gap);
+cat("minus_start:", minus_start, "plus_start:", plus_start, "minus_end:", minus_end, "plus_end:", plus_end);
                 if (!findPairedgRNAOnly)
                 {
                     all.gRNAs <- DNAStringSet(c(plus.gRNAs[,1], minus.gRNAs[,1]))
@@ -284,9 +305,7 @@ findgRNAs <-
                     paired <- cbind(minus.gRNAs[minus.index,1], 
                         minus.gRNAs[minus.index, 2], plus.gRNAs[plus.index,1], 
                         plus.gRNAs[plus.index, 2],
-                        gap = as.numeric(as.character(
-                        plus.gRNAs[plus.index,3])) - 1 - as.numeric(
-                        as.character(minus.gRNAs[minus.index, 3])))
+                        gap = gap)
                     colnames(paired)[1:5] <- c( "ReversegRNAPlusPAM", 
                         "ReversegRNAName", "ForwardgRNAPlusPAM", 
                         "ForwardgRNAName", "gap")
