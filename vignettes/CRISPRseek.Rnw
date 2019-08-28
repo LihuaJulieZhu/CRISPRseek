@@ -270,10 +270,12 @@ chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
 }
 Calling the function \Rfunction{offTargetAnalysis} with max.mismatch = 0 
 results in quick gRNA search with gRNA efficacy prediction 
-without off-target analysis. Paramter rule.set can be set to 
+without off-target analysis. Parameter rule.set can be set to 
 Root\_RuleSet2\_2016 to calculate efficacy using the rule set 2 published in 2016.
 By default, gRNA efficacy is predicted using the rule set 1 published in 2014.
-To use the rule set 2, first install python 2.7, then install the python packages: scikit-learn 0.16.1, pickle, pandas, numpy nd scipy.
+To use the rule set 2, first install python 2.7, then install the python packages: scikit-learn 0.16.1, pickle, pandas, numpy nd scipy. In a R session, type the following script to use python 2.7 since rule set 2 is implemented in python 2.7.
+Sys.setenv(PATH = paste("~/anaconda2/bin", Sys.getenv("PATH"), sep=":")) 
+system("python --version") should output Python 2.7.15.
 In addition, parameters findgRNAsWithREcutOnly and findPairedgRNAOnly 
 can be tuned to indicate whether searching for gRNAs
 overlap restriction enzyme cut sites or not, and whether searching for 
