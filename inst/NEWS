@@ -1,5 +1,14 @@
+CHANGES IN VERSION 1.25.4
+     o annotation is now strand-specific 
+
+------------------------
 CHANGES IN VERSION 1.25.1
+------------------------
+
+NEW FEATURES
+
      o added paired.orientation parameteter
+
 CHANGES IN VERSION 1.9.12
 ------------------------
 
