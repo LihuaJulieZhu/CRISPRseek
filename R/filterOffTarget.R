@@ -137,19 +137,21 @@ filterOffTarget <-
 	{
 		Offtargets <- annotateOffTargets(Offtargets, txdb, orgAnn)
 	}
-	chr <- as.character(Offtargets$chrom)
-        strand <- as.character(Offtargets$strand)
+    ontargets <- subset(Offtargets, Offtargets$n.mismatch == 0)
+	chr <- as.character(ontargets$chrom)
+        strand <- as.character(ontargets$strand)
         Start <- ifelse(strand=="-",
-              as.numeric(as.character(Offtargets$chromStart)) - baseAfterPAM,
-              as.numeric(as.character(Offtargets$chromStart)) - baseBeforegRNA)
+              as.numeric(as.character( ontargets$chromStart)) - baseAfterPAM,
+              as.numeric(as.character( ontargets$chromStart)) - baseBeforegRNA)
         End <- ifelse(strand=="-",
-              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(baseBeforegRNA),
-              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(baseAfterPAM))
+              as.numeric(as.character( ontargets$chromEnd)) + as.numeric(baseBeforegRNA),
+              as.numeric(as.character( ontargets$chromEnd)) + as.numeric(baseAfterPAM))
         starts <- unlist(apply(cbind(Start,1), 1, max))
         ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
+
         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
            end = ends, strand = strand, width = NA, as.character = TRUE)
-	Offtargets <- cbind(Offtargets, extendedSequence = extendedSequence)
+	 ontargets <- cbind(ontargets, extendedSequence = extendedSequence)
         if (rule.set == "Root_RuleSet1_2014")
 	{
             gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
@@ -160,7 +162,8 @@ filterOffTarget <-
         {
             gRNAefficiency <- calculategRNAEfficiency2(extendedSequence)
         }
-	Offtargets <- cbind(Offtargets, gRNAefficacy = gRNAefficiency)
+	 ontargets <- cbind(ontargets, gRNAefficacy = gRNAefficiency)
+         Offtargets <- merge(Offtargets, ontargets, all = TRUE)
 	if (fetchSequence)
 	{
            strand <- as.character(Offtargets$strand)

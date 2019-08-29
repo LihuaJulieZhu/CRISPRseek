@@ -1,3 +1,6 @@
+CHANGES IN VERSION 1.25.5
+     o efficacy is calculated only for on-target 
+
 CHANGES IN VERSION 1.25.4
      o annotation is now strand-specific 
 

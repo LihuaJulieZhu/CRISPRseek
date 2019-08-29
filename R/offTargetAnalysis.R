@@ -387,6 +387,7 @@ if (dim(hits)[1] > 0)
         scores <- getOfftargetScore(featureVectors, weights = weights)
     #write.table(scores, file="testScore2.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
+
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
             orgAnn = orgAnn, min.score = min.score, topN = topN, 
