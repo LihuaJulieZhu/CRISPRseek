@@ -1,3 +1,6 @@
+CHANGES IN VERSION 1.25.6
+     o added parameter ignore.strand to indidate whether gene annotation should be strand-specific
+
 CHANGES IN VERSION 1.25.5
      o efficacy is calculated only for on-target 
 

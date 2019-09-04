@@ -8,7 +8,7 @@ annotate off targets
  annotate off targets to indicate whether it is inside an exon or intron, and the gene id if inside the gene.
 }
 \usage{
-annotateOffTargets(scores, txdb, orgAnn)
+annotateOffTargets(scores, txdb, orgAnn, ignore.strand = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,6 +42,9 @@ TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
 }
  \item{orgAnn}{
 organism annotation mapping such as org.Hs.egSYMBOL in org.Hs.eg.db package for human
+}
+\item{ignore.strand}{
+default to TRUE
 }
  }
 \details{

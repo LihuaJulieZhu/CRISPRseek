@@ -12,7 +12,8 @@ filter off targets and generate reports.
 \usage{
 filterOffTarget(scores, min.score = 0.01, topN = 200, 
     topN.OfftargetTotalScore = 20,
-    annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE, 
+    annotateExon = TRUE, txdb, orgAnn,ignore.strand = TRUE,
+    outputDir, oneFilePergRNA = FALSE, 
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
@@ -64,6 +65,9 @@ TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
 }
  \item{orgAnn}{
 organism annotation mapping such as org.Hs.egSYMBOL in org.Hs.eg.db package for human
+}
+\item{ignore.strand}{
+default to TRUE
 }
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to

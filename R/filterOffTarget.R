@@ -1,6 +1,6 @@
 filterOffTarget <-
     function(scores, min.score = 0.01, topN = 200, topN.OfftargetTotalScore = 20,
-    annotateExon = TRUE, txdb, orgAnn, outputDir, oneFilePergRNA = FALSE,
+    annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir, oneFilePergRNA = FALSE,
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
@@ -135,7 +135,7 @@ filterOffTarget <-
         stringsAsFactors = FALSE)
 	if (annotateExon)
 	{
-		Offtargets <- annotateOffTargets(Offtargets, txdb, orgAnn)
+		Offtargets <- annotateOffTargets(Offtargets, txdb, orgAnn, ignore.strand)
 	}
     ontargets <- subset(Offtargets, Offtargets$n.mismatch == 0)
 	chr <- as.character(ontargets$chrom)

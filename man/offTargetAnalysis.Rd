@@ -27,7 +27,8 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1, 
     gRNA.pattern = "", min.score = 0, topN = 1000, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
-    txdb, orgAnn, outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
+    txdb, orgAnn, ignore.strand = TRUE,
+    outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
     upstream.search = 0, downstream.search = 0,
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 
     0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
@@ -201,6 +202,9 @@ TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
 }
 \item{orgAnn}{
 organism annotation mapping such as org.Hs.egSYMBOL in org.Hs.eg.db package for human
+}
+\item{ignore.strand}{
+default to TRUE when annotating to gene
 }
   \item{outputDir}{
 the directory where the off target analysis and reports will be written to

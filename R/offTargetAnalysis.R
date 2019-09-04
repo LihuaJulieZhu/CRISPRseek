@@ -19,7 +19,7 @@ offTargetAnalysis <-
         PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1,
         gRNA.pattern = "", min.score = 0, topN = 1000, 
         topN.OfftargetTotalScore = 10, 
-        annotateExon = TRUE, txdb, orgAnn, outputDir,
+        annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir,
         fetchSequence = TRUE, upstream = 200, downstream = 200,
 	upstream.search = 0, downstream.search = 0,
         weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 
@@ -390,7 +390,8 @@ if (dim(hits)[1] > 0)
 
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
-            orgAnn = orgAnn, min.score = min.score, topN = topN, 
+            orgAnn = orgAnn, ignore.strand = ignore.strand,
+	    min.score = min.score, topN = topN, 
             topN.OfftargetTotalScore = topN.OfftargetTotalScore, 
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 

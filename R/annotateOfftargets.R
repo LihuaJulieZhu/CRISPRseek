@@ -1,4 +1,4 @@
-annotateOffTargets <- function(scores, txdb, orgAnn) 
+annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE)
 {
     score.RD <- GRanges(seqnames = Rle(scores$chrom), 
         ranges = IRanges(start = scores$chromStart, 
@@ -13,7 +13,7 @@ annotateOffTargets <- function(scores, txdb, orgAnn)
     allExons <- allExons[as.character(seqnames(allExons)) %in% 
       	unique(as.character(seqnames(score.RD))),]
     ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
-        type = "any",ignore.strand=FALSE)
+        type = "any",ignore.strand=ignore.strand)
     inExon <- cbind(forViewInUCSC = names(score.RD),
         inExon = unlist(ann.scores))
     inExon[inExon[,2] == FALSE, 2] <- ""
@@ -24,7 +24,7 @@ annotateOffTargets <- function(scores, txdb, orgAnn)
         seqlevels(allGenes) = paste("Chr", seqlevels(allGenes), sep="")
     }
     overlapGenes <- findOverlaps(score.RD, allGenes, minoverlap = 1L, 
-	    type = "any",ignore.strand=FALSE)
+	    type = "any",ignore.strand=ignore.strand)
 	entrez_id <- character(dim(scores)[1])
 	symbol <- entrez_id
 	query.ind <- queryHits(overlapGenes)
