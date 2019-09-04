@@ -12,8 +12,22 @@ annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE)
     }
     allExons <- allExons[as.character(seqnames(allExons)) %in% 
       	unique(as.character(seqnames(score.RD))),]
+    if (ignore.strand)
+    {
+        score.plus.RD <- GRanges(seqnames = Rle(scores$chrom),
+            ranges = IRanges(start = scores$chromStart,
+            end = scores$chromEnd, names = scores$forViewInUCSC),
+            strand = "+")
+        score.minus.RD <- GRanges(seqnames = Rle(scores$chrom),
+            ranges = IRanges(start = scores$chromStart,
+            end = scores$chromEnd, names = scores$forViewInUCSC),
+            strand = "-")
+        score.list <- GRangesList(score.plus.RD, score.minus.RD)
+        score.RD <- c(score.list[[1]], score.list[[2]])
+        scores <- rbind(scores, scores)
+     } 
     ann.scores <- overlapsAny(score.RD, allExons, minoverlap = 1L, 
-        type = "any",ignore.strand=ignore.strand)
+        type = "any",ignore.strand=FALSE)
     inExon <- cbind(forViewInUCSC = names(score.RD),
         inExon = unlist(ann.scores))
     inExon[inExon[,2] == FALSE, 2] <- ""
@@ -24,10 +38,10 @@ annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE)
         seqlevels(allGenes) = paste("Chr", seqlevels(allGenes), sep="")
     }
     overlapGenes <- findOverlaps(score.RD, allGenes, minoverlap = 1L, 
-	    type = "any",ignore.strand=ignore.strand)
-	entrez_id <- character(dim(scores)[1])
-	symbol <- entrez_id
+	type = "any",ignore.strand=FALSE)
 	query.ind <- queryHits(overlapGenes)
+        entrez_id <- character(dim(scores)[1])
+        symbol <- entrez_id
 	entrez_id[query.ind] <- 
 		unlist(allGenes[subjectHits(overlapGenes),]$gene_id)
 	entrez_id <- as.character(entrez_id)
@@ -50,11 +64,13 @@ annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE)
 	    }
 		scores$symbol[is.na(scores$symbol)] = ""
 	}
-        scores <- merge(scores,inExon)
+        scores <- cbind(scores,inExon)
 	inIntron <- entrez_id
 	inIntron[scores$entrez_id != "" & scores$inExon == ""] = TRUE
 	inIntron[scores$entrez_id == "" | scores$inExon == TRUE] = ""
 	scores <- cbind(scores, inIntron = inIntron)
+        scores <- scores[order(scores$entrez_id, na.last = TRUE, decreasing=TRUE),]
+        scores <- scores[!duplicated(scores$forViewInUCSC) | scores$entrez_id != "",]
     if (length(grep("FBgn",entrez_id[1])) > 0 && !missing(orgAnn) && 
 		class(orgAnn) == "AnnDbBimap")
     {

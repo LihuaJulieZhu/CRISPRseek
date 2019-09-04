@@ -397,8 +397,7 @@ if (dim(hits)[1] > 0)
             annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 
 	    baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile,
             rule.set = rule.set)
-    #write.table(offTargets, file="testoffTargets2.xls", sep="\t", row.names=FALSE)
-   
+  saveRDS(offTargets, file = "offTargets.RDS") 
     cat("Done annotating\n")
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 
         header = TRUE, stringsAsFactors = FALSE) 
