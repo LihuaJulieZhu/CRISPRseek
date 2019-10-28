@@ -26,8 +26,8 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
 "chr6_ssto_hap7"),
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1, 
     gRNA.pattern = "", 
-    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
-    editingWindow.offtargets = 5:13,
+    baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
+    editingWindow.offtargets = 4:8,
     min.score = 0, topN = 1000, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, orgAnn, ignore.strand = TRUE,
@@ -190,13 +190,13 @@ Please change it to A if you intend to use the ABE system.
 }
 \item{editingWindow}{
 Applicable only when baseEditing is set to TRUE. It is used to indicate the
-effective editing window, default to 5 to 13 which is for the original CBE system.
+effective editing window, default to 4 to 8 which is for the original CBE system.
 Please change it accordingly if the system you use have a different editing window.
 }
 \item{editingWindow.offtargets}{
 Applicable only when baseEditing is set to TRUE. It is used to indicate the
 effective editing window to consider for the offtargets search only, 
-default to 5 to 13 (1 means the most distal site from the 3' PAM, the most proximla site
+default to 4 to 8 (1 means the most distal site from the 3' PAM, the most proximla site
 from the 5' PAM), which is for the original CBE system.  
 Please change it accordingly if the system you use have a different editing window,
 or you would like to include offtargets with the target base in a larger editing window.

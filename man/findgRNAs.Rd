@@ -9,7 +9,7 @@
     format
 }
 \usage{
-findgRNAs(inputFilePath,  baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+findgRNAs(inputFilePath,  baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
     format = "fasta", PAM = "NGG", PAM.size = 3, 
     findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
     paired.orientation = c("PAMout", "PAMin"), enable.multicore = FALSE,
@@ -37,7 +37,7 @@ Please change it to A if you intend to use the ABE system.
 }
 \item{editingWindow}{
 Applicable only when baseEditing is set to TRUE. It is used to indicate the
-effective editing window, default to 5 to 13 which is for the original CBE system.
+effective editing window, default to 4 to 8 which is for the original CBE system.
 Please change it accordingly if the system you use have a different editing window.
 }
   \item{format}{

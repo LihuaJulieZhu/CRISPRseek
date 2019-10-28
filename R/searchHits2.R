@@ -13,7 +13,7 @@
 .searchHitsInOneSeq2 <- function(gRNAs, seq, seqname, PAM, PAM.pattern, PAM.size,
                                 max.mismatch, outfile, allowed.mismatch.PAM,
                                 PAM.location = "3prime", BSgenomeName,
-                                baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
+                                baseEditing = FALSE, targetBase = "C", editingWindow = 4:8)
 {
     if (.preprocess_me2(gRNAs, max.mismatch)) {
         patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
@@ -72,7 +72,7 @@ searchHits2 <-
 	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, 
         PAM = "NGG", PAM.pattern = "N[A|G]G$",
         allowed.mismatch.PAM = 1, PAM.location = "3prime", 
-        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)  
+        baseEditing = FALSE, targetBase = "C", editingWindow = 4:8)  
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")

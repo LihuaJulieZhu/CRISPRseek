@@ -3,7 +3,7 @@
     PAM = "NGG", PAM.pattern = "NNN$", PAM.size = 3,
     max.mismatch = 2, outfile, allowed.mismatch.PAM = 2,
     PAM.location = "3prime", gRNA.size = 20,
-    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
+    baseEditing = FALSE, targetBase = "C", editingWindow = 4:8)
 {
     if (.preprocess_me2(gRNAs, max.mismatch)) {
         patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
@@ -63,7 +63,7 @@ searchHits <-
         PAM = "NGG", PAM.pattern = "NNN$",
         allowed.mismatch.PAM = 2, PAM.location = "3prime",
         outfile,
-        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13) 
+        baseEditing = FALSE, targetBase = "C", editingWindow = 4:8) 
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")

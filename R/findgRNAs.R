@@ -4,7 +4,7 @@
     baseAfterPAM = 3,
     reverse.subject = FALSE,
     PAM.location = "3prime",
-    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
+    baseEditing = FALSE, targetBase = "C", editingWindow = 4:8)
 {
      seq.len <- nchar(as.character(subject))
      pos.PAMs <- unlist(gregexpr(PAM, subject, perl = TRUE,
@@ -176,7 +176,7 @@
 
 findgRNAs <-
     function (inputFilePath, 
-        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+        baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
         format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
         paired.orientation = c("PAMout", "PAMin"),

@@ -4,7 +4,7 @@ writeHits2 <-
         chrom.len, append = FALSE,
         PAM.location = "3prime", PAM.size = 3L,
         allowed.mismatch.PAM = 1L,
-        BSgenomeName, baseEditing = FALSE, targetBase = "C", editingWindow = 5:13) 
+        BSgenomeName, baseEditing = FALSE, targetBase = "C", editingWindow = 4:8) 
 {
     if (missing(gRNA) || class(gRNA) != "DNAString") {
         stop("gRNA is required as a DNAString object!")
