@@ -14,7 +14,8 @@ writeHits(gRNA, seqname, matches, strand, file, gRNA.size = 20L,
      PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 4L,
      chrom.len, append = FALSE, PAM.location = "3prime", 
      PAM.size = 3L, allowed.mismatch.PAM = 1L,
-     seqs)
+     seqs,
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,6 +69,22 @@ to the PAM sequence. Default to 1 for NGG PAM
 }
 \item{seqs}{
 DNAString object containing a DNA sequence.
+}
+\item{baseEditing}{
+Indicate whether to design gRNAs for base editing. Default to FALSE
+If TRUE, please set baseEditing = TRUE, targetBase and editingWidow accordingly.
+}
+\item{targetBase}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the target
+base for base editing systems, default to C for converting C to T in the CBE system.
+Please change it to A if you intend to use the ABE system.
+}
+\item{editingWindow}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window to consider for the offtargets search only,
+default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window,
+or you would like to include offtargets with the target base in a larger editing window.
 }
 }
 \details{

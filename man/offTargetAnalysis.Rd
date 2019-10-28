@@ -25,7 +25,10 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
     max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1, 
-    gRNA.pattern = "", min.score = 0, topN = 1000, 
+    gRNA.pattern = "", 
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+    editingWindow.offtargets = 5:13,
+    min.score = 0, topN = 1000, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, orgAnn, ignore.strand = TRUE,
     outputDir, fetchSequence = TRUE, upstream = 200, downstream = 200, 
@@ -175,6 +178,28 @@ Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA
 pattern, default is no restriction. To specify that the gRNA must start 
 with GG for example, then set it to ^GG. Please see help(translatePattern) for
 a list of IUPAC Extended Genetic Alphabet.
+}
+\item{baseEditing}{
+Indicate whether to design gRNAs for base editing. Default to FALSE
+If TRUE, please set baseEditing = TRUE, targetBase and editingWidow accordingly.
+}
+\item{targetBase}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the target
+base for base editing systems, default to C for converting C to T in the CBE system.
+Please change it to A if you intend to use the ABE system.
+}
+\item{editingWindow}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window, default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window.
+}
+\item{editingWindow.offtargets}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window to consider for the offtargets search only, 
+default to 5 to 13 (1 means the most distal site from the 3' PAM, the most proximla site
+from the 5' PAM), which is for the original CBE system.  
+Please change it accordingly if the system you use have a different editing window,
+or you would like to include offtargets with the target base in a larger editing window.
 }
   \item{min.score}{
 minimum score of an off target to included in the final output, default 0
@@ -358,6 +383,27 @@ CRISPRseek
             outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
             PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
             subPAM.position = c(1,2))
+ 
+        results1 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
+                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+                 annotatePaired = FALSE,
+                 BSgenomeName = Hsapiens, chromToSearch = "chrX",
+                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
+                 outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
+                 PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
+                 subPAM.position = c(1,2), baseEditing = TRUE, editingWindow =20, targetBase = "G")
+
+        results2 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
+                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+                 annotatePaired = FALSE,
+                 BSgenomeName = Hsapiens, chromToSearch = "chrX",
+                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
+                 outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
+                 PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
+                 subPAM.position = c(1,2), baseEditing = TRUE, 
+                 editingWindow = 10:20, targetBase = "A")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

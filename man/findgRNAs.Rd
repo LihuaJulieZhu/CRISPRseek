@@ -9,7 +9,8 @@
     format
 }
 \usage{
-findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3, 
+findgRNAs(inputFilePath,  baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+    format = "fasta", PAM = "NGG", PAM.size = 3, 
     findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
     paired.orientation = c("PAMout", "PAMin"), enable.multicore = FALSE,
     n.cores.max = 6, gRNA.pattern = "", gRNA.size = 20, 
@@ -24,6 +25,20 @@ findgRNAs(inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
   \item{inputFilePath}{
  Sequence input file path or a DNAStringSet object that contains sequences 
  to be searched for potential gRNAs
+}
+\item{baseEditing}{
+Indicate whether to design gRNAs for base editing. Default to FALSE
+If TRUE, please set baseEditing = TRUE, targetBase and editingWidow accordingly.
+}
+\item{targetBase}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the target
+base for base editing systems, default to C for converting C to T in the CBE system.
+Please change it to A if you intend to use the ABE system.
+}
+\item{editingWindow}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window, default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window.
 }
   \item{format}{
 Format of the input file, fasta and fastq are supported, default fasta
@@ -146,6 +161,32 @@ offTargetAnalysis
         featureWeightMatrixFile = system.file("extdata", 
             "DoenchNBT2014.csv", package = "CRISPRseek"),
        efficacyFile = "testcpf1Efficacy.xls")
+
+    findgRNAs(inputFilePath = system.file("extdata", 
+             "cpf1.fa", package = "CRISPRseek"), 
+             findPairedgRNAOnly=FALSE, 
+             pairOutputFile = "testpairedgRNAs-cpf1.xls", 
+             PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+             overlap.gRNA.positions = c(19,23),
+             baseBeforegRNA = 8, baseAfterPAM = 23,
+             calculategRNAEfficacy= TRUE, 
+             featureWeightMatrixFile = system.file("extdata", 
+                 "DoenchNBT2014.csv", package = "CRISPRseek"),
+            efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
+            editingWindow=20, targetBase = "X")
+
+    findgRNAs(inputFilePath = system.file("extdata", 
+             "cpf1.fa", package = "CRISPRseek"), 
+             findPairedgRNAOnly=FALSE, 
+             pairOutputFile = "testpairedgRNAs-cpf1.xls", 
+             PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+             overlap.gRNA.positions = c(19,23),
+             baseBeforegRNA = 8, baseAfterPAM = 23,
+             calculategRNAEfficacy= TRUE, 
+             featureWeightMatrixFile = system.file("extdata", 
+                 "DoenchNBT2014.csv", package = "CRISPRseek"),
+            efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
+            editingWindow=20, targetBase = "C")
  }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

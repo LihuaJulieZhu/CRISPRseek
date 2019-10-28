@@ -12,6 +12,8 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     inputNames=c("Seq1", "Seq2"), 
     format = c("fasta", "fasta"), header=FALSE, findgRNAsWithREcutOnly = FALSE, 
     searchDirection=c("both","1to2", "2to1"), BSgenomeName,
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+    editingWindow.offtargets = 5:13,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE),
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
@@ -85,6 +87,27 @@ example, BSgenome.Hsapiens.UCSC.hg19 for hg19, BSgenome.Mmusculus.UCSC.mm10
 for mm10, BSgenome.Celegans.UCSC.ce6 for ce6, BSgenome.Rnorvegicus.UCSC.rn5 
 for rn5, BSgenome.Drerio.UCSC.danRer7 for Zv9, and 
 BSgenome.Dmelanogaster.UCSC.dm3 for dm3
+}
+\item{baseEditing}{
+Indicate whether to design gRNAs for base editing. Default to FALSE
+If TRUE, please set baseEditing = TRUE, targetBase and editingWidow accordingly.
+}
+\item{targetBase}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the target
+base for base editing systems, default to C for converting C to T in the CBE system.
+Please change it to A if you intend to use the ABE system.
+}
+\item{editingWindow}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window, default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window.
+}
+\item{editingWindow.offtargets}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window to consider for the offtargets search only, 
+default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window,
+or you would like to include offtargets with the target base in a larger editing window.
 }
   \item{REpatternFile}{
 File path containing restriction enzyme cut patters
@@ -285,6 +308,13 @@ CRISPRseek
     seqs <- compare2Sequences(inputFile1Path, inputFile2Path,
         outputDir = getwd(), 
         REpatternFile = REpatternFile, overwrite = TRUE)
+
+    seqs2 <- compare2Sequences(inputFile1Path, inputFile2Path,
+               inputNames=c("Seq1", "Seq2"),
+               scoring.method = "CFDscore",
+               outputDir = getwd(), 
+               overwrite = TRUE, baseEditing = TRUE)
+
     inputFile1Path <- DNAStringSet("TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG")
     names(inputFile1Path) <- "seq1"
     
@@ -296,6 +326,12 @@ CRISPRseek
           scoring.method = "CFDscore",
           outputDir = getwd(), 
           overwrite = TRUE)
+
+    seqs2 <- compare2Sequences(inputFile1Path, inputFile2Path,
+               inputNames=c("Seq1", "Seq2"),
+               scoring.method = "CFDscore",
+               outputDir = getwd(), 
+               overwrite = TRUE, baseEditing = TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

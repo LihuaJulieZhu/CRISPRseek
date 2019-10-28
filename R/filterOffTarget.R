@@ -138,6 +138,8 @@ filterOffTarget <-
 		Offtargets <- annotateOffTargets(Offtargets, txdb, orgAnn, ignore.strand)
 	}
     ontargets <- subset(Offtargets, Offtargets$n.mismatch == 0)
+    if (dim(ontargets)[1] > 0)
+    {
 	chr <- as.character(ontargets$chrom)
         strand <- as.character(ontargets$strand)
         Start <- ifelse(strand=="-",
@@ -164,6 +166,7 @@ filterOffTarget <-
         }
 	 ontargets <- cbind(ontargets, gRNAefficacy = gRNAefficiency)
          Offtargets <- merge(Offtargets, ontargets, all = TRUE)
+      }
 	if (fetchSequence)
 	{
            strand <- as.character(Offtargets$strand)

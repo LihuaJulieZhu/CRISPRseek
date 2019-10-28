@@ -4,7 +4,7 @@ writeHits2 <-
         chrom.len, append = FALSE,
         PAM.location = "3prime", PAM.size = 3L,
         allowed.mismatch.PAM = 1L,
-        BSgenomeName) 
+        BSgenomeName, baseEditing = FALSE, targetBase = "C", editingWindow = 5:13) 
 {
     if (missing(gRNA) || class(gRNA) != "DNAString") {
         stop("gRNA is required as a DNAString object!")
@@ -109,30 +109,45 @@ writeHits2 <-
         hits <- hits[containPAM == 1,]
         if (dim(hits)[1] > 0)
         {
-            if (PAM.location == "3prime")
+            if (baseEditing)
             {
+          
+                n.targetBase <- unlist(lapply(1:dim(hits)[1], function(i) {
+                   table(factor(s2c(substring(as.character(hits[i, ]$OffTargetSequence), 
+                   min(editingWindow),max(editingWindow))), levels=c(targetBase)))
+                }))
+                hits <- hits[n.targetBase > 0, ]
+            }   
+            if (dim(hits)[1] > 0)
+            {
+              if (PAM.location == "3prime")
+              {
                 PAM.sequence <- substr(hits$OffTargetSequence,
                     gRNA.size + 1, gRNA.size + PAM.size)
-            }
-            else
-            {
+              }
+              else
+              {
                 PAM.sequence <- substr(hits$OffTargetSequence,
                     1,  PAM.size)
-             }
+              }
 
-             n.PAM.mismatch <- unlist(lapply(DNAStringSet(PAM.sequence), function(i) {
+              n.PAM.mismatch <- unlist(lapply(DNAStringSet(PAM.sequence), function(i) {
                   neditAt(i, DNAString(PAM), fixed=FALSE)
                   }))
              
-             hits <- hits[n.PAM.mismatch <= allowed.mismatch.PAM,]
-             forViewInUCSC <- hits$chrom
-             score <- rep(100, dim(hits)[1])
-             hits <- hits[, -grep("chrom.len", colnames(hits))]
-             hits <- cbind(hits, forViewInUCSC, score)
-             hits$forViewInUCSC <- paste(paste(hits$chrom, hits$chromStart, 
-                sep = ":"), hits$chromEnd, sep = "-")
-             write.table(hits, file = file, append = append, quote = FALSE, 
-                sep = "\t", row.names = FALSE, col.names = ! append)
+              hits <- hits[n.PAM.mismatch <= allowed.mismatch.PAM,]
+              if (dim(hits)[1] > 0)
+              {
+                 forViewInUCSC <- hits$chrom
+                 score <- rep(100, dim(hits)[1])
+                 hits <- hits[, -grep("chrom.len", colnames(hits))]
+                 hits <- cbind(hits, forViewInUCSC, score)
+                 hits$forViewInUCSC <- paste(paste(hits$chrom, hits$chromStart, 
+                   sep = ":"), hits$chromEnd, sep = "-")
+                 write.table(hits, file = file, append = append, quote = FALSE, 
+                   sep = "\t", row.names = FALSE, col.names = ! append)
+               }
+            }
         }
     }
 }

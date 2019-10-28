@@ -14,7 +14,7 @@ writeHits2(gRNA, seqname, matches, strand, file, gRNA.size = 20,
     max.mismatch = 4, chrom.len, append = FALSE,
     PAM.location = "3prime", PAM.size = 3,
     allowed.mismatch.PAM = 1L,
-        BSgenomeName)
+    BSgenomeName, baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -71,6 +71,22 @@ example, BSgenome.Hsapiens.UCSC.hg19 for hg19, BSgenome.Mmusculus.UCSC.mm10
 for mm10, BSgenome.Celegans.UCSC.ce6 for ce6, BSgenome.Rnorvegicus.UCSC.rn5
 for rn5, BSgenome.Drerio.UCSC.danRer7 for Zv9, and
 BSgenome.Dmelanogaster.UCSC.dm3 for dm3
+}
+\item{baseEditing}{
+Indicate whether to design gRNAs for base editing. Default to FALSE
+If TRUE, please set baseEditing = TRUE, targetBase and editingWidow accordingly.
+}
+\item{targetBase}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the target
+base for base editing systems, default to C for converting C to T in the CBE system.
+Please change it to A if you intend to use the ABE system.
+}
+\item{editingWindow}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window to consider for the offtargets search only, 
+default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window,
+or you would like to include offtargets with the target base in a larger editing window.
 }
 }
 \details{

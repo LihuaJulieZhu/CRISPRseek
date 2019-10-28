@@ -3,7 +3,8 @@
     PAM.size = 3, calculategRNAEfficacy = TRUE, baseBeforegRNA = 4,
     baseAfterPAM = 3,
     reverse.subject = FALSE,
-    PAM.location = "3prime")
+    PAM.location = "3prime",
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
 {
      seq.len <- nchar(as.character(subject))
      pos.PAMs <- unlist(gregexpr(PAM, subject, perl = TRUE,
@@ -29,23 +30,43 @@
             pos.set2 <- unlist(gregexpr(gRNA.pattern, gRNA.seqs,
                perl = TRUE, ignore.case = TRUE, fixed = FALSE))
             pos.PAMs <- pos.PAMs[pos.set2 == 1]
+       }
+       if (baseEditing && length(pos.PAMs) > 0)
+       {
             if (PAM.location == "3prime")
                 starts.gRNA <- pos.PAMs - gRNA.size
             else
                 starts.gRNA <- pos.PAMs + PAM.size 
             ends.gRNA <- starts.gRNA + gRNA.size - 1
-        }
-        if (PAM.location == "3prime")
+          
+            pos.PAMs <- pos.PAMs[ends.gRNA <= length(subject)]
+	    starts.gRNA <- starts.gRNA[ends.gRNA <= length(subject)]
+            ends.gRNA <- ends.gRNA[ends.gRNA <= length(subject)]
+
+            gRNA.seqs <- as.character(Views(subject,
+                 start = starts.gRNA,
+                 end = ends.gRNA))
+             n.targetBase <- unlist(lapply(1:length(gRNA.seqs), function(i) {
+                table(factor(s2c(substring(as.character(gRNA.seqs[i]), min(editingWindow),max(editingWindow))), levels=c(targetBase)))
+             }))
+            pos.PAMs <- pos.PAMs[n.targetBase == 1]
+            starts.gRNA <- starts.gRNA[n.targetBase == 1]
+            ends.gRNA <- ends.gRNA[n.targetBase == 1]
+       }       
+      if (length(pos.PAMs) > 0)
+      {
+         if (PAM.location == "3prime")
             seq <- as.character(Views(subject,
                 start = starts.gRNA,
                 end = ends.gRNA + PAM.size))
-        else
+         else
             seq <- as.character(Views(subject,
                 start = starts.gRNA - PAM.size,
                 end = ends.gRNA))
-        extendedSequence <- seq
-        if (calculategRNAEfficacy)
-        {
+      
+          extendedSequence <- seq
+          if (calculategRNAEfficacy)
+          {
             extended.starts <- starts.gRNA - baseBeforegRNA
             extended.starts[extended.starts < 1] <- 1
             if (PAM.location == "3prime")
@@ -55,19 +76,24 @@
             extended.ends[extended.ends > length(subject)] <- length(subject)
             extendedSequence <- as.character(Views(subject, start = extended.starts,
                 end = extended.ends))
-        }
-        if (reverse.subject)
-        {
+         }
+         if (reverse.subject)
+         {
             gRNAs.cut <- cbind(seq, paste( subjectname,"_gR",
                 (seq.len - (starts.gRNA + cut.site -1 ) + 1), "r", sep = ""),
                 (seq.len - starts.gRNA + 1), "-", extendedSequence)
-        }
+         }
         else
         {
             gRNAs.cut <-
                 cbind(seq, paste(subjectname,"_gR", (starts.gRNA + cut.site - 1),
                 "f", sep = ""), starts.gRNA, "+", extendedSequence)
         }
+      }
+      else
+      {
+ 	gRNAs.cut <- "" 
+      }
      }
      else
      {
@@ -149,7 +175,9 @@
 }
 
 findgRNAs <-
-    function (inputFilePath, format = "fasta", PAM = "NGG", PAM.size = 3,
+    function (inputFilePath, 
+        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+        format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
         paired.orientation = c("PAMout", "PAMin"),
         enable.multicore = FALSE, n.cores.max = 6,
@@ -222,7 +250,8 @@ findgRNAs <-
                calculategRNAEfficacy = calculategRNAEfficacy,
                baseBeforegRNA = baseBeforegRNA,
                baseAfterPAM = baseAfterPAM,
-               PAM.location = PAM.location)
+               PAM.location = PAM.location,
+               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
        
        minus.gRNAs <-
            .getgRNA.cut.sites(revsubject, subjectname, PAM = PAM,
@@ -234,7 +263,8 @@ findgRNAs <-
                baseBeforegRNA = baseBeforegRNA,
                baseAfterPAM = baseAfterPAM,
                reverse.subject = TRUE,
-               PAM.location = PAM.location) 
+               PAM.location = PAM.location,
+               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
 
         if (length(plus.gRNAs) > 1)
             n.plus.gRNAs <- dim(plus.gRNAs)[1]
@@ -254,7 +284,7 @@ findgRNAs <-
             cat(paste("No paired gRNAs found in the input sequence", subjectname))
             all.gRNAs <- DNAStringSet()
         }
-	    else if (annotatePaired || findPairedgRNAOnly)
+        else if (annotatePaired || findPairedgRNAOnly)
 	    {
             temp = matrix(nrow =0, ncol=5)
             colnames(temp)[1:5] <- c( "ReversegRNAPlusPAM",
@@ -371,9 +401,9 @@ findgRNAs <-
         {
             all.gRNAs <- DNAStringSet()
         }
-        if (length(all.gRNAs) == 0 && !findPairedgRNAOnly)
-          cat(paste("No gRNAs found in the input sequence",
-               subjectname))
+        #if (length(all.gRNAs) == 0 && !findPairedgRNAOnly)
+        #  cat(paste("No gRNAs found in the input sequence",
+        #       subjectname))
         if (length(all.gRNAs) >0)
 	       forEffi
     })) ## do call subjects

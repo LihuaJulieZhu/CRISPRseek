@@ -12,7 +12,8 @@
 
 .searchHitsInOneSeq2 <- function(gRNAs, seq, seqname, PAM, PAM.pattern, PAM.size,
                                 max.mismatch, outfile, allowed.mismatch.PAM,
-                                PAM.location = "3prime", BSgenomeName)
+                                PAM.location = "3prime", BSgenomeName,
+                                baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
 {
     if (.preprocess_me2(gRNAs, max.mismatch)) {
         patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
@@ -43,7 +44,8 @@
                 PAM.location = PAM.location,
                 PAM.size = PAM.size,
                 allowed.mismatch.PAM = allowed.mismatch.PAM,
-                BSgenomeName = BSgenomeName)
+                BSgenomeName = BSgenomeName,
+                baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
         }
         if (reverseComplement(pattern) != pattern) {
             minus_matches <- Views(revseq, all_minus_macthes[[i]])
@@ -58,7 +60,8 @@
                     chrom.len = length(seq), append = TRUE, 
                     PAM.location = PAM.location, PAM.size = PAM.size,
                     allowed.mismatch.PAM = allowed.mismatch.PAM,
-                    BSgenomeName = BSgenomeName)
+                    BSgenomeName = BSgenomeName,
+                    baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow) 
             }
         }
     }
@@ -68,7 +71,8 @@ searchHits2 <-
     function (gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "", 
 	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, 
         PAM = "NGG", PAM.pattern = "N[A|G]G$",
-        allowed.mismatch.PAM = 1, PAM.location = "3prime") 
+        allowed.mismatch.PAM = 1, PAM.location = "3prime", 
+        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)  
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")
@@ -105,7 +109,8 @@ searchHits2 <-
              max.mismatch = max.mismatch, outfile, 
              allowed.mismatch.PAM = allowed.mismatch.PAM,
              PAM.location = PAM.location,
-             BSgenomeName = BSgenomeName)
+             BSgenomeName = BSgenomeName,
+             baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
         cat(">>> DONE searching\n")
     }
     if (file.exists(outfile))

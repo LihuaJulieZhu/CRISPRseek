@@ -1,6 +1,8 @@
 compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1", "Seq2"), 
 	format = c("fasta", "fasta"), header = FALSE, findgRNAsWithREcutOnly = FALSE,
     searchDirection = c("both","1to2", "2to1"), BSgenomeName,
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13,
+    editingWindow.offtargets = 5:13,
     REpatternFile=system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
     minREpatternSize = 6, findgRNAs = c(TRUE, TRUE), removegRNADetails = c(FALSE, FALSE), 
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
@@ -102,6 +104,8 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
 			     gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
 			     gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern,
                              outputUniqueREs = FALSE,
+                             baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
+                             editingWindow.offtargets = editingWindow.offtargets,
 			     outputDir = outputDir1, upstream.search = upstream,
 			     downstream.search = downstream,
 			     weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
@@ -145,7 +149,9 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
             		min.gap = min.gap, max.gap = max.gap, 
             		gRNA.name.prefix = gRNA.name.prefix, PAM.size = PAM.size,
             		gRNA.size = gRNA.size, PAM = PAM, PAM.pattern = PAM.pattern, 
-            		outputDir = outputDir2,upstream.search = upstream,
+                        baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
+                        editingWindow.offtargets = editingWindow.offtargets,
+            		outputDir = outputDir2, upstream.search = upstream,
 			downstream.search = downstream, 
             		weights = weights, foldgRNAs = FALSE, overwrite = overwrite,
                         featureWeightMatrixFile = featureWeightMatrixFile,
@@ -217,14 +223,18 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                         seqs = subjects2[[j]], seqname = names(subjects2)[j],
                         max.mismatch = max.mismatch, PAM.size = PAM.size, 
                         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
-                        PAM.location = PAM.location, outfile = outfile) 
+                        PAM.location = PAM.location, outfile = outfile, 
+                        baseEditing = baseEditing, targetBase = targetBase,
+                        editingWindow = editingWindow.offtargets) 
                 else
                     hits <- rbind(hits, searchHits(gRNAs = gRNAs1, PAM = PAM, 
                         PAM.pattern = PAM.pattern,
                         seqs = subjects2[[j]], seqname = names(subjects2)[j],
                         max.mismatch = max.mismatch, PAM.size = PAM.size,
                         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
-                        PAM.location = PAM.location, outfile = outfile))
+                        PAM.location = PAM.location, outfile = outfile,
+                        baseEditing = baseEditing, targetBase = targetBase,
+                        editingWindow = editingWindow.offtargets))
            }
 	} # end of if searchDirection == "both" or searchDirection == "1to2"
 	cat("finish off-target search in sequence 2\n") 
@@ -245,14 +255,18 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
                        seqs = subjects1[[j]], seqname = names(subjects1)[j],
                        max.mismatch = max.mismatch, PAM.size = PAM.size, 
                        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
-                       PAM.location = PAM.location, outfile = outfile) 
+                       PAM.location = PAM.location, outfile = outfile,
+                       baseEditing = baseEditing, targetBase = targetBase,
+                       editingWindow = editingWindow.offtargets) 
                else
                    hits <- rbind(hits, searchHits(gRNAs = gRNAs2, PAM = PAM, 
                        PAM.pattern = PAM.pattern,
                        seqs = subjects1[[j]], seqname = names(subjects1)[j],
                        max.mismatch = max.mismatch, PAM.size = PAM.size, 
                        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
-                       PAM.location = PAM.location, outfile = outfile))
+                       PAM.location = PAM.location, outfile = outfile,
+                       baseEditing = baseEditing, targetBase = targetBase,
+                       editingWindow = editingWindow.offtargets))
 	    }
 	} # if searchDirection == "both" or searchDirection == "2to1"
 	cat("finish off-target search in sequence 1\n")

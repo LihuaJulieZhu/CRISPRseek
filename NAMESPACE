@@ -1,4 +1,5 @@
 import(BiocGenerics)
+importFrom(methods, as)
 import(S4Vectors, except=c(fold, values))
 import(IRanges, except=values)
 import(Biostrings)

@@ -1,3 +1,6 @@
+CHANGES IN VERSION 1.25.9
+     o added parametrs allowing gRNA design for base editor system
+
 CHANGES IN VERSION 1.25.6
      o added parameter ignore.strand to indidate whether gene annotation should be strand-specific
 

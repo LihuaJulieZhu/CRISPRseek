@@ -17,7 +17,10 @@ offTargetAnalysis <-
 "chr6_ssto_hap7"),
 	max.mismatch = 3, 
         PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1,
-        gRNA.pattern = "", min.score = 0, topN = 1000, 
+        gRNA.pattern = "",
+        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13, 
+        editingWindow.offtargets = 5:13,
+        min.score = 0, topN = 1000, 
         topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir,
         fetchSequence = TRUE, upstream = 200, downstream = 200,
@@ -124,6 +127,7 @@ offTargetAnalysis <-
 	efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
 	if (chromToSearch == "" || useEfficacyFromInputSeq)
             potential.gRNAs <- findgRNAs(inputFilePath,
+               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
                paired.orientation = paired.orientation,
@@ -139,6 +143,7 @@ offTargetAnalysis <-
                rule.set = rule.set)
          else
 	    potential.gRNAs <- findgRNAs(inputFilePath,
+               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
                paired.orientation = paired.orientation,
@@ -151,7 +156,9 @@ offTargetAnalysis <-
                max.gap = max.gap, name.prefix = gRNA.name.prefix, 
                format = format,  rule.set = rule.set)
 	if (length(potential.gRNAs) == 0)
-		stop("no gRNAs found!")
+        {
+		return(cat("no gRNAs found!"))
+        }
 	if (length(potential.gRNAs) > 0 && (exportAllgRNAs == "fasta" || exportAllgRNAs == "all"))
 	{
 		writeXStringSet(potential.gRNAs, filepath= file.path(outputDir,
@@ -369,7 +376,9 @@ offTargetAnalysis <-
 	chromToExclude = chromToExclude,
         max.mismatch = max.mismatch, PAM.size = PAM.size, 
         gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
-        PAM.location = PAM.location) 
+        PAM.location = PAM.location,
+        baseEditing = baseEditing, targetBase = targetBase, 
+        editingWindow = editingWindow.offtargets) 
 if (dim(hits)[1] > 0)
 {
     cat("Building feature vectors for scoring ...\n")
@@ -387,7 +396,7 @@ if (dim(hits)[1] > 0)
         scores <- getOfftargetScore(featureVectors, weights = weights)
     #write.table(scores, file="testScore2.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
-
+saveRDS(scores, file="scores.RDS")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
             orgAnn = orgAnn, ignore.strand = ignore.strand,

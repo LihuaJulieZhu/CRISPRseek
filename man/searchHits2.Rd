@@ -11,7 +11,8 @@ Search for off targets for given gRNAs, BSgenome and maximum mismatches
 searchHits2(gRNAs, BSgenomeName, chromToSearch = "all", chromToExclude = "",
     max.mismatch = 3, 
     PAM.size = 3, gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$", 
-    allowed.mismatch.PAM = 1, PAM.location = "3prime")
+    allowed.mismatch.PAM = 1, PAM.location = "3prime",
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
 }
 \arguments{
   \item{gRNAs}{
@@ -61,6 +62,22 @@ Number of degenerative bases in the PAM sequence, default to 1 for N[A|G]G PAM
 \item{PAM.location}{
 PAM location relative to gRNA. For example, spCas9 PAM is located on the 3 prime while
 cpf1 PAM is located on the 5 prime
+}
+\item{baseEditing}{
+Indicate whether to design gRNAs for base editing. Default to FALSE
+If TRUE, please set baseEditing = TRUE, targetBase and editingWidow accordingly.
+}
+\item{targetBase}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the target
+base for base editing systems, default to C for converting C to T in the CBE system.
+Please change it to A if you intend to use the ABE system.
+}
+\item{editingWindow}{
+Applicable only when baseEditing is set to TRUE. It is used to indicate the
+effective editing window to consider for the offtargets search only, 
+default to 5 to 13 which is for the original CBE system.
+Please change it accordingly if the system you use have a different editing window,
+or you would like to include offtargets with the target base in a larger editing window.
 }
 }
 \details{

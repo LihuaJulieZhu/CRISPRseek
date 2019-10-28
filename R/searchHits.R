@@ -2,7 +2,8 @@
 .searchHitsInOneSeq3 <- function(gRNAs, seqs, seqname, 
     PAM = "NGG", PAM.pattern = "NNN$", PAM.size = 3,
     max.mismatch = 2, outfile, allowed.mismatch.PAM = 2,
-    PAM.location = "3prime", gRNA.size = 20)
+    PAM.location = "3prime", gRNA.size = 20,
+    baseEditing = FALSE, targetBase = "C", editingWindow = 5:13)
 {
     if (.preprocess_me2(gRNAs, max.mismatch)) {
         patterns <- PDict(gRNAs, max.mismatch = max.mismatch)
@@ -33,7 +34,8 @@
                 PAM.location = PAM.location,
                 PAM.size = PAM.size,
                 allowed.mismatch.PAM = allowed.mismatch.PAM,
-                seqs = seqs)
+                seqs = seqs,
+		baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
         }
         if (reverseComplement(pattern1) != pattern1) {
             minus_matches <- Views(revseq, all_minus_matches[[i]])
@@ -48,7 +50,8 @@
                     chrom.len = length(seqs), append = TRUE, 
                     PAM.location = PAM.location, PAM.size = PAM.size,
                     allowed.mismatch.PAM = allowed.mismatch.PAM,
-                    seqs = revseq)
+                    seqs = revseq, 
+                    baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
             }
         }
     }
@@ -59,7 +62,8 @@ searchHits <-
 	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, 
         PAM = "NGG", PAM.pattern = "NNN$",
         allowed.mismatch.PAM = 2, PAM.location = "3prime",
-        outfile) 
+        outfile,
+        baseEditing = FALSE, targetBase = "C", editingWindow = 5:13) 
 {
     if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")
@@ -86,7 +90,8 @@ searchHits <-
              PAM.pattern = PAM.pattern, PAM.size = PAM.size,
              max.mismatch = max.mismatch, outfile, 
              allowed.mismatch.PAM = allowed.mismatch.PAM,
-             PAM.location = PAM.location)
+             PAM.location = PAM.location,
+             baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
     cat(">>> DONE searching\n")
     if (file.exists(outfile))
     {
