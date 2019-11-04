@@ -14,7 +14,18 @@ findgRNAs(inputFilePath,  baseEditing = FALSE, targetBase = "C", editingWindow =
     findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
     paired.orientation = c("PAMout", "PAMin"), enable.multicore = FALSE,
     n.cores.max = 6, gRNA.pattern = "", gRNA.size = 20, 
-    overlap.gRNA.positions = c(17,18), min.gap = 0, max.gap = 20,
+    overlap.gRNA.positions = c(17,18),
+    primeEditing = FALSE,
+        PBS.length = 13L,
+        RT.template.length = 8:28,
+        RT.template.pattern = "D$",
+        corrected.seq,
+        targeted.seq.length.change,
+        bp.after.target.end = 15L,
+        target.start,
+        target.end,
+primeEditingPaired.output = "pairedgRNAsForPE.xls", 
+     min.gap = 0, max.gap = 20,
     pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
         baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile,
@@ -77,6 +88,61 @@ The size of the gRNA, default 20
 \item{overlap.gRNA.positions}{
 The required overlap positions of gRNA and restriction enzyme cut site, 
 default 17 and 18
+}
+\item{primeEditing}{
+Indicate whether to design gRNAs for prime editing. Default to FALSE. 
+If true, please set PBS.length, RT.template.length, RT.template.pattern, targeted.seq.length.change,
+bp.after.target.end, target.start, and target.end accordingly}
+\item{PBS.length}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the number of bases to
+ouput for primer binding site.
+}
+\item{RT.template.length}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the number of bases required
+for RT template, default to 8 to 18. Please increase the length if the edit is large insertion. 
+Only gRNAs with calculated RT.template.length falling into the specified range will be 
+in the output. It is calculated as the following. RT.template.length = target.start – cut.start + 
+(target.end - target.start) + targeted.seq.length.change + bp.after.target.end
+} 
+\item{RT.template.pattern}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the RT template sequence pattern, 
+default to not ending with C according to https://doi.org/10.1038/s41586-019-1711-4
+}
+\item{corrected.seq}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the mutated or inserted sequences
+after successful editing.
+}
+\item{targeted.seq.length.change}{
+Applicable only when primeEditing is set to TRUE. It is used to specify 
+the number of targeted sequence length change. Please set it to 0 for base
+ changes, positive numbers for insersion, and negative number for deletion. For example,
+10 means that the corrected sequence will have 10bp insertion, -10 means 
+that the corrected sequence will have 10bp
+deletion, and 0 means only bases have been changed and the sequence length remains the same
+}
+\item{bp.after.target.end}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the number of
+bases to add after the target change end site as part of RT template. Please refer to
+RT.template.length for how this parameter influences the RT.template.length calculation
+which is used as a filtering criteria in pregRNA selection.
+}
+\item{target.start}{
+Applicable only when primeEditing is set to TRUE. It is used to specify
+the start location in the input sequence to make changes, which will be
+used to obtain the RT template sequence. Please also refer to
+RT.template.length for how this parameter influences the RT.template.length calculation
+which is used as a filtering criteria in pregRNA selection.
+}
+\item{target.end}{
+Applicable only when primeEditing is set to TRUE. It is used to specify
+the end location in the input sequnence to make changes, which will be
+used to obtain the RT template sequence. Please also refer to
+RT.template.length for how this parameter influences the RT.template.length calculation
+which is used as a filtering criteria in pregRNA selection.
+}
+\item{primeEditingPaired.output}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the file path to save
+ pegRNA and the second gRNA with PBS, RT.template, gRNA sequences, default pairedgRNAsForPE.xls
 }
   \item{min.gap}{
 Minimum distance between two oppositely oriented gRNAs to be valid paired 
@@ -187,6 +253,23 @@ offTargetAnalysis
                  "DoenchNBT2014.csv", package = "CRISPRseek"),
             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
             editingWindow=20, targetBase = "C")
+
+     inputSeq <-  DNAStringSet("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG")
+     gRNAs <-  findgRNAs(inputFilePath =  inputSeq,
+         pairOutputFile = "testpairedgRNAs1.xls",
+         PAM.size = 3L,
+         gRNA.size = 20L,
+         overlap.gRNA.positions = c(17L,18L),
+         PBS.length = 15,
+         corrected.seq = "T",
+         RT.template.pattern = "D$",
+         RT.template.length = 8:30, 
+         targeted.seq.length.change = 0,
+         bp.after.target.end = 15,
+         target.start = 46,
+         target.end = 46,
+         paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
+         primeEditing = TRUE, findPairedgRNAOnly = TRUE)
  }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

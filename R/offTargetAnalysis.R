@@ -20,6 +20,16 @@ offTargetAnalysis <-
         gRNA.pattern = "",
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8, 
         editingWindow.offtargets = 4:8,
+        primeEditing = FALSE, 
+        PBS.length = 13L,
+	RT.template.length = 8:28,
+        RT.template.pattern = "D$",
+        corrected.seq,
+        targeted.seq.length.change,
+        bp.after.target.end = 15L,
+        target.start,
+        target.end,
+        primeEditingPaired.output = "pairedgRNAsForPE.xls",
         min.score = 0, topN = 1000, 
         topN.OfftargetTotalScore = 10, 
         annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir,
@@ -127,7 +137,9 @@ offTargetAnalysis <-
 	efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
 	if (chromToSearch == "" || useEfficacyFromInputSeq)
             potential.gRNAs <- findgRNAs(inputFilePath,
+               overlap.gRNA.positions = overlap.gRNA.positions,
                baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
+               primeEditing = primeEditing,
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
                paired.orientation = paired.orientation,
@@ -143,7 +155,18 @@ offTargetAnalysis <-
                rule.set = rule.set)
          else
 	    potential.gRNAs <- findgRNAs(inputFilePath,
-               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
+               overlap.gRNA.positions = overlap.gRNA.positions,
+              baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
+              primeEditing = primeEditing,
+              PBS.length = PBS.length,
+                RT.template.length = RT.template.length,
+                RT.template.pattern = RT.template.pattern,
+                corrected.seq = corrected.seq,
+                targeted.seq.length.change = targeted.seq.length.change,
+                bp.after.target.end = bp.after.target.end,
+                target.start = target.start,
+                target.end = target.end,
+             primeEditingPaired.output =  primeEditingPaired.output,
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
                paired.orientation = paired.orientation,
@@ -159,6 +182,7 @@ offTargetAnalysis <-
         {
 		return(cat("no gRNAs found!"))
         }
+        
 	if (length(potential.gRNAs) > 0 && (exportAllgRNAs == "fasta" || exportAllgRNAs == "all"))
 	{
 		writeXStringSet(potential.gRNAs, filepath= file.path(outputDir,

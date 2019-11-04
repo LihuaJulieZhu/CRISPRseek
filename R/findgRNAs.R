@@ -42,7 +42,6 @@
             pos.PAMs <- pos.PAMs[ends.gRNA <= length(subject)]
 	    starts.gRNA <- starts.gRNA[ends.gRNA <= length(subject)]
             ends.gRNA <- ends.gRNA[ends.gRNA <= length(subject)]
-
             gRNA.seqs <- as.character(Views(subject,
                  start = starts.gRNA,
                  end = ends.gRNA))
@@ -183,6 +182,16 @@ findgRNAs <-
         enable.multicore = FALSE, n.cores.max = 6,
         gRNA.pattern = "", gRNA.size = 20, 
 	overlap.gRNA.positions = c(17,18),
+primeEditing = FALSE, 
+        PBS.length = 13L,
+        RT.template.length = 8:28,
+        RT.template.pattern = "D$",
+        corrected.seq,
+        targeted.seq.length.change,
+        bp.after.target.end = 15L,
+        target.start,
+        target.end,
+primeEditingPaired.output = "pairedgRNAsForPE.xls",
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
 	featureWeightMatrixFile = system.file("extdata", 
            "DoenchNBT2014.csv", package = "CRISPRseek"), 
@@ -349,14 +358,43 @@ findgRNAs <-
                             minus.gRNAs[minus.index,2])
                         forEffi <- rbind(plus.gRNAs[plus.index,], minus.gRNAs[minus.index,])
                     }
+                    if (primeEditing)
+                    {
+                        paired <- designPEs(subject,
+                           PAM.size = PAM.size,
+                           gRNA.size = gRNA.size,
+                           overlap.gRNA.positions = overlap.gRNA.positions,
+                           PBS.length = PBS.length,
+                           paired.gRNAs = data.frame(paired),
+                           RT.template.length = RT.template.length,
+                           RT.template.pattern = RT.template.pattern,
+                           corrected.seq = corrected.seq,
+                           targeted.seq.length.change = targeted.seq.length.change,
+                           bp.after.target.end = bp.after.target.end,
+                           target.start = target.start,
+                           target.end = target.end,
+                           primeEditingPaired.output =  primeEditingPaired.output, 
+                           col.names = colNames, append = toAppend)
+                         paired <- paired[,1:5]
+                         all.gRNAs <- DNAStringSet(c(as.character(paired[,3]),
+                            as.character(paired[,1])))
+                         names(all.gRNAs) <- c(as.character(paired[,4]),
+                            as.character(paired[,2])) 
+                         all.gRNAs <- unique(all.gRNAs)
+                         forEffi <- forEffi[forEffi[,2] %in% names(all.gRNAs),] 
+                    }
                     if (dim(paired)[1] == 1)
+                    {
                         write.table(paired, file = pairOutputFile, sep = "\t", 
                             row.names = FALSE, quote = FALSE, append = toAppend,
 			                col.names = colNames)
+                     }
                     else
+                    {
                         write.table(paired[order(as.character(paired[,4])), ], 
                             file = pairOutputFile, sep = "\t", row.names = FALSE,
                             quote = FALSE, append = toAppend, col.names = colNames)
+                    }
                 } ## if paired found
                 else if (findPairedgRNAOnly)
                 {

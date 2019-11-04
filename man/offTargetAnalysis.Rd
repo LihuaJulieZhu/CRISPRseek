@@ -28,6 +28,16 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     gRNA.pattern = "", 
     baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
     editingWindow.offtargets = 4:8,
+    primeEditing = FALSE,
+        PBS.length = 13L,
+        RT.template.length = 8:28,
+        RT.template.pattern = "D$",
+        corrected.seq,
+        targeted.seq.length.change,
+        bp.after.target.end = 15L,
+        target.start,
+        target.end,
+    primeEditingPaired.output = "pairedgRNAsForPE.xls",
     min.score = 0, topN = 1000, 
     topN.OfftargetTotalScore = 10, annotateExon = TRUE,
     txdb, orgAnn, ignore.strand = TRUE,
@@ -77,9 +87,11 @@ to be searched for potential gRNAs
 Format of the input file, fasta, fastq and bed are supported, default fasta
 }
 \item{header}{
-Indicate whether the input file contains header, default FALSE, only applies to bed format}
+Indicate whether the input file contains header, default FALSE, only 
+applies to bed format}
   \item{gRNAoutputName}{
-Specify the name of the gRNA outupt file when inputFilePath is DNAStringSet object instead of file path
+Specify the name of the gRNA outupt file when inputFilePath is DNAStringSet 
+object instead of file path
 }
   \item{findgRNAs}{
 Indicate whether to find gRNAs from the sequences in the input file or skip 
@@ -112,7 +124,8 @@ on plus strand called forward gRNA. TRUE or FALSE, default FALSE
 }
 \item{annotatePaired}{Indicate whether to output paired information, default TRUE}
 \item{paired.orientation}{PAMin orientation means the two adjacent PAMs on the sense and 
-antisense strands face inwards towards each other like N21GG and CCN21 whereas PAMout orientation
+antisense strands face inwards towards each other like N21GG and CCN21 whereas 
+PAMout orientation
 means they face away from each other like CCN21 and N21GG}
   \item{min.gap}{
 Minimum distance between two oppositely oriented gRNAs to be valid paired 
@@ -201,6 +214,61 @@ from the 5' PAM), which is for the original CBE system.
 Please change it accordingly if the system you use have a different editing window,
 or you would like to include offtargets with the target base in a larger editing window.
 }
+\item{primeEditing}{
+Indicate whether to design gRNAs for prime editing. Default to FALSE. 
+If true, please set PBS.length, RT.template.length, RT.template.pattern, targeted.seq.length.change,
+bp.after.target.end, target.start, and target.end accordingly}
+\item{PBS.length}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the number of bases to
+ouput for primer binding site.
+}
+\item{RT.template.length}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the number of bases required
+for RT template, default to 8 to 18. Please increase the length if the edit is large insertion. 
+Only gRNAs with calculated RT.template.length falling into the specified range will be 
+in the output. It is calculated as the following. RT.template.length = target.start – cut.start + 
+(target.end - target.start) + targeted.seq.length.change + bp.after.target.end
+} 
+\item{RT.template.pattern}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the RT template sequence pattern, 
+default to not ending with C according to https://doi.org/10.1038/s41586-019-1711-4
+}
+\item{corrected.seq}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the mutated or inserted sequences
+after successful editing.
+}
+\item{targeted.seq.length.change}{
+Applicable only when primeEditing is set to TRUE. It is used to specify 
+the number of targeted sequence length change. Please set it to 0 for base
+ changes, positive numbers for insersion, and negative number for deletion. For example,
+10 means that the corrected sequence will have 10bp insertion, -10 means 
+that the corrected sequence will have 10bp
+deletion, and 0 means only bases have been changed and the sequence length remains the same
+}
+\item{bp.after.target.end}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the number of
+bases to add after the target change end site as part of RT template. Please refer to
+RT.template.length for how this parameter influences the RT.template.length calculation
+which is used as a filtering criteria in pregRNA selection.
+}
+\item{target.start}{
+Applicable only when primeEditing is set to TRUE. It is used to specify
+the start location in the input sequence to make changes, which will be
+used to obtain the RT template sequence. Please also refer to
+RT.template.length for how this parameter influences the RT.template.length calculation
+which is used as a filtering criteria in pregRNA selection.
+}
+\item{target.end}{
+Applicable only when primeEditing is set to TRUE. It is used to specify
+the end location in the input sequnence to make changes, which will be
+used to obtain the RT template sequence. Please also refer to
+RT.template.length for how this parameter influences the RT.template.length calculation
+which is used as a filtering criteria in pregRNA selection.
+}
+\item{primeEditingPaired.output}{
+Applicable only when primeEditing is set to TRUE. It is used to specify the file path to save
+ pegRNA and the second gRNA with PBS, RT.template, gRNA sequences, default pairedgRNAsForPE.xls
+}
   \item{min.score}{
 minimum score of an off target to included in the final output, default 0
 }
@@ -267,20 +335,31 @@ Please note, for PAM located on the 5 prime, need to include the length of the g
 the extended sequence on the 3 prime
 }
 \item{featureWeightMatrixFile}{
-Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used. To use alternative weight matrix file, please input a csv file with first column containing significant features and the second column containing the corresponding weights for the features. Please see Doench et al., 2014 for details.
+Feature weight matrix file used for calculating gRNA efficiency. By default DoenchNBT2014 
+weight matrix is used. To use alternative weight matrix file, please input a csv file
+with first column containing significant features and the second column containing the
+corresponding weights for the features. Please see Doench et al., 2014 for details.
 }
 \item{useScore}{
-	Default TRUE, display in gray scale with the darkness indicating the gRNA efficacy. The taller bar shows the Cas9 cutting site. If set to False, efficacy will not show. Instead, gRNAs in plus strand will be colored red and gRNAs in negative strand will be colored green. 
+	Default TRUE, display in gray scale with the darkness indicating the gRNA efficacy. 
+The taller bar shows the Cas9 cutting site. If set to False, efficacy will not show. 
+Instead, gRNAs in plus strand will be colored red and gRNAs in negative
+strand will be colored green. 
 }
 \item{useEfficacyFromInputSeq}{
-Default FALSE. If set to TRUE, summary file will contain gRNA efficacy calculated from input sequences instead of from off-target analysis. Set it to TRUE if the input sequence is from a different species than the one used for off-target analysis.
+Default FALSE. If set to TRUE, summary file will contain gRNA efficacy calculated
+from input sequences instead of from off-target analysis. Set it to TRUE if
+the input sequence is from a different species than the one used for 
+off-target analysis.
 }
 \item{outputUniqueREs}{
-Default TRUE. If set to TRUE, summary file will contain REs unique to the cleavage site within 100 or 200 bases surrounding the gRNA sequence.
+Default TRUE. If set to TRUE, summary file will contain REs unique to the 
+cleavage site within 100 or 200 bases surrounding the gRNA sequence.
 }
 \item{foldgRNAs}{
 Default FALSE. If set to TRUE, summary file will contain minimum free energy of the secondary
-structure of gRNA with gRNA backbone from GeneRfold package provided that GeneRfold package has been installed.
+structure of gRNA with gRNA backbone from GeneRfold package provided that 
+GeneRfold package has been installed.
 }
 \item{gRNA.backbone}{
 gRNA backbone constant region sequence. Default to the
@@ -303,14 +382,16 @@ to preferred PAM sequence
 }
 \item{subPAM.position}{
    Applicable only when scoring.method is set to CFDscore
-The start and end positions of the sub PAM. Default to 22 and 23 for spCas9 with 20bp gRNA and NGG as preferred PAM. For Cpf1, it could be c(1,2).
+The start and end positions of the sub PAM. Default to 22 and 23 for spCas9
+with 20bp gRNA and NGG as preferred PAM. For Cpf1, it could be c(1,2).
 }
 \item{PAM.location}{
 PAM location relative to gRNA. For example, default to 3prime for spCas9 PAM. 
 Please set to 5prime for cpf1 PAM since it's PAM is located on the 5 prime end
 }
 \item{rule.set}{
-Specify a rule set scoring system for calculating gRNA efficacy. Please note that Root_RuleSet2_2016 requires the following python packages with specified verion and python 2.7. 
+Specify a rule set scoring system for calculating gRNA efficacy. Please note that Root_RuleSet2_2016 
+requires the following python packages with specified verion and python 2.7. 
 1. scikit-learn 0.16.1
 2. pickle
 3. pandas
@@ -320,7 +401,8 @@ Specify a rule set scoring system for calculating gRNA efficacy. Please note tha
 \item{mismatch.activity.file}{
 Applicable only when scoring.method is set to CFDscore
 A comma separated (csv) file containing the cleavage rates for all possible types of
-single nucleotide mismatche at each position of the gRNA. By default, using the supplemental Table 19 from Doench et al., Nature Biotechnology 2016
+single nucleotide mismatche at each position of the gRNA. By default, using the 
+supplemental Table 19 from Doench et al., Nature Biotechnology 2016
 }
 }
 \details{
@@ -342,6 +424,7 @@ targeting specificity of rNA-guided Cas9 nucleases. Nature Biotechnology
 Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
 Doench JG et al., Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology Jan 18th 2016
+Anzalone et al., Search-and-replace genome editing without double-strand breaks or donor DNA. Nature October 2019 https://www.nature.com/articles/s41586-019-1711-4
 }
 \author{
 Lihua Julie Zhu
@@ -404,6 +487,28 @@ CRISPRseek
                  PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
                  subPAM.position = c(1,2), baseEditing = TRUE, 
                  editingWindow = 10:20, targetBase = "A")
+
+        inputFilePath <- DNAStringSet("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG")
+        names(inputFilePath) <- "testPE"
+        results3 <- offTargetAnalysis(inputFilePath, 
+            gRNAoutputName = "testPEgRNAs",
+            BSgenomeName = Hsapiens, chromToSearch = "chrX",
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+            orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
+            outputDir = outputDir, overwrite = TRUE,
+            PAM.size = 3L,
+            gRNA.size = 20L,
+            overlap.gRNA.positions = c(17L,18L),
+            PBS.length = 15,
+            corrected.seq = "T",
+            RT.template.pattern = "D$",
+            RT.template.length = 8:30, 
+            targeted.seq.length.change = 0,
+            bp.after.target.end = 15,
+            target.start = 20,
+            target.end = 20,
+            paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
+            primeEditing = TRUE, findPairedgRNAOnly = TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
