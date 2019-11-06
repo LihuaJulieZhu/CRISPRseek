@@ -561,19 +561,20 @@ saveRDS(scores, file="scores.RDS")
        REs.isUnique100 = ""
        REs.isUnique50 = ""
     } 
-   # if (foldgRNAs)
-   #  {
-#	gRNAs.withoutPAM <- substr(as.character(summary$gRNAsPlusPAM), 1, gRNA.size)
-#        folded.gRNAs <- foldgRNAs(gRNAs.withoutPAM, gRNA.backbone = gRNA.backbone, 
-#           temperature = temperature)
-#	if (length(dim(folded.gRNAs)) > 0)
-#	{
-#	   if (dim(folded.gRNAs)[1] >1)
-#	      summary <- cbind(summary, folded.gRNAs[,-1])
-#	   else
-#	      summary <- data.frame(c(summary, folded.gRNAs[,-1]))	
-#	}
-#     }
+    if (foldgRNAs)
+     {
+        source(system.file("extdata/foldgRNAs.R",package = "CRISPRseek"))
+	gRNAs.withoutPAM <- substr(as.character(summary$gRNAsPlusPAM), 1, gRNA.size)
+        folded.gRNAs <- foldgRNAs(gRNAs.withoutPAM, gRNA.backbone = gRNA.backbone, 
+           temperature = temperature)
+	if (length(dim(folded.gRNAs)) > 0)
+	{
+	   if (dim(folded.gRNAs)[1] >1)
+	      summary <- cbind(summary, folded.gRNAs[,-1])
+	   else
+	      summary <- data.frame(c(summary, folded.gRNAs[,-1]))	
+	}
+     }
     #write.table(summary[order(as.character(summary$forViewInUCSC)), ], 
     ### even there is no perfect target for a gRNA, it will be kept in the summary file
     ### need to calculate the topN offtarget score and distance correctly yet if include those gRNAs without target
