@@ -27,7 +27,8 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     overwrite = FALSE, baseBeforegRNA = 4, 
     baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
        "DoenchNBT2014.csv", package = "CRISPRseek"), foldgRNAs = FALSE, 
-    gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+    gRNA.backbone = 
+"GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
     temperature = 37,
     scoring.method = c("Hsu-Zhang", "CFDscore"),
         subPAM.activity = hash( AA =0,
@@ -315,10 +316,16 @@ CRISPRseek
                outputDir = getwd(), 
                overwrite = TRUE, baseEditing = TRUE)
 
-    inputFile1Path <- DNAStringSet("TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG")
+    inputFile1Path <- 
+DNAStringSet(
+"TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"
+)
     names(inputFile1Path) <- "seq1"
     
-    inputFile2Path <- DNAStringSet("TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG")
+    inputFile2Path <- 
+DNAStringSet(
+"TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"
+)
     names(inputFile2Path) <- "seq2"
 
     seqs <- compare2Sequences(inputFile1Path, inputFile2Path,

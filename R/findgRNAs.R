@@ -199,7 +199,7 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
         baseAfterPAM = 3,
 	calculategRNAEfficacy = FALSE, efficacyFile,
         PAM.location = "3prime",
-        rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
+        rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"))
 {
     rule.set <- match.arg(rule.set)
     paired.orientation <- match.arg(paired.orientation)
@@ -460,6 +460,11 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
         else if (rule.set == "Root_RuleSet2_2016")
         {
           effi <- calculategRNAEfficiency2(all.gRNAs.df[,5])
+        }
+        else if (rule.set == "CRISPRscan")
+        {
+          effi <- calculategRNAEfficiencyCRISPRscan(all.gRNAs.df[,5], 
+              featureWeightMatrix = featureWeightMatrix)
         }
         extendedSequences <- cbind(all.gRNAs.df, effi)
         colnames(extendedSequences)  <- c("gRNAplusPAM", "name", "start", "strand", 

@@ -24,12 +24,14 @@ findgRNAs(inputFilePath,  baseEditing = FALSE, targetBase = "C", editingWindow =
         bp.after.target.end = 15L,
         target.start,
         target.end,
-primeEditingPaired.output = "pairedgRNAsForPE.xls", 
-     min.gap = 0, max.gap = 20,
-    pairOutputFile, name.prefix = "", featureWeightMatrixFile = system.file("extdata", 
+        primeEditingPaired.output = "pairedgRNAsForPE.xls", 
+    min.gap = 0, max.gap = 20,
+    pairOutputFile, name.prefix = "", 
+    featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), baseBeforegRNA = 4, 
         baseAfterPAM = 3, calculategRNAEfficacy = FALSE, efficacyFile,
-    PAM.location = "3prime", rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
+    PAM.location = "3prime", 
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -216,6 +218,34 @@ offTargetAnalysis
         "inputseq.fa", package = "CRISPRseek"),
         pairOutputFile = "testpairedgRNAs.xls",
         findPairedgRNAOnly = TRUE)               
+
+
+    ##### predict gRNA efficacy using CRISPRscan
+    featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
+            package = "CRISPRseek")
+
+    findgRNAs(inputFilePath = system.file("extdata",
+        "inputseq.fa", package = "CRISPRseek"),
+        pairOutputFile = "testpairedgRNAs.xls",
+        findPairedgRNAOnly = FALSE,
+        calculategRNAEfficacy= TRUE,
+        rule.set = "CRISPRscan", 
+        baseBeforegRNA = 6, baseAfterPAM = 6,
+        featureWeightMatrixFile = featureWeightMatrixFile,
+        efficacyFile = "testCRISPRscanEfficacy.xls"
+     )
+
+     findgRNAs(inputFilePath = system.file("extdata",
+        "testCRISPRscan.fa", package = "CRISPRseek"),
+        pairOutputFile = "testpairedgRNAs.xls",
+        findPairedgRNAOnly = FALSE,
+        calculategRNAEfficacy= TRUE,
+        rule.set = "CRISPRscan",
+        baseBeforegRNA = 6, baseAfterPAM = 6,
+        featureWeightMatrixFile = featureWeightMatrixFile,
+        efficacyFile = "testCRISPRscanEfficacy.xls"
+     )
+
     findgRNAs(inputFilePath = system.file("extdata", 
         "cpf1.fa", package = "CRISPRseek"), 
         findPairedgRNAOnly=FALSE, 
@@ -254,7 +284,9 @@ offTargetAnalysis
             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
             editingWindow=20, targetBase = "C")
 
-     inputSeq <-  DNAStringSet("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG")
+     inputSeq <-  DNAStringSet(paste(
+"CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
+"TCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
      gRNAs <-  findgRNAs(inputFilePath =  inputSeq,
          pairOutputFile = "testpairedgRNAs1.xls",
          PAM.size = 3L,

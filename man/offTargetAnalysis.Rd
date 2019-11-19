@@ -49,7 +49,8 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"), useScore = TRUE, useEfficacyFromInputSeq = FALSE,
     outputUniqueREs = TRUE, foldgRNAs = FALSE, 
-    gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+    gRNA.backbone = 
+"GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
     temperature = 37,
     overwrite = FALSE,
     scoring.method = c("Hsu-Zhang", "CFDscore"),
@@ -71,7 +72,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
-     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -423,6 +424,7 @@ targeting specificity of rNA-guided Cas9 nucleases. Nature Biotechnology
 31:827-834
 Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
+Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al. CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nat Methods 12, 982–988 (2015) doi:10.1038/nmeth.3543
 Doench JG et al., Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology Jan 18th 2016
 Anzalone et al., Search-and-replace genome editing without double-strand breaks or donor DNA. Nature October 2019 https://www.nature.com/articles/s41586-019-1711-4
 }
@@ -455,7 +457,22 @@ CRISPRseek
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
 	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
             outputDir = outputDir, overwrite = TRUE)
-  
+ 
+       #### predict gRNA efficacy using CRISPRscan  
+       featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
+            package = "CRISPRseek")
+
+       results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
+            annotatePaired = FALSE,
+            BSgenomeName = Hsapiens, chromToSearch = "chrX",
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+            orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
+            rule.set = "CRISPRscan",
+            baseBeforegRNA = 6, baseAfterPAM = 6,
+            featureWeightMatrixFile = featureWeightMatrixFile, 
+            outputDir = outputDir, overwrite = TRUE)
+
        ######## PAM is on the 5 prime side
        results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
@@ -477,7 +494,7 @@ CRISPRseek
                  PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
                  subPAM.position = c(1,2), baseEditing = TRUE, editingWindow =20, targetBase = "G")
 
-        results2 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
+        results.testBE <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
                  REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
                  annotatePaired = FALSE,
                  BSgenomeName = Hsapiens, chromToSearch = "chrX",
@@ -488,7 +505,9 @@ CRISPRseek
                  subPAM.position = c(1,2), baseEditing = TRUE, 
                  editingWindow = 10:20, targetBase = "A")
 
-        inputFilePath <- DNAStringSet("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG")
+        inputFilePath <- DNAStringSet(paste(
+"CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAA",
+"CTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
         names(inputFilePath) <- "testPE"
         results3 <- offTargetAnalysis(inputFilePath, 
             gRNAoutputName = "testPEgRNAs",

@@ -5,11 +5,12 @@ filterOffTarget <-
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"),
-    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016")      
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan")      
 )
 {
     rule.set <- match.arg(rule.set)
-    if (featureWeightMatrixFile != ""  & file.exists(featureWeightMatrixFile))
+   
+    if (featureWeightMatrixFile != ""  && file.exists(featureWeightMatrixFile))
 	{
 		featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
 	}
@@ -163,6 +164,11 @@ filterOffTarget <-
         else if (rule.set == "Root_RuleSet2_2016")
         {
             gRNAefficiency <- calculategRNAEfficiency2(extendedSequence)
+        }
+         else if (rule.set == "CRISPRscan")
+        {
+            gRNAefficiency <- calculategRNAEfficiencyCRISPRscan(extendedSequence,
+              featureWeightMatrix = featureWeightMatrix)
         }
 	 ontargets <- cbind(ontargets, gRNAefficacy = gRNAefficiency)
          Offtargets <- merge(Offtargets, ontargets, all = TRUE)

@@ -64,7 +64,7 @@ offTargetAnalysis <-
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
-     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")

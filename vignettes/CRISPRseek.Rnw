@@ -270,10 +270,11 @@ chromToSearch = "", outputDir = outputDir, overwrite = TRUE)
 }
 Calling the function \Rfunction{offTargetAnalysis} with max.mismatch = 0 
 results in quick gRNA search with gRNA efficacy prediction 
-without off-target analysis. Parameter rule.set can be set to 
+without off-target analysis. Parameter rule.set can be set to CRISPRscan published in 2015 or
 Root\_RuleSet2\_2016 to calculate efficacy using the rule set 2 published in 2016.
 By default, gRNA efficacy is predicted using the rule set 1 published in 2014.
-To use the rule set 2, first install python 2.7, then install the python packages: scikit-learn 0.16.1, pickle, pandas, numpy nd scipy. In a R session, type the following script to use python 2.7 since rule set 2 is implemented in python 2.7.
+To use the rule set 2, first install python 2.7, then install the python 
+packages: scikit-learn 0.16.1, pickle, pandas, numpy nd scipy. In a R session, type the following script to use python 2.7 since rule set 2 is implemented in python 2.7.
 Sys.setenv(PATH = paste("~/anaconda2/bin", Sys.getenv("PATH"), sep=":")) 
 system("python --version") should output Python 2.7.15.
 In addition, parameters findgRNAsWithREcutOnly and findPairedgRNAOnly 
@@ -285,6 +286,22 @@ gRNAs in paired configuration or not.
 results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
 annotateExon = FALSE,findPairedgRNAOnly = TRUE, chromToSearch = "chrX",
 max.mismatch = 0, BSgenomeName = Hsapiens, outputDir = outputDir, overwrite = TRUE)
+@
+\end{scriptsize}
+
+Here is an example on how to use CRISPRscan to calculate efficacy. Please remember 
+to reset baseBeforegRNA, baseAfterPAM, rule.set, and featureWeightMatrixFile.
+\begin{scriptsize}
+<<>>=
+results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+    annotateExon = FALSE,findPairedgRNAOnly = TRUE, chromToSearch = "chrX",
+    max.mismatch = 0, BSgenomeName = Hsapiens, 
+    rule.set = "CRISPRscan",
+    baseBeforegRNA = 6,
+    baseAfterPAM = 6,
+    featureWeightMatrixFile =  system.file("extdata", "Morenos-Mateo.csv",
+            package = "CRISPRseek"),
+    outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
 
@@ -348,6 +365,45 @@ results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE,
     outputDir = outputDir, overwrite = TRUE)
 @
 \end{scriptsize}
+\subsection{Scenario 11. Design gRNAs for base editing systems}
+Cytosine or adenine base editors (CBEs or ABEs) can introduce 
+specific DNA C-to-T or A-to-G alterations.
+Calling the function \Rfunction{offTargetAnalysis} with 
+baseEditing set to TRUE, and targetBase, editingWindow and 
+editingWindow.offtarget set appropriately. By default, targetBase
+is set to C, editingWindow to 4 to 8 and editingWindow.offtargets to 
+4 to 8 for the CBE system developed in the Liu Laboratory.
+\begin{scriptsize}
+<<>>=
+offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
+                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
+                 annotatePaired = FALSE,
+                 BSgenomeName = Hsapiens, chromToSearch = "chrX",
+                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
+                 outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
+                 PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
+                 subPAM.position = c(1,2), baseEditing = TRUE,
+                 editingWindow = 10:20, targetBase = "A")
+@
+\end{scriptsize}
+\subsection{Scenario 12. Design gRNAs and pegRNAs for the Prime Editor}
+Recently, the Liu Laboratory developed the Prime Editor (PE), 
+which is more versatile and flexible with high efficacy and without 
+the need to make a DSB or providing donor template. It can be used to 
+make all possible 12 single base changes, 1-44 bp insertions,
+or 1-80 bp deletions. This editing system can be programmed to 
+correct about 89 percent of human pathagenic variants. To design 
+gRNAs and pegRNAs for PE, you need to set primeEditing to TRUE, set 
+seq.length.changed, bp.after.target.end, PBS.length (default 13),
+RT.template.length (default 8 to 28), min.gap (default 40),
+max.gap (default 90), findPairedgRNAOnly (needs to be set to TRUE),
+paired.orientation (needs to be set to "PAMin"), target.start, target.end,
+and correct.seq accordingly. 
+
+Please type help(offTargetAnalysis) for detailed
+description of these parameters and examples for designing PE.
+
 \section{References}
 \begin{thebibliography}{5}
 \bibitem[Lihua Julie Zhu, 2015]{Zhu, 2015} Lihua Julie Zhu. Overview of guide 
@@ -368,9 +424,20 @@ Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
 {Zhu et al., 2014} Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael
 Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide
 RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
+\bibitem[Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al., 2015]
+{Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al., 2015}
+Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al. CRISPRscan: 
+designing highly efficient sgRNAs for CRISPR-Cas9 targeting 
+in vivo. Nat Methods 12, 982–988 (2015) doi:10.1038/nmeth.3543
 \bibitem[Doench JG et al., 2016]{Doench et al., 2016} Doench et al. Optimized sgRNA
 design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nat Biotechnol.
 2016 Jan 18. doi:10.1038/nbt.3437
+\bibitem[Komor et al., 2016]{Komor et al., 2016}Komor, A. C., Kim, Y. B., Packer, M. S., 
+Zuris, J. A. and Liu, D. R. Programmable editing of a target base in 
+genomic DNA without double-stranded DNA cleavage. Nature 533, 420–424 (2016).
+\bibitem[Gaudelli et al., 2017]{Gaudelli et al., 2017}Gaudelli, N. M. et al. 
+Programmable base editing of A or T to G or C in genomic DNA without 
+DNA cleavage. Nature 551, 464–471 (2017).
 \end{thebibliography}
 \section{Session Info}
 <<>>=

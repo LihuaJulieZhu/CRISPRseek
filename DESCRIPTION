@@ -1,15 +1,15 @@
 Package: CRISPRseek
 Type: Package
 Title: Design of target-specific guide RNAs in CRISPR-Cas9, genome-editing systems
-Version: 1.27.3
-Date: 2019-11-06
+Version: 1.27.4
+Date: 2019-11-19
 Encoding: UTF-8
 Author: Lihua Julie Zhu, Benjamin R. Holmes, Hervé Pagès, Michael Lawrence, Isana Veksler-Lublinsky, Victor Ambros, Neil Aronin and Michael Brodsky
 Maintainer: Lihua Julie Zhu <julie.zhu@umassmed.edu>
 Depends: R (>= 3.0.1), BiocGenerics, Biostrings
 Imports: parallel, data.table, seqinr, S4Vectors (>= 0.9.25), IRanges, BSgenome, BiocParallel, hash, methods
 Suggests:  RUnit, BiocStyle, BSgenome.Hsapiens.UCSC.hg19, TxDb.Hsapiens.UCSC.hg19.knownGene, org.Hs.eg.db
-Description: The package includes functions to find potential guide RNAs for the CRISPR editing system including Base Editors and Prime Editors for input target sequences, optionally filter guide RNAs without restriction enzyme cut site, or without paired guide RNAs, genome-wide search for off-targets, score, rank, fetch flank sequence and indicate whether the target and off-targets are located in exon region or not. Potential guide RNAs are annotated with total score of the top5 and topN off-targets, detailed topN mismatch sites, restriction enzyme cut sites, and paired guide RNAs. This package leverages Biostrings and BSgenome packages.
+Description: The package includes functions to find potential guide RNAs for the CRISPR editing system including Base Editors and the Prime Editor for input target sequences, optionally filter guide RNAs without restriction enzyme cut site, or without paired guide RNAs, genome-wide search for off-targets, score, rank, fetch flank sequence and indicate whether the target and off-targets are located in exon region or not. Potential guide RNAs are annotated with total score of the top5 and topN off-targets, detailed topN mismatch sites, restriction enzyme cut sites, and paired guide RNAs. This package leverages Biostrings and BSgenome packages.
 License: GPL (>= 2)
 LazyLoad: yes
 biocViews: ImmunoOncology, GeneRegulation, SequenceMatching, CRISPR
