@@ -18,7 +18,7 @@ filterOffTarget(scores, min.score = 0.01, topN = 200,
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"),
-    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"))
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
