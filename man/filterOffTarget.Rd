@@ -18,7 +18,8 @@ filterOffTarget(scores, min.score = 0.01, topN = 200,
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"),
-    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"))
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+    calculategRNAefficacyForOfftargets = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -101,6 +102,9 @@ Feature weight matrix file used for calculating gRNA efficiency. By default Doen
 }
 \item{rule.set}{
 Specify a rule set scoring system for calculating gRNA efficacy.
+}
+\item{calculategRNAefficacyForOfftargets}{
+Default to TRUE to output gRNA efficacy for offtargets as well as ontargets. Set it to FALSE if only need gRNA efficacy calculated for ontargets only to speed up the analysis. Please refer to https://support.bioconductor.org/p/133538/#133661 for potential use cases of offtarget efficacies.
 }
 }
 \details{

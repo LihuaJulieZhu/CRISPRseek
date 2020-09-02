@@ -5,7 +5,8 @@ filterOffTarget <-
     baseBeforegRNA = 4, baseAfterPAM = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"),
-    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan")      
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+   calculategRNAefficacyForOfftargets = TRUE
 )
 {
     rule.set <- match.arg(rule.set)
@@ -139,7 +140,7 @@ filterOffTarget <-
 		Offtargets <- annotateOffTargets(Offtargets, txdb, orgAnn, ignore.strand)
 	}
     ontargets <- subset(Offtargets, Offtargets$n.mismatch == 0)
-    if (dim(ontargets)[1] > 0)
+    if (!calculategRNAefficacyForOfftargets && dim(ontargets)[1] > 0)
     {
 	chr <- as.character(ontargets$chrom)
         strand <- as.character(ontargets$strand)
@@ -149,12 +150,25 @@ filterOffTarget <-
         End <- ifelse(strand=="-",
               as.numeric(as.character( ontargets$chromEnd)) + as.numeric(baseBeforegRNA),
               as.numeric(as.character( ontargets$chromEnd)) + as.numeric(baseAfterPAM))
+    }
+    else if (calculategRNAefficacyForOfftargets && dim(Offtargets)[1] > 0)
+    {
+	chr <- as.character(Offtargets$chrom)
+        strand <- as.character(Offtargets$strand)
+        Start <- ifelse(strand=="-",
+              as.numeric(as.character( Offtargets$chromStart)) - baseAfterPAM,
+              as.numeric(as.character( Offtargets$chromStart)) - baseBeforegRNA)
+        End <- ifelse(strand=="-",
+              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseBeforegRNA),
+              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseAfterPAM))
+    }
+    if ((calculategRNAefficacyForOfftargets && dim(Offtargets)[1] > 0) || (!calculategRNAefficacyForOfftargets && dim(ontargets)[1] > 0))
+    {
         starts <- unlist(apply(cbind(Start,1), 1, max))
         ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
-
+        
         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
            end = ends, strand = strand, width = NA, as.character = TRUE)
-	 ontargets <- cbind(ontargets, extendedSequence = extendedSequence)
         if (rule.set == "Root_RuleSet1_2014")
 	{
             gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
@@ -170,10 +184,16 @@ filterOffTarget <-
             gRNAefficiency <- calculategRNAEfficiencyCRISPRscan(extendedSequence,
               featureWeightMatrix = featureWeightMatrix)
         }
-	 ontargets <- cbind(ontargets, gRNAefficacy = gRNAefficiency)
-         Offtargets <- merge(Offtargets, ontargets, all = TRUE)
+       if (!calculategRNAefficacyForOfftargets && dim(ontargets)[1] > 0)
+       {
+	   ontargets <- cbind(ontargets,  extendedSequence = extendedSequence, gRNAefficacy = gRNAefficiency)
+           Offtargets <- merge(Offtargets, ontargets, all = TRUE)
+        }
+        else {
+           Offtargets  <- cbind(Offtargets,  extendedSequence = extendedSequence, gRNAefficacy = gRNAefficiency)
+        }
       }
-	if (fetchSequence)
+      if (fetchSequence)
 	{
            strand <- as.character(Offtargets$strand)
            chr <- as.character(Offtargets$chrom)

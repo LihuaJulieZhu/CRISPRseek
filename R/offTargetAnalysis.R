@@ -65,6 +65,7 @@ offTargetAnalysis <-
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
      rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+     calculategRNAefficacyForOfftargets = TRUE,
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -420,7 +421,7 @@ if (dim(hits)[1] > 0)
         scores <- getOfftargetScore(featureVectors, weights = weights)
     #write.table(scores, file="testScore2.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
-saveRDS(scores, file="scores.RDS")
+    #saveRDS(scores, file="scores.RDS")
     offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
             orgAnn = orgAnn, ignore.strand = ignore.strand,
@@ -429,8 +430,8 @@ saveRDS(scores, file="scores.RDS")
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 
 	    baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile,
-            rule.set = rule.set)
-  saveRDS(offTargets, file = "offTargets.RDS") 
+            rule.set = rule.set, calculategRNAefficacyForOfftargets = calculategRNAefficacyForOfftargets)
+  #saveRDS(offTargets, file = "offTargets.RDS") 
     cat("Done annotating\n")
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 
         header = TRUE, stringsAsFactors = FALSE) 

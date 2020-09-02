@@ -73,6 +73,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
      rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+     calculategRNAefficacyForOfftargets = TRUE,
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek")
@@ -398,6 +399,9 @@ requires the following python packages with specified verion and python 2.7.
 3. pandas
 4. numpy
 5. scipy
+}
+\item{calculategRNAefficacyForOfftargets}{
+Default to TRUE to output gRNA efficacy for offtargets as well as ontargets. Set it to FALSE if only need gRNA efficacy calculated for ontargets only to speed up the analysis. Please refer to https://support.bioconductor.org/p/133538/#133661 for potential use cases of offtarget efficacies.
 }
 \item{mismatch.activity.file}{
 Applicable only when scoring.method is set to CFDscore
