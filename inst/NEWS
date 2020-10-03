@@ -1,5 +1,9 @@
+CHANGES IN VERSION 1.29.2
+     o added parameters such as predIndelFreq to allow the prediction of indels and their frequecies for Cas9 targeted sites
+CHANGES IN VERSION 1.29.1
+     o added parameter calculategRNAefficacyForOfftargets, default to TRUE.
 CHANGES IN VERSION 1.25.9
-     o added parametrs allowing gRNA design for base editor system
+     o added parameters allowing gRNA design for base editor system
 
 CHANGES IN VERSION 1.25.6
      o added parameter ignore.strand to indidate whether gene annotation should be strand-specific

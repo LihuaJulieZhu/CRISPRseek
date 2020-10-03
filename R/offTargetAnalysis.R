@@ -16,7 +16,7 @@ offTargetAnalysis <-
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
 	max.mismatch = 3, 
-        PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1,
+        PAM.pattern = "NNG$|NGN$", allowed.mismatch.PAM = 1,
         gRNA.pattern = "",
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8, 
         editingWindow.offtargets = 4:8,
@@ -68,7 +68,12 @@ offTargetAnalysis <-
      calculategRNAefficacyForOfftargets = TRUE,
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
-         package = "CRISPRseek")
+         package = "CRISPRseek"),
+     predIndelFreq = FALSE,
+     predictIndelFreq.onTargetOnly = TRUE,
+     method.indelFreq = "Lindel",
+     baseBeforegRNA.indelFreq = 13,
+     baseAfterPAM.indelFreq = 24 
 )
 {
     cat("Validating input ...\n")
@@ -598,10 +603,32 @@ if (dim(hits)[1] > 0)
         write.table(summary[order(as.character(summary$forViewInUCSC)), ],
            file = paste(outputDir, "Summary.xls", sep = ""), 
            sep = "\t", row.names = FALSE)
-    cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
+    if (predIndelFreq) {
+        if (predictIndelFreq.onTargetOnly)
+		targets <- unique(subset(offTargets$offtargets, 
+                     offTargets$offtargets$n.mismatch == 0 & offTargets$offtargets$isCanonicalPAM ==1))
+        else
+		targets <- offTargets$offtargets
+        extendedSequence <- getExtendedSequence(targets, 
+                 BSgenomeName = BSgenomeName,
+                 baseBeforegRNA =  baseBeforegRNA.indelFreq,
+                 baseAfterPAM = baseAfterPAM.indelFreq, forMethod = method.indelFreq)
+	indelFreq <- predictRelativeFreqIndels(extendedSequence, method = method.indelFreq)
+        names(indelFreq) <- paste(targets[,1], targets[,2], targets[,3],
+		 targets[,7], targets[,8], targets[,13], round(targets[,19], 3), sep= ",")
+     
+        cat("Done. Please check output files in directory ", outputDir, "\n")
+        list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets,
+                 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
+                 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50,
+                 indelFreq = indelFreq)
+    } 
+    else {
+        cat("Done. Please check output files in directory ", outputDir, "\n")
+        list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
 		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
 		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
+    }
 }
 else
 {

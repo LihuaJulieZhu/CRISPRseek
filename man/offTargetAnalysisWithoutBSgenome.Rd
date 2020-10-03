@@ -24,7 +24,7 @@ offTargetAnalysisWithoutBSgenome(inputFilePath, format = "fasta", header = FALSE
     chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
-    max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1, 
+    max.mismatch = 3, PAM.pattern = "NNG$|NGN$", allowed.mismatch.PAM = 1, 
     gRNA.pattern = "", 
     baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
     editingWindow.offtargets = 4:8,
@@ -181,12 +181,12 @@ Maximum mismatch allowed in off target search, default 3. Warning: will be
 considerably slower if set > 3
 }
   \item{PAM.pattern}{
-Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$ for spCas9.
+Regular expression of protospacer-adjacent motif (PAM), default NNG$|NGN$ for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
-Maximum number of mismatches allowed in the PAM sequence, 
-default to 1 for N[A|G]G PAM pattern
+Maximum number of mismatches allowed in the PAM sequence for offtarget search,
+default to 1 for NNG or NGN PAM pattern for offtarget finding.
 }
 \item{gRNA.pattern}{
 Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 

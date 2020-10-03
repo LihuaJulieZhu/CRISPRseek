@@ -16,7 +16,7 @@ offTargetAnalysisWithoutBSgenome <-
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
 	max.mismatch = 3, 
-        PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1,
+        PAM.pattern = "NNG$|NGN$", allowed.mismatch.PAM = 1,
         gRNA.pattern = "",
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8, 
         editingWindow.offtargets = 4:8,

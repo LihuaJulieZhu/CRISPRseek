@@ -5,9 +5,10 @@
 Design of target-specific guide RNAs for CRISPR-Cas9 system in one function
 }
 \description{
-Design of target-specific guide RNAs (gRNAs) for CRISPR-Cas9 system by automatically 
-calling findgRNAs, filtergRNAs, searchHits, buildFeatureVectorForScoring, 
-getOfftargetScore, filterOfftarget, calculating gRNA cleavage efficiency and generate reports.
+Design of target-specific guide RNAs (gRNAs) and predict relative indel fequencies
+for CRISPR-Cas9 system by automatically calling findgRNAs, filtergRNAs, searchHits,
+buildFeatureVectorForScoring, getOfftargetScore, filterOfftarget, calculating gRNA
+cleavage efficiency, predict indels and their frequencies and generate reports.
 }
 \usage{
 offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE, 
@@ -24,7 +25,7 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
     chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
 "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
 "chr6_ssto_hap7"),
-    max.mismatch = 3, PAM.pattern = "N[A|G]G$", allowed.mismatch.PAM = 1, 
+    max.mismatch = 3, PAM.pattern = "NNG$|NGN$", allowed.mismatch.PAM = 1, 
     gRNA.pattern = "", 
     baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
     editingWindow.offtargets = 4:8,
@@ -76,7 +77,12 @@ offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE,
      calculategRNAefficacyForOfftargets = TRUE,
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
-         package = "CRISPRseek")
+         package = "CRISPRseek"),
+     predIndelFreq = FALSE,
+     predictIndelFreq.onTargetOnly = TRUE,
+     method.indelFreq = "Lindel",
+     baseBeforegRNA.indelFreq = 13,
+     baseAfterPAM.indelFreq = 24
     )
 }
 %- maybe also 'usage' for other objects documented here.
@@ -181,12 +187,12 @@ Maximum mismatch allowed in off target search, default 3. Warning: will be
 considerably slower if set > 3
 }
   \item{PAM.pattern}{
-Regular expression of protospacer-adjacent motif (PAM), default N[A|G]G$ for spCas9.
+Regular expression of protospacer-adjacent motif (PAM), default NNG$|NGN$ for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
-Maximum number of mismatches allowed in the PAM sequence, 
-default to 1 for N[A|G]G PAM pattern
+Maximum number of mismatches allowed in the PAM sequence for offtarget search,
+default to 1 to allow NGN and NNG PAM pattern for offtarget identification.
 }
 \item{gRNA.pattern}{
 Regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 
@@ -409,6 +415,32 @@ A comma separated (csv) file containing the cleavage rates for all possible type
 single nucleotide mismatche at each position of the gRNA. By default, using the 
 supplemental Table 19 from Doench et al., Nature Biotechnology 2016
 }
+\item{predIndelFreq}{
+Default to FALSE. Set it to TRUE to output the predicted indels and their frequencies.
+}
+\item{predictIndelFreq.onTargetOnly}{
+Default to TRUE, indicating that only targeted sites will have indels and their frequencies predicted.
+Usually, researchers are only interested in the editing outcome prediction for the ontargets 
+since any editing in the offtargets are not wanted.
+Set it to FALSE if you are interested in predicting indels and their frequencies for offtargets.
+It will take longer time to run if you set it to FALSE.
+}
+\item{method.indelFreq}{
+Currently only Lindel method has been implemented. Please let us know if you think additional methods
+should be made available.
+Need to download and install the python package Lindel first.
+git clone https://github.com/shendurelab/Lindel.git 
+cd Lindel
+sudo python setup.py install
+Lindel is compatible with both Python2.7 and Python3.5 or higher.
+Please type help(predictRelativeFreqIndels) to get more details.
+}
+\item{baseBeforegRNA.indelFreq}{
+Default to 13 for Lindel method.
+}
+\item{baseAfterPAM.indelFreq}{
+Default to 24 for Lindel method.
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -431,6 +463,11 @@ Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek
 Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al. CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nat Methods 12, 982–988 (2015) doi:10.1038/nmeth.3543
 Doench JG et al., Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology Jan 18th 2016
 Anzalone et al., Search-and-replace genome editing without double-strand breaks or donor DNA. Nature October 2019 https://www.nature.com/articles/s41586-019-1711-4
+Wei Chen, Aaron McKenna, Jacob Schreiber et al.,
+Massively parallel profiling and predictive modeling of the 
+outcomes of CRISPR/Cas9-mediated double-strand break repair, 
+Nucleic Acids Research, Volume 47, Issue 15, 05 September 2019, 
+Pages 7989–8003, https://doi.org/10.1093/nar/gkz487
 }
 \author{
 Lihua Julie Zhu
@@ -462,6 +499,20 @@ CRISPRseek
 	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
             outputDir = outputDir, overwrite = TRUE)
  
+       #### predict indels and their frequecies for target sites
+
+       results <- offTargetAnalysis(inputFilePath,findgRNAsWithREcutOnly = TRUE,
+            findPairedgRNAOnly = FALSE, 
+            annotatePaired = FALSE,
+            BSgenomeName = Hsapiens, chromToSearch = "chrX",
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
+	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
+            outputDir = outputDir, overwrite = TRUE, 
+            predIndelFreq=TRUE, predictIndelFreq.onTargetOnly= TRUE)
+  
+       names(results$indelFreq)
+       results$indelFreq[[1]]
+
        #### predict gRNA efficacy using CRISPRscan  
        featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
             package = "CRISPRseek")
