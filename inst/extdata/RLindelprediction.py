@@ -1,9 +1,12 @@
+### By Hui Mao
+### Modified the original write_file and Lindel_prediction.py from Lindel
+### return an array instead of writing the results to a file
+
 import Lindel, os, sys
 from Lindel.Predictor import *
 import pickle as pkl
 
-
-def write_file(seq,array,freq):
+def write_array(seq,array,freq):
     sequences,frequency,indels = [],[],[]
     ss = 13
     sequences.append(seq[0:30] + ' | '+ seq[30:60])
@@ -39,14 +42,17 @@ def write_file(seq,array,freq):
             s = seq[0:ss+17]+' '+bp+' '*(2-len(bp))+seq[ss+17:]
         sequences.append(s)
         frequency.append("{0:.8f}".format(freq[pt]*100))
+    #f0 = open(fname,'w')
     res = []
     for s,f,i in zip(sequences,frequency,indels):
         # res.append(s+'\t'+f + '\t'+i +'\n')
         res.append([s,f,i])
+    # f0.close()
+    #print(res)
     return(res)
 
 
-def rlp(inputseq):
+def predIndelFreq(inputseq):
     weights = pkl.load(open(os.path.join(Lindel.__path__[0], "Model_weights.pkl"),'rb'))
     prerequesites = pkl.load(open(os.path.join(Lindel.__path__[0],'model_prereq.pkl'),'rb'))
     seq = inputseq.upper() #input your sequence here
@@ -59,7 +65,12 @@ def rlp(inputseq):
             if y_hat[i]!=0:
                 pred_freq[rev_index[i]] = y_hat[i]
         pred_sorted = sorted(pred_freq.items(), key=lambda kv: kv[1],reverse=True)
-        res = write_file(seq,pred_sorted,pred_freq)
+        #res = write_file2(seq,pred_sorted,pred_freq)
+        res = write_array(seq,pred_sorted,pred_freq)
         return(res)
     except ValueError:
-        return ('Error: No PAM sequence is identified.Please check your sequence and try again')
+        return ('Warning: No PAM sequence is identified. Please check your sequence and try again')
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+       print(predIndelFreq(sys.argv[1]))
