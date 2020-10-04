@@ -72,7 +72,7 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
              py_install("json")
         if (! py_module_available("setuptools"))
              py_install("setuptools")
-        lindelDir <- system.file("extdata/Lindel", package = "CRISPRseek")
+        lindelDir <- system.file("extdata", package = "CRISPRseek")
         oldDir <- getwd()
         if (dir.exists(lindelDir))
         {
