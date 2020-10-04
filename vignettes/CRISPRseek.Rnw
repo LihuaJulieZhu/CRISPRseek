@@ -410,7 +410,6 @@ The first command outputs the gRNA name,gRNAPlusPAM sequence,
 offtarget sequence, gene name, predicted offtarget score, genomic location,
 and predicted efficacy. The second command outputs the indel locations and frequencies for the
 first target site. Currently, only the Lindel method by Chen et al., 2019 is available. 
-To use this feature, users need to install python package Lindel first.
 Please type help(predictRelativeFreqIndels) for more details.
 
 \begin{scriptsize}

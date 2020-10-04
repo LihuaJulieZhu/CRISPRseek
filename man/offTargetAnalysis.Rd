@@ -8,7 +8,7 @@ Design of target-specific guide RNAs for CRISPR-Cas9 system in one function
 Design of target-specific guide RNAs (gRNAs) and predict relative indel fequencies
 for CRISPR-Cas9 system by automatically calling findgRNAs, filtergRNAs, searchHits,
 buildFeatureVectorForScoring, getOfftargetScore, filterOfftarget, calculating gRNA
-cleavage efficiency, predict indels and their frequencies and generate reports.
+cleavage efficiency, and predict gRNA efficacy, indels and their frequencies.
 }
 \usage{
 offTargetAnalysis(inputFilePath, format = "fasta", header = FALSE, 
@@ -419,19 +419,15 @@ supplemental Table 19 from Doench et al., Nature Biotechnology 2016
 Default to FALSE. Set it to TRUE to output the predicted indels and their frequencies.
 }
 \item{predictIndelFreq.onTargetOnly}{
-Default to TRUE, indicating that only targeted sites will have indels and their frequencies predicted.
-Usually, researchers are only interested in the editing outcome prediction for the ontargets 
-since any editing in the offtargets are not wanted.
+Default to TRUE, indicating that indels and their frequencies will be predicted for ontargets only.
+Usually, researchers are only interested in predicting the editing outcome for the ontargets 
+since any editing in the offtargets are unwanted.
 Set it to FALSE if you are interested in predicting indels and their frequencies for offtargets.
 It will take longer time to run if you set it to FALSE.
 }
 \item{method.indelFreq}{
 Currently only Lindel method has been implemented. Please let us know if you think additional methods
 should be made available.
-Need to download and install the python package Lindel first.
-git clone https://github.com/shendurelab/Lindel.git 
-cd Lindel
-sudo python setup.py install
 Lindel is compatible with both Python2.7 and Python3.5 or higher.
 Please type help(predictRelativeFreqIndels) to get more details.
 }
@@ -458,11 +454,26 @@ Konermann, Vineeta Agarwala, Yinqing Li, Eli J Fine, Xuebing Wu, Ophir Shalem,
 Thomas J Cradick, Luciano A Marraffini, Gang Bao & Feng Zhang (2013) DNA 
 targeting specificity of rNA-guided Cas9 nucleases. Nature Biotechnology 
 31:827-834
-Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
-Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. CRISPRseek: a Bioconductor package to identify target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
-Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al. CRISPRscan: designing highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. Nat Methods 12, 982–988 (2015) doi:10.1038/nmeth.3543
-Doench JG et al., Optimized sgRNA design to maximize activity and minimize off-target effects of CRISPR-Cas9. Nature Biotechnology Jan 18th 2016
-Anzalone et al., Search-and-replace genome editing without double-strand breaks or donor DNA. Nature October 2019 https://www.nature.com/articles/s41586-019-1711-4
+
+Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I, Sullender M, Ebert BL,
+Xavier RJ, Root DE. Rational design of highly active sgRNAs for CRISPR-Cas9-mediated 
+gene inactivation. Nat Biotechnol. 2014 Sep 3. doi: 10.1038 nbt.3026
+
+Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael Brodsky. 
+CRISPRseek: a Bioconductor package to identify target-specific guide
+ RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014 
+
+Moreno-Mateos, M., Vejnar, C., Beaudoin, J. et al. CRISPRscan: designing 
+highly efficient sgRNAs for CRISPR-Cas9 targeting in vivo. 
+Nat Methods 12, 982–988 (2015) doi:10.1038/nmeth.3543
+
+Doench JG et al., Optimized sgRNA design to maximize activity and minimize off-target 
+effects of CRISPR-Cas9. Nature Biotechnology Jan 18th 2016
+
+Anzalone et al., Search-and-replace genome editing without double-strand 
+breaks or donor DNA. Nature October 2019 
+https://www.nature.com/articles/s41586-019-1711-4
+ 
 Wei Chen, Aaron McKenna, Jacob Schreiber et al.,
 Massively parallel profiling and predictive modeling of the 
 outcomes of CRISPR/Cas9-mediated double-strand break repair, 

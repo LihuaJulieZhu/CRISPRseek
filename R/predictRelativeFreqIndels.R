@@ -4,31 +4,19 @@
 #'
 #' @details Predict relative indel frequency around target sites of CRISPR/Cas9 system.
 #' Currently only Lindel method using logistic regression is implemented in CRISPRseek.
-#' Need to download and install the python package Lindel first.
-#'
-#' git clone https://github.com/shendurelab/Lindel.git 
-#'
-#' cd Lindel
-#'
-#' sudo python setup.py install
 #'
 #' Lindel is compatible with both Python2.7 and Python3.5 or higher.
 #'
 #' By default, reticulate uses the version of Python found on your PATH (i.e. Sys.which("python")).
 #'
-#' Set the python path to the output of sys.path (import sys first) in python where Lindel has been setup.
+#' Use the function use_python in reticulate library to set the python path to a specific version.
 #' For example, use_python('/opt/anaconda3/lib/python3.7')
 #'
-#' You can also suggest a Conda env to use.
-#' For example, use_condaenv("r-cl", conda = "/opt/anaconda3/condabin/conda")
-#'
-#' Sys.setenv(RETICULATE_PYTHON = "/opt/anaconda3/envs/r-cl/bin/python")
-#'
-#' \code{}. This function implements the Lindel method
+#' \code{}This function implements the Lindel method
 #'
 #' @param extendedSequence A vector of DNA sequences of length 60bp. It consists 30bp before the cut site
 #' and 30bp after the cut site.
-
+#'
 #' @param method the prediction method. default to Lindel. Currently only Lindel method are implemented.
 #'
 #' @return A list with the same length as the input extendedSequence. 
@@ -84,11 +72,12 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
              py_install("json")
         if (! py_module_available("setuptools"))
              py_install("setuptools")
-        pyDir <- system.file("extdata/", package = "CRISPRseek")
+        lindelDir <- system.file("extdata/Lindel", package = "CRISPRseek")
         oldDir <- getwd()
-        if (dir.exists(pyDir))
+        if (dir.exists(lindelDir))
         {
-            setwd(pyDir)
+            setwd(lindelDir)
+            source_python("Predictor.py")
             source_python("RLindelprediction.py")
             tryCatch((
                 indelFreq <- lapply(extendedSequence,   function(thisSeq) {

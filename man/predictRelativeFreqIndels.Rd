@@ -29,26 +29,15 @@ Predict insertions and deletions, and associated reletive frequecies induced by 
 \details{
 Predict relative indel frequency around target sites of CRISPR/Cas9 system.
 Currently only Lindel method using logistic regression is implemented in CRISPRseek.
-Need to download and install the python package Lindel first.
-
-git clone https://github.com/shendurelab/Lindel.git 
-
-cd Lindel
-
-sudo python setup.py install
 
 Lindel is compatible with both Python2.7 and Python3.5 or higher.
 
 By default, reticulate uses the version of Python found on your PATH (i.e. Sys.which("python")).
 
-Set the python path in R to the output of sys.path (import sys first) in python where Lindel has been setup.
+Use the function use_python in reticulate library to set the python path to a specific version.
 For example, use_python('/opt/anaconda3/lib/python3.7')
 
-You can also suggest a Conda env to use.
-
-For example, use_condaenv("r-cl", conda = "/opt/anaconda3/condabin/conda")
-
-\code{}This function implements the Lindel method
+\code{}. This function implements the Lindel method
 }
 \examples{
 extendedSequence <- c("AAA", "TAACGTTATCAACGCCTATATTAAAGCGACCGTCGGTTGAACTGCGTGGATCAATGCGTC")
