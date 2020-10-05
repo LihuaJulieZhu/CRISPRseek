@@ -351,14 +351,16 @@ results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE,
 \subsection{Scenario 10. Output cutting frerquency determiniation (CFD)
  score for offtargets}
 Calling the function \Rfunction{offTargetAnalysis} with scoring.method
-set to CFDscore will output CFD score using the algorithm by Doench 
-et al., 2016, which models the effects of both mismatch position and 
-mimatch type on cutting frequency. By default, scoring.method 
-is set to Hsu-Zhang, which only models the effect of mismatch position.
+set to CFDscore and PAM.pattern as NNG or NGA  will output CFD score 
+using the algorithm by Doench et al., 2016, which models the 
+effects of both mismatch position and mimatch type on cutting
+frequency. By default, scoring.method is set to Hsu-Zhang,
+ which only models the effect of mismatch position.
 \begin{scriptsize}
 <<>>=
 results <- offTargetAnalysis(inputFilePath, annotatePaired = FALSE,
     scoring.method = "CFDscore",
+    PAM.pattern  = "NNG$|NGN$",
     chromToSearch = "chrX",
     annotateExon = FALSE,
     max.mismatch = 2, BSgenomeName = Hsapiens,
@@ -422,6 +424,7 @@ results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
                  orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
                  outputDir = outputDir, overwrite = TRUE,
                  scoring.method = "CFDscore",
+                 PAM.pattern  = "NNG$|NGN$",
                  predIndelFreq = TRUE)
 
 names(results$indelFreq)
