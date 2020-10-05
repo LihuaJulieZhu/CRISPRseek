@@ -19,7 +19,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "_gR", PAM.size = 3, 
-    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
+    gRNA.size = 20, PAM = "NGG", PAM.pattern = "NNG$|NGN$",
     allowed.mismatch.PAM = 1, max.mismatch = 3,
     outputDir, upstream = 0, downstream = 0, 
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
@@ -163,12 +163,12 @@ The size of the gRNA, default 20
 PAM sequence after the gRNA, default NGG
 }
   \item{PAM.pattern}{
-Regular expression of PAM, default N[A|G]G$ for spCas9.
+Regular expression of PAM, default NNG or NGN for spCas9.
 For cpf1, ^TTTN since it is a 5 prime PAM sequence
 }
 \item{allowed.mismatch.PAM}{
 Maximum number of mismatches allowed to the PAM sequence,
-default to 1 for PAM.pattern N[A|G]G PAM
+default to 1 for PAM.pattern NNG or NGN PAM
 }
   \item{max.mismatch}{
 Maximum mismatch allowed to search the off targets in the other sequence,

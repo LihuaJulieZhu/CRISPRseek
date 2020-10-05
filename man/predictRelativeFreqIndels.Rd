@@ -37,7 +37,7 @@ By default, reticulate uses the version of Python found on your PATH (i.e. Sys.w
 Use the function use_python in reticulate library to set the python path to a specific version.
 For example, use_python('/opt/anaconda3/lib/python3.7')
 
-\code{}. This function implements the Lindel method
+\code{}This function implements the Lindel method
 }
 \examples{
 extendedSequence <- c("AAA", "TAACGTTATCAACGCCTATATTAAAGCGACCGTCGGTTGAACTGCGTGGATCAATGCGTC")

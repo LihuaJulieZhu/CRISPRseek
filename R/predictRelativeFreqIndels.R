@@ -30,6 +30,7 @@
 #' Warning: No PAM sequence is identified. Please check your sequence and try again.
 #'
 #' @importFrom reticulate py_config py_available py_module_available source_python
+#' @importFrom rhdf5 H5Fopen h5write h5createFile
 #' @export
 #'
 #' @examples
@@ -72,16 +73,32 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
              py_install("json")
         if (! py_module_available("setuptools"))
              py_install("setuptools")
-        lindelDir <- system.file("extdata", package = "CRISPRseek")
+        lindelDir <- system.file("extdata/Lindel", package = "CRISPRseek")
         oldDir <- getwd()
         if (dir.exists(lindelDir))
         {
             setwd(lindelDir)
             source_python("Predictor.py")
             source_python("RLindelprediction.py")
+	    h5f1 = H5Fopen("model_weights1.h5")
+	    h5f2 = H5Fopen("model_weights2.h5")
+            h5f31 = H5Fopen("model_weights3_1.h5")
+	    h5f32 = H5Fopen("model_weights3_2.h5")
+            h5f4 = H5Fopen("model_weights4.h5")
+            h5f5 = H5Fopen("model_weights5.h5")
+            h5f6 = H5Fopen("model_weights6.h5") 
+            m3 <- cbind(h5f31$m3.1, h5f32$m3.2)
+            weights <- list(h5f1$m1, h5f2$m2, m3, h5f4$m4, h5f5$m5, h5f6$m6)
+
+            #h5f = H5Fopen("model_prereq.h5")
+            #prerequesites = h5f$model_prereq
+            
+            h5closeAll()
+ 
             tryCatch((
                 indelFreq <- lapply(extendedSequence,   function(thisSeq) {
-                        res <- predIndelFreq(thisSeq)
+            #            res <- predIndelFreq(thisSeq, weights, prerequesites)
+                        res <- predIndelFreq(thisSeq, weights)
                         if (length(res) == 1 && res == e) {
                             return(e)
                         }

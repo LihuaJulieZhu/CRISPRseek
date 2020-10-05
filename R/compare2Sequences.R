@@ -8,7 +8,7 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
     exportAllgRNAs = c("no", "all", "fasta", "genbank"), annotatePaired =  FALSE,
     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE, 
     min.gap = 0, max.gap = 20, gRNA.name.prefix = "_gR", PAM.size = 3, 
-    gRNA.size = 20, PAM = "NGG", PAM.pattern = "N[A|G]G$",
+    gRNA.size = 20, PAM = "NGG", PAM.pattern = "NNG$|NGN$",
     allowed.mismatch.PAM = 1, max.mismatch = 3, 
     outputDir, upstream =0, downstream = 0,
     weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 

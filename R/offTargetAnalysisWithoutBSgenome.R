@@ -68,7 +68,12 @@ offTargetAnalysisWithoutBSgenome <-
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
          package = "CRISPRseek"),
-     useBSgenome = FALSE, genomeSeqFile
+     useBSgenome = FALSE, genomeSeqFile,
+     predIndelFreq = FALSE,
+     predictIndelFreq.onTargetOnly = TRUE,
+     method.indelFreq = "Lindel",
+     baseBeforegRNA.indelFreq = 13,
+     baseAfterPAM.indelFreq = 24
 )
 {
     cat("Validating input ...\n")
@@ -459,7 +464,7 @@ if (dim(hits)[1] > 0)
         scores <- getOfftargetScore(featureVectors, weights = weights)
     #write.table(scores, file="testScore2.xls", sep="\t", row.names=FALSE)
     cat("Annotating, filtering and generating reports ...\n")
-saveRDS(scores, file="scores.RDS")
+    #saveRDS(scores, file="scores.RDS")
     offTargets <- filterOffTargetWithoutBSgenome(scores = scores, outputDir = outputDir,
         BSgenomeName = BSgenomeName, fetchSequence = fetchSequence, txdb = txdb,
             orgAnn = orgAnn, ignore.strand = ignore.strand,
@@ -636,10 +641,32 @@ saveRDS(scores, file="scores.RDS")
         write.table(summary[order(as.character(summary$forViewInUCSC)), ],
            file = paste(outputDir, "Summary.xls", sep = ""), 
            sep = "\t", row.names = FALSE)
-    cat("Done. Please check output files in directory ", outputDir, "\n")
-    list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
+    if (predIndelFreq) {
+        if (predictIndelFreq.onTargetOnly)
+                targets <- unique(subset(offTargets$offtargets,
+                     offTargets$offtargets$n.mismatch == 0 & offTargets$offtargets$isCanonicalPAM ==1))
+        else
+                targets <- offTargets$offtargets
+        extendedSequence <- getExtendedSequence(targets,
+                 BSgenomeName = BSgenomeName,
+                 baseBeforegRNA =  baseBeforegRNA.indelFreq,
+                 baseAfterPAM = baseAfterPAM.indelFreq, forMethod = method.indelFreq)
+        indelFreq <- predictRelativeFreqIndels(extendedSequence, method = method.indelFreq)
+        names(indelFreq) <- paste(targets[,1], targets[,2], targets[,3],
+                 targets[,7], targets[,8], targets[,13], round(targets[,19], 3), sep= ",")
+
+        cat("Done. Please check output files in directory ", outputDir, "\n")
+        list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets,
+                 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
+                 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50,
+                 indelFreq = indelFreq)
+    }
+    else { 
+        cat("Done. Please check output files in directory ", outputDir, "\n")
+        list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
 		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
 		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
+     }
 }
 else
 {
