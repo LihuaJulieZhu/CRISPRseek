@@ -49,8 +49,7 @@ compare2Sequences(inputFile1Path, inputFile2Path,
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
-     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
-     mismatch.activity.file = system.file("extdata",
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"), mismatch.activity.file = system.file("extdata",
          "NatureBiot2016SuppTable19DoenchRoot.csv",
          package = "CRISPRseek")    
     )
@@ -59,11 +58,15 @@ compare2Sequences(inputFile1Path, inputFile2Path,
 \arguments{
   \item{inputFile1Path}{
 Sequence input file 1 path that contains one of the 
-two sequences to be searched for potential gRNAs 
+two sequences to be searched for potential gRNAs.
+It can also be a DNAStringSet object with names field set.
+Please see examples below.
 }
   \item{inputFile2Path}{
 Sequence input file 2 path that contains one of the
-two sequences to be searched for potential gRNAs 
+two sequences to be searched for potential gRNAs.
+It can also be a DNAStringSet object with names field set.
+Please see examples below.
 }
   \item{inputNames}{
 Name of the input sequences when inputFile1Path and inputFile2Path are 
@@ -320,12 +323,17 @@ CRISPRseek
 DNAStringSet(
 "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"
 )
+    ## when set inputFile1Path to a DNAStringSet object, it is important
+    ## to call names
     names(inputFile1Path) <- "seq1"
     
     inputFile2Path <- 
 DNAStringSet(
 "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"
 )
+     ## when set inputFile2Path to a DNAStringSet object, it is important 
+    ## to call names
+
     names(inputFile2Path) <- "seq2"
 
     seqs <- compare2Sequences(inputFile1Path, inputFile2Path,

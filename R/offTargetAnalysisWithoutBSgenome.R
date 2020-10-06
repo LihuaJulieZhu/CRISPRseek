@@ -655,14 +655,14 @@ if (dim(hits)[1] > 0)
         names(indelFreq) <- paste(targets[,1], targets[,2], targets[,3],
                  targets[,7], targets[,8], targets[,13], round(targets[,19], 3), sep= ",")
 
-        cat("Done. Please check output files in directory ", outputDir, "\n")
+        cat("Done. Please check output files in directory \n", outputDir, "\n")
         list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets,
                  gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
                  REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50,
                  indelFreq = indelFreq)
     }
     else { 
-        cat("Done. Please check output files in directory ", outputDir, "\n")
+        cat("Done. Please check output files in directory \n", outputDir, "\n")
         list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets, 
 		 gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
 		 REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50)
