@@ -632,7 +632,7 @@ if (dim(hits)[1] > 0)
            sep = "\t", row.names = FALSE)
  
         names(indelFreq) <- paste(targets[,1], targets[,2], targets[,3],
-		 targets[,7], targets[,8], targets[,13], round(targets[,19], 3), sep= ",")
+		 sep= ",")
      
         cat("Done. Please check output files in directory \n", outputDir, "\n")
         list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets,
