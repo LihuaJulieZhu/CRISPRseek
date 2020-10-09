@@ -613,7 +613,24 @@ if (dim(hits)[1] > 0)
                  BSgenomeName = BSgenomeName,
                  baseBeforegRNA =  baseBeforegRNA.indelFreq,
                  baseAfterPAM = baseAfterPAM.indelFreq, forMethod = method.indelFreq)
-	indelFreq <- predictRelativeFreqIndels(extendedSequence, method = method.indelFreq)
+	indelFreqFS <- predictRelativeFreqIndels(extendedSequence, method = method.indelFreq)
+        fs <- unlist(lapply(indelFreqFS, function(x) { x$fs }))
+        indelFreq <- lapply(indelFreqFS, function(x) {x$indel})
+
+        entropy <- unlist(lapply(indelFreq, function(x) {
+            sum(-as.numeric(x[,2])/100 *  log(as.numeric(x[,2])/100, base = 450), na.rm = TRUE)}))
+       
+        fs2 <- data.frame(cbind(names = as.character(targets[,1]), frameshift = fs), entropy = entropy)
+
+        fs2[,1] <- as.character(fs2[,1])
+        summary <- data.frame(summary)
+        summary[,1] <- as.character(summary[,1])
+        summary <- merge(fs2, summary, all.y = TRUE)
+ 
+        write.table(summary[order(as.character(summary$forViewInUCSC)), ],
+           file = paste(outputDir, "Summary.xls", sep = ""),
+           sep = "\t", row.names = FALSE)
+ 
         names(indelFreq) <- paste(targets[,1], targets[,2], targets[,3],
 		 targets[,7], targets[,8], targets[,13], round(targets[,19], 3), sep= ",")
      
@@ -621,7 +638,7 @@ if (dim(hits)[1] > 0)
         list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets,
                  gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,
                  REs.isUnique100 = REs.isUnique100, REs.isUnique50 = REs.isUnique50,
-                 indelFreq = indelFreq)
+                 indelFreq = indelFreq, frameshift = fs2)
     } 
     else {
         cat("Done. Please check output files in directory \n", outputDir, "\n")

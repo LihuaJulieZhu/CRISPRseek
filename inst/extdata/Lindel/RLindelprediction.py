@@ -73,7 +73,7 @@ def predIndelFreq(inputseq, weights):
         pred_sorted = sorted(pred_freq.items(), key=lambda kv: kv[1],reverse=True)
         #res = write_file2(seq,pred_sorted,pred_freq)
         res = write_array(seq,pred_sorted,pred_freq)
-        return(res)
+        return(res,fs)
     except ValueError:
         return ('Warning: No PAM sequence is identified. Please check your sequence and try again')
 

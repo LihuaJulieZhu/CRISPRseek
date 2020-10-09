@@ -524,7 +524,7 @@ CRISPRseek
        names(results$indelFreq)
        head(results$indelFreq[[1]])
        ### save the indel frequences to tab delimited files, one file for each target/offtarget site.
-       mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), sep = "\t")
+       mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), sep = "\t", row.names = FALSE)
 
        #### predict gRNA efficacy using CRISPRscan  
        featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",

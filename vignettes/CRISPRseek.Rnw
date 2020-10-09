@@ -430,7 +430,8 @@ results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
 names(results$indelFreq)
 head(results$indelFreq[[1]])
 
-mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), sep = "\t")
+mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), 
+    sep = "\t", row.names = FALSE)
 @
 \end{scriptsize}
 

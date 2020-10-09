@@ -96,17 +96,16 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
             h5closeAll()
  
             tryCatch((
-                indelFreq <- lapply(extendedSequence,   function(thisSeq) {
-            #            res <- predIndelFreq(thisSeq, weights, prerequesites)
+                indelFreq <- lapply(extendedSequence, function(thisSeq) {
                         res <- predIndelFreq(thisSeq, weights)
                         if (length(res) == 1 && res == e) {
-                            return(e)
+                            return(list(fs = NA, indels = e))
                         }
                         else {
-                            result <- t(data.frame(res))
+                            result <- t(data.frame(res[[1]]))
                             row.names(result) <- NULL
                             colnames(result) <- c("Indels", "Frequency", "Location")
-                            return(result)
+                            return(list(fs = res[[2]], indels = result))
                          } 
               })), error = function(e) {print(e); })
         }

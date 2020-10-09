@@ -1,4 +1,5 @@
-getExtendedSequence <- function(targets, BSgenomeName, baseBeforegRNA = 13, baseAfterPAM = 24, forMethod = "Lindel")
+getExtendedSequence <- function(targets, useBSgenome = TRUE, BSgenomeName, 
+     genomeSeq, baseBeforegRNA = 13, baseAfterPAM = 24, forMethod = "Lindel")
 {
    if (forMethod == "Lindel")
    {
@@ -17,8 +18,18 @@ getExtendedSequence <- function(targets, BSgenomeName, baseBeforegRNA = 13, base
               as.numeric(as.character( targets$chromEnd)) + as.numeric(baseAfterPAM))
     }
     starts <- unlist(apply(cbind(Start,1), 1, max))
-    ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
-        
-    extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
-           end = ends, strand = strand, width = NA, as.character = TRUE)
+    if (useBSgenome)
+    {
+         ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
+         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
+             end = ends, strand = strand, width = NA, as.character = TRUE)
+     }
+    else
+    {
+         ends <- unlist(apply(cbind(End, width(genomeSeq)[names(genomeSeq) %in% chr]),
+                1, min))
+         extended.info <- data.frame(chrom = chr, start = starts, end = ends, strand = strand)
+         extendedSequence <- as.character(getSeq(genomeSeq, as(extended.info, "GRanges")))
+    }
+    extendedSequence
 }
