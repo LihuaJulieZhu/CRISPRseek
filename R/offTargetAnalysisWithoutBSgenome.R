@@ -646,7 +646,7 @@ if (dim(hits)[1] > 0)
                 targets <- unique(subset(offTargets$offtargets,
                      offTargets$offtargets$n.mismatch == 0 & offTargets$offtargets$isCanonicalPAM ==1))
         else
-                targets <- offTargets$offtargets
+                targets <- subset(offTargets$offtargets, offTargets$offtargets$isCanonicalPAM == 1)
 
         if (useBSgenome) {        
              extendedSequence <- getExtendedSequence(targets,
@@ -668,14 +668,18 @@ if (dim(hits)[1] > 0)
         indelFreq <- lapply(indelFreqFS, function(x) {x$indel})
 
         entropy <- unlist(lapply(indelFreq, function(x) {
-            sum(-as.numeric(x[,2])/100 *  log(as.numeric(x[,2])/100, base = 450), na.rm = TRUE)}))
+            if (length(x) > 1)
+               sum(-as.numeric(x[,2])/100 *  log(as.numeric(x[,2])/100, base = 450), na.rm = TRUE)
+            else
+               NA
+         }))
 
-        fs2 <- data.frame(cbind(names = as.character(targets[,1]), frameshift = fs), entropy = entropy)
-
+        fs2 <- data.frame(cbind(names = as.character(targets[,1]), frameshift = fs,
+             entropy = entropy, n.mismatch = as.character(targets$n.mismatch)))
         fs2[,1] <- as.character(fs2[,1])
         summary <- data.frame(summary)
         summary[,1] <- as.character(summary[,1])
-        summary <- merge(fs2, summary, all.y = TRUE)
+        summary <- merge(subset(fs2, fs2[,4] == 0)[,-4], summary, all.y = TRUE)
 
         write.table(summary[order(as.character(summary$forViewInUCSC)), ],
            file = paste(outputDir, "Summary.xls", sep = ""),
@@ -683,6 +687,15 @@ if (dim(hits)[1] > 0)
 
         names(indelFreq) <- paste(targets[,1], targets[,2], targets[,3],
                  sep= ",")
+        if (!predictIndelFreq.onTargetOnly)
+        {
+             targets[,1] <- as.character(targets[,1])
+             fs2 <- cbind(OffTargetSequence =  as.character(targets[,3]), fs2[, -1])
+             targets <- merge(targets, fs2, all.x = TRUE)
+             offTargets$offtargets <- targets
+             write.table(targets,  file = paste(outputDir, "OfftargetAnalysis.xls", sep = ""),
+        sep = "\t", row.names = FALSE)
+        }
         cat("Done. Please check output files in directory \n", outputDir, "\n")
         list(on.target=on.target, summary=summary, offtarget = offTargets$offtargets,
                  gRNAs.bedFormat=gRNA.bed, REcutDetails = REcutDetails,

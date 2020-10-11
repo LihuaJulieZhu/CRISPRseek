@@ -15,11 +15,12 @@ and 30bp after the cut site.}
 \value{
 A list with the same length as the input extendedSequence. 
 
-Each list item either contains a data frame with three columns or a warning message.
+Each list item either contains a warning message, or a predicted fraction of frameshift in the mutational outcomes plus
+a data frame with three columns.
 
 The three columns are the alignment of predicted indel sequence to the original unedited sequence,
 predicted indel frequency, and the location of the predicted indels.
-The warning message for Lindel method is as follows.
+The warning message for the Lindel method is as follows.
 
 Warning: No PAM sequence is identified. Please check your sequence and try again.
 }

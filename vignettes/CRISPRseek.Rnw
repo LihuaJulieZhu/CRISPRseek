@@ -411,8 +411,9 @@ Calling the function \Rfunction{offTargetAnalysis} with predIndelFreq set to TRU
 The first command outputs the gRNA name,gRNAPlusPAM sequence,
 offtarget sequence, gene name, predicted offtarget score, genomic location,
 and predicted efficacy. The second command outputs the indel locations and frequencies for the
-first target site. Currently, only the Lindel method by Chen et al., 2019 is available. 
-Please type help(predictRelativeFreqIndels) for more details.
+first target site. The summary file contains Shannon entropy and the fraction of frameshift of
+mutational outcomes for each target. Currently, only the Lindel method by Chen et al., 2019
+is available. Please type help(predictRelativeFreqIndels) for more details.
 
 \begin{scriptsize}
 <<>>=
@@ -429,6 +430,7 @@ results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
 
 names(results$indelFreq)
 head(results$indelFreq[[1]])
+head(results$summmary[,1:6])
 
 mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), 
     sep = "\t", row.names = FALSE)
