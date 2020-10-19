@@ -11,9 +11,10 @@ calculategRNAEfficiency2 <- function(extendedSequence,
      aa.cut = -1, per.peptide = -1)
 {
     system2("python", args = "--version", stderr="pythonVersion.txt")
-    if(grep( "2.7", read.table("pythonVersion.txt", sep="", header=FALSE)[1,2]))
+    #if(grep( "2.7", read.table("pythonVersion.txt", sep="", header=FALSE)[1,2]))
+    if(grep( "2.7", py_discover_config()$version)) 
     {	
-	unlink("pythonVersion.txt")
+ #	unlink("pythonVersion.txt")
 	origDir <- getwd()
 	pythonDir <- system.file("extdata/Rule_Set_2_scoring_v1/analysis/",package = "CRISPRseek")
         origDir <- getwd()

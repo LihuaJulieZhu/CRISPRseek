@@ -10,7 +10,7 @@ import(BiocParallel)
 importFrom(parallel, makeCluster, stopCluster, detectCores)
 importFrom(hash, values, hash)
 importFrom("utils", "read.csv", "read.table", "write.table")
-importFrom(reticulate, py_config, py_available, py_module_available, source_python)
+importFrom(reticulate, py_config, py_available, py_module_available, source_python, py_discover_config)
 importFrom(rhdf5, H5Fopen, h5write, h5createFile, h5closeAll)
 export(offTargetAnalysis,filterOffTarget,filtergRNAs, findgRNAs, 
     searchHits2, writeHits2, searchHits, writeHits, translatePattern, getOfftargetScore, 

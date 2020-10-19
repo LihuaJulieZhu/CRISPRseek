@@ -56,9 +56,8 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
         e = "Warning: No PAM sequence is identified. Please check your sequence and try again"
    if (! py_available())
 	stop("The indel frequency prediction module requires python 2.7, 3.5 or higher to be installed\n")
-   pyv <- system2("python", args = "--version", stderr="pythonVersion.txt")
-   pyv <- read.table("pythonVersion.txt", sep="", header=FALSE)[1,2]
-   pyv <- unlist(strsplit(as.character(pyv), split =".", fixed = TRUE)) 
+   pyv <- unlist(strsplit(py_discover_config()$version, ".", fixed = TRUE)) 
+   
    if((pyv[1] == 2 && pyv[2] >= 7) || (pyv[1] == 3 && pyv[2] >=5 ))
    {
         unlink("pythonVersion.txt")

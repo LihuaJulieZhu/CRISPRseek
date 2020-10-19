@@ -31,7 +31,7 @@ annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE)
     inExon <- cbind(forViewInUCSC = names(score.RD),
         inExon = unlist(ann.scores))
     inExon[inExon[,2] == FALSE, 2] <- ""
-    allGenes <- genes(txdb, columns = "gene_id", single.strand.genes.only=TRUE)
+    allGenes <- suppressMessages(genes(txdb, columns = "gene_id", single.strand.genes.only=TRUE))
     if (length(grep("Chr",seqnames(allGenes))) == 0 && 
                 length(grep("Chr", scores$chrom)) >0 )
     {
