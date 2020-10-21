@@ -30,7 +30,7 @@
 #'
 #' Warning: No PAM sequence is identified. Please check your sequence and try again.
 #'
-#' @importFrom reticulate py_config py_available py_module_available source_python
+#' @importFrom reticulate py_config py_available py_module_available source_python install_miniconda
 #' @importFrom rhdf5 H5Fopen h5write h5createFile
 #' @export
 #'
@@ -54,8 +54,11 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
    py_config()
    if (method == "Lindel")
         e = "Warning: No PAM sequence is identified. Please check your sequence and try again"
-   if (! py_available())
-	stop("The indel frequency prediction module requires python 2.7, 3.5 or higher to be installed\n")
+   if (!py_available())
+   {
+        install_miniconda() 
+	#stop("The indel frequency prediction module requires python 2.7, 3.5 or higher to be installed\n")
+   }
    pyv <- unlist(strsplit(py_discover_config()$version, ".", fixed = TRUE)) 
    
    if((pyv[1] == 2 && pyv[2] >= 7) || (pyv[1] == 3 && pyv[2] >=5 ))
@@ -69,7 +72,7 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
             py_install("pickle")
 	if (! py_module_available("re"))
 	     py_install("re")
-	 if (! py_module_available("json"))
+	if (! py_module_available("json"))
              py_install("json")
         if (! py_module_available("setuptools"))
              py_install("setuptools")
