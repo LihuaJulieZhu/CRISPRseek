@@ -30,13 +30,14 @@
 #'
 #' Warning: No PAM sequence is identified. Please check your sequence and try again.
 #'
-#' @importFrom reticulate py_config py_available py_module_available source_python install_miniconda
+#' @importFrom reticulate py_config py_available py_install py_module_available source_python install_miniconda use_condaenv
 #' @importFrom rhdf5 H5Fopen h5write h5createFile
 #' @export
 #'
 #' @examples
 #' extendedSequence <- c("AAA", "TAACGTTATCAACGCCTATATTAAAGCGACCGTCGGTTGAACTGCGTGGATCAATGCGTC")
-#' indelFreq <- predictRelativeFreqIndels(extendedSequence, method = "Lindel") 
+#' if (interactive())
+#'     indelFreq <- predictRelativeFreqIndels(extendedSequence, method = "Lindel") 
 #'
 #' 
 #' @references Wei Chen, Aaron McKenna, Jacob Schreiber et al.,
@@ -56,14 +57,16 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
         e = "Warning: No PAM sequence is identified. Please check your sequence and try again"
    if (!py_available())
    {
+        indelFreq = "The indel frequency prediction module requires python 2.7, 3.5 or higher to be installed" 
         install_miniconda() 
-	#stop("The indel frequency prediction module requires python 2.7, 3.5 or higher to be installed\n")
+        e = indelFreq
+        use_condaenv("r-reticulate")
    }
    pyv <- unlist(strsplit(py_discover_config()$version, ".", fixed = TRUE)) 
    
    if((pyv[1] == 2 && pyv[2] >= 7) || (pyv[1] == 3 && pyv[2] >=5 ))
    {
-        unlink("pythonVersion.txt")
+        #unlink("pythonVersion.txt")
         if (! py_module_available("numpy"))
             py_install("numpy")
         if (! py_module_available("scipy"))

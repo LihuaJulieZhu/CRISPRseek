@@ -42,7 +42,8 @@ For example, use_python('/opt/anaconda3/lib/python3.7')
 }
 \examples{
 extendedSequence <- c("AAA", "TAACGTTATCAACGCCTATATTAAAGCGACCGTCGGTTGAACTGCGTGGATCAATGCGTC")
-indelFreq <- predictRelativeFreqIndels(extendedSequence, method = "Lindel") 
+if (interactive())
+    indelFreq <- predictRelativeFreqIndels(extendedSequence, method = "Lindel") 
 
 
 }
