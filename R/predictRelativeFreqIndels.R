@@ -52,18 +52,17 @@ predictRelativeFreqIndels <- function(extendedSequence, method = "Lindel")
 {
    if (any(unlist(lapply(extendedSequence, nchar)) != 60))
         warning("Some of the sequences for predicting indel frequencies using Lindel are shorter than 60bp long!")
-   py_config()
    if (method == "Lindel")
         e = "Warning: No PAM sequence is identified. Please check your sequence and try again"
+   py_config()
    if (!py_available())
    {
-        indelFreq = "The indel frequency prediction module requires python 2.7, 3.5 or higher to be installed" 
-        install_miniconda() 
-        e = indelFreq
+        tryCatch((install_miniconda()), error = function(e) {print(e); })
         use_condaenv("r-reticulate")
    }
    pyv <- unlist(strsplit(py_discover_config()$version, ".", fixed = TRUE)) 
-   
+   if (!exists("pyv"))
+     stop("Please install python first! Python 2.7, 3.5 or higher is required for predicting relative indel frequency!\n") 
    if((pyv[1] == 2 && pyv[2] >= 7) || (pyv[1] == 3 && pyv[2] >=5 ))
    {
         #unlink("pythonVersion.txt")
