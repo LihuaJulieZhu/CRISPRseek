@@ -180,7 +180,6 @@ filterOffTargetWithoutBSgenome <- function (scores,
         }
         else
         {
-            #ends <- unlist(apply(cbind(End, width(genomeSeq)[names(genomeSeq) %in% chr]),
             chrLen <- unlist(lapply(chr, function(i) width(genomeSeq)[names(genomeSeq) == i]))
             ends <- unlist(apply(cbind(End, chrLen),
                 1, min))
