@@ -675,8 +675,10 @@ if (dim(hits)[1] > 0)
 }
 else
 {
-  x <- paste(substr(as.character(gRNAs), 1, gRNA.size), PAM, sep ="")
-
+  if (PAM.location == "3prime")
+      x <- paste(substr(as.character(gRNAs), 1, gRNA.size), PAM, sep ="")
+  else
+      x <- paste(PAM, substr(as.character(gRNAs), 1, gRNA.size), sep ="")
   summary <- cbind(names = names(gRNAs), gRNAsPlusPAM = x,top5OfftargetTotalScore = rep("NA", length(gRNAs)),
    	top10OfftargetTotalScore =  rep("NA", length(gRNAs)),
 	top1Hit.onTarget.MMdistance2PAM =  rep("NA", length(gRNAs))
