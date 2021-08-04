@@ -2,7 +2,7 @@ library(CRISPRseek)
 inputFile2Path <- system.file("extdata", "rs362331C.fa",
     package = "CRISPRseek")
 
-load(system.file("extdata", "seqs2.RData",
+seqs2 <- readRDS(system.file("extdata", "seqs2.RDS",
     package = "CRISPRseek"))
 
 inputgRNA <- DNAStringSet("GTAGATGAGGGAGCAGGCGT")

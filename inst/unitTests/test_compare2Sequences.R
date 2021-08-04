@@ -43,13 +43,13 @@ seqs2.5prime.new <- compare2Sequences(inputFile1Path, inputFile2Path,
         outputDir = getwd(), PAM.location = "5prime", PAM = "GCT", PAM.pattern = "^NCN",
         overwrite = TRUE, subPAM.position = c(1,2))
 
-save(seqs2.5prime.new, file ="~/seqs2.5prime.new.RData")
-save(seqs2.new, file = "~/seqs2.new.RData")
-save(seqs2CFD.new, file = "~/seqs2CFD.new.RData")
+saveRDS(seqs2.5prime.new, file ="~/seqs2.5prime.new.RDS")
+saveRDS(seqs2.new, file = "~/seqs2.new.RDS")
+saveRDS(seqs2CFD.new, file = "~/seqs2CFD.new.RDS")
 
-load(system.file("extdata", "seqs2.RData", package = "CRISPRseek"))
-load(system.file("extdata", "seqs2CFD.RData", package = "CRISPRseek"))
-load(system.file("extdata", "seqs2.5prime.RData", package = "CRISPRseek"))
+seqs2 <- readRDS(system.file("extdata", "seqs2.RDS", package = "CRISPRseek"))
+seqs2CFD <- readRDS(system.file("extdata", "seqs2CFD.RDS", package = "CRISPRseek"))
+seqs2.5prime <- readRDS(system.file("extdata", "seqs2.5prime.RDS", package = "CRISPRseek"))
 
 test_compare2Sequences <- function() {
 cat("testing compare2Sequences \n")
