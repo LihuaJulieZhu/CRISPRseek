@@ -1,4 +1,75 @@
 ### for compare2Sequences matches are from matching gRNA portion only
+
+
+#' Write the hits of sequence search from a sequence to a file
+#' 
+#' write the hits of sequence search from a sequence instead of BSgenome to a
+#' file, internal function used by searchHits
+#' 
+#' %% ~~ If necessary, more details than the description above ~~
+#' 
+#' @param gRNA DNAString object with gRNA sequence with PAM appended
+#' immediately after,e.g., ACGTACGTACGTACTGACGTCGG with 20bp gRNA sequence plus
+#' 3bp PAM sequence CGG
+#' @param seqname sequence name as character
+#' @param matches XStringViews object storing matched chromosome locations
+#' @param strand strand of the match, + for plus strand and - for minus strand
+#' @param file file path where the hits is written to
+#' @param gRNA.size gRNA size, default 20
+#' @param PAM PAM as regular expression for appending to the gRNA, default NGG
+#' for SpCas9, change to TTTN for cpf1.
+#' @param PAM.pattern PAM as regular expression for filtering the hits, default
+#' N[A|G]G$ for spCas9. For cpf1, ^TTTN since it is a 5 prime PAM sequence.
+#' @param max.mismatch maximum mismatch allowed within the gRNA (excluding PAM
+#' portion) for filtering the hits, default 4
+#' @param chrom.len length of the matched chromosome
+#' @param append TRUE if append to existing file, false if start a new file
+#' @param PAM.location PAM location relative to gRNA. For example, spCas9 PAM
+#' is located on the 3 prime while cpf1 PAM is located on the 5 prime
+#' @param PAM.size Size of PAM, default 3
+#' @param allowed.mismatch.PAM Maximum number of mismatches allowed in the
+#' offtargets comparing to the PAM sequence. Default to 1 for NGG PAM
+#' @param seqs DNAString object containing a DNA sequence.
+#' @param baseEditing Indicate whether to design gRNAs for base editing.
+#' Default to FALSE If TRUE, please set baseEditing = TRUE, targetBase and
+#' editingWidow accordingly.
+#' @param targetBase Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the target base for base editing systems, default to C for
+#' converting C to T in the CBE system. Please change it to A if you intend to
+#' use the ABE system.
+#' @param editingWindow Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the effective editing window to consider for the offtargets
+#' search only, default to 4 to 8 which is for the original CBE system. Please
+#' change it accordingly if the system you use have a different editing window,
+#' or you would like to include offtargets with the target base in a larger
+#' editing window.
+#' @return results are saved in the file specified by file
+#' @note %% ~~further notes~~
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references
+#' http://bioconductor.org/packages/2.8/bioc/vignettes/BSgenome/inst/doc/
+#' GenomeSearching.pdf
+#' @keywords misc
+#' @examples
+#' 
+#'  if(interactive())
+#'  {
+#'     gRNAPlusPAM <- DNAString("ACGTACGTACGTACTGACGTCGG")
+#'     x <- DNAString("AAGCGCGATATGACGTACGTACGTACTGACGTCGG")
+#'     chrom.len <- nchar(as.character(x))
+#'     m <- matchPattern(gRNAPlusPAM, x)
+#'     names(m) <- "testing"
+#'     writeHits(gRNA = gRNAPlusPAM, seqname = "chr1", 
+#'         matches = m, strand = "+", file = "exampleWriteHits.txt", 
+#'         chrom.len = chrom.len, append = FALSE, seqs = x)
+#'  }
+#' @importFrom Biostrings hasLetterAt DNAStringSet neditAt DNAString matchPattern
+#' @importFrom BiocGenerics unlist cbind rep.int lapply table start end
+#' @importFrom methods as
+#' @importFrom seqinr s2c
+#' @importFrom utils write.table
+#' @export  
 writeHits <-
     function (gRNA, seqname, matches, strand, file, gRNA.size = 20L, 
         PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 4L, 

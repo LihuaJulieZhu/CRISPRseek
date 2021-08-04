@@ -1,3 +1,7 @@
+#' @importFrom BiocGenerics unlist cbind
+#' @importFrom utils read.table
+#' @importFrom Biostrings DNAStringSet
+#' @importFrom GenomeInfoDb seqlengths
 getSeqFromBed <- function(inputFilePath, header=FALSE, BSgenomeName, upstream = 0, downstream = 0)
 {
       bed <- read.table(inputFilePath, sep="\t", header=header, stringsAsFactors = FALSE)

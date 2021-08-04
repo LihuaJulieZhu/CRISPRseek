@@ -19,6 +19,11 @@ if (test == 1)
                 primeEditingPaired.output =  primeEditingPaired.output)
 }
 
+#' @importFrom BiocGenerics unlist lapply cbind 
+#' @importFrom utils write.table
+#' @importFrom Biostrings reverseComplement DNAStringSet
+#' @importFrom IRanges reverse Views
+
 designPEs <- function(inputSeq,
         PAM.size = 3L,
         PAM.location = "3prime",
@@ -36,6 +41,8 @@ designPEs <- function(inputSeq,
         primeEditingPaired.output = "pairedgRNAsPE.xls",
         append = FALSE, col.names = TRUE)
 {
+  ForwardgRNA.RT.template.length <- ForwardgRNA.cut.5prime.targetStart <- 
+    ReversegRNA.RT.template.length <- ReversegRNA.cut.5prime.targetEnd <- NULL
    ###Hsap_GATA1_ex2_gR7r or Hsap_GATA1_ex2_gR17f
    ###Obtain the cut.start from the names of gRNAs
    ### insert just before target.start

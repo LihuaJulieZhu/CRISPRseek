@@ -1,0 +1,5 @@
+I was using pip install keras to install keras, but it did not install the latest version of keras according to this. That is why I could do things like from keras.models import Sequential, from keras.layers.core import Dense, Activation, Dropout, and from keras.layers.recurrent import LSTM but not from keras.utils.data_utils import get_file. Because it is not in the previous versions.
+
+SO, just clone the keras from their github, cd into it, and run sudo python setup.py install will solve this problem.
+
+REMEMBER, if you already did this pip install keras, you have to make sure clear all keras versions you have installed by doing this pip uninstall keras many time until no keras existing, then do this sudo python setup.py install.

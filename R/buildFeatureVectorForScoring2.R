@@ -10,6 +10,14 @@
     relist(ind_col, partitioning)
 }
 
+#' @importFrom Biostrings DNAStringSet isMatchingAt substring extractAt complement RNAStringSet DNAString replaceAt
+#' @importFrom BiocGenerics grep sort relist rep.int cbind
+#' @importFrom IRanges IRangesList PartitioningByEnd 
+#' @importFrom S4Vectors unstrsplit orderIntegerPairs elementNROWS
+#' @importFrom methods as
+#' @importFrom DelayedArray mean
+
+
 buildFeatureVectorForScoring2 <-
     function(hits, gRNA.size = 20, 
     canonical.PAM = "NGG",

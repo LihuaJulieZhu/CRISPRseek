@@ -8,6 +8,9 @@
 
 #calculategRNAEfficiencyCRISPRscan(extendedSequence, featureWeightMatrix)
 
+#' @importFrom BiocGenerics cbind rbind do.call lapply
+
+
 calculategRNAEfficiencyCRISPRscan <- function(extendedSequence, 
     featureWeightMatrix)
 {

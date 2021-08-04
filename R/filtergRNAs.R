@@ -1,3 +1,51 @@
+#' Filter gRNAs
+#' 
+#' Filter gRNAs containing restriction enzyme cut site
+#' 
+#' %% ~~ If necessary, more details than the description above ~~
+#' 
+#' @param all.gRNAs gRNAs as DNAStringSet, such as the output from findgRNAs
+#' @param pairOutputFile File path with paired gRNAs
+#' @param findgRNAsWithREcutOnly Indicate whether to find gRNAs overlap with
+#' restriction enzyme recognition pattern
+#' @param REpatternFile File path containing restriction enzyme cut patters
+#' @param format Format of the REpatternFile, default as fasta
+#' @param minREpatternSize Minimum restriction enzyme recognition pattern
+#' length required for the enzyme pattern to be searched for, default 4
+#' @param overlap.gRNA.positions The required overlap positions of gRNA and
+#' restriction enzyme cut site, default 17 and 18
+#' @param overlap.allpos Default TRUE, meaning that only gRNAs overlap with all
+#' the positions are retained FALSE, meaning that gRNAs overlap with one or
+#' both of the positions are retained
+#' @return \item{gRNAs.withRE }{gRNAs as DNAStringSet that passed the filter
+#' criteria} \item{gRNAREcutDetails}{a data frame that contains a set of gRNAs
+#' annotated with restriction enzyme cut details}
+#' @note %% ~~further notes~~
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references %% ~put references to the literature/web site here ~
+#' @keywords misc
+#' @examples
+#' 
+#'     all.gRNAs <- findgRNAs(
+#'         inputFilePath = system.file("extdata", "inputseq.fa", 
+#'         package = "CRISPRseek"),
+#'         pairOutputFile = "testpairedgRNAs.xls",
+#'         findPairedgRNAOnly = TRUE)
+#' 
+#'     gRNAs.RE <- filtergRNAs(all.gRNAs = all.gRNAs,
+#'         pairOutputFile = "testpairedgRNAs.xls",minREpatternSize = 6,
+#'         REpatternFile = system.file("extdata", "NEBenzymes.fa", 
+#'         package = "CRISPRseek"), overlap.allpos = TRUE)
+#' 
+#'     gRNAs  <- gRNAs.RE$gRNAs.withRE
+#'     restriction.enzyme.cut.sites <- gRNAs.RE$gRNAREcutDetails
+#' @importFrom Biostrings readDNAStringSet reverseComplement DNAStringSet
+#' @importFrom BiocGenerics do.call rbind lapply cbind
+#' @importFrom utils read.table
+#' @importFrom S4Vectors merge
+#' @importFrom IRanges width
+#' @export
 filtergRNAs <-
     function(all.gRNAs, pairOutputFile = "", 
         findgRNAsWithREcutOnly = FALSE, 

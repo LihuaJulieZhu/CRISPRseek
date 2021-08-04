@@ -173,6 +173,233 @@
     list(queryHits(hits), subjectHits(hits), gap)
 }
 
+
+
+#' Find potential gRNAs
+#' 
+#' Find potential gRNAs for an input file containing sequences in fasta format
+#' 
+#' If users already has a fasta file that contains a set of potential gRNAs,
+#' then users can call filergRNAs directly although the easiest way is to call
+#' the one-stop-shopping function OffTargetAnalysis with findgRNAs set to
+#' FALSE.
+#' 
+#' @param inputFilePath Sequence input file path or a DNAStringSet object that
+#' contains sequences to be searched for potential gRNAs
+#' @param baseEditing Indicate whether to design gRNAs for base editing.
+#' Default to FALSE If TRUE, please set baseEditing = TRUE, targetBase and
+#' editingWidow accordingly.
+#' @param targetBase Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the target base for base editing systems, default to C for
+#' converting C to T in the CBE system. Please change it to A if you intend to
+#' use the ABE system.
+#' @param editingWindow Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the effective editing window, default to 4 to 8 which is
+#' for the original CBE system. Please change it accordingly if the system you
+#' use have a different editing window.
+#' @param format Format of the input file, fasta and fastq are supported,
+#' default fasta
+#' @param PAM protospacer-adjacent motif (PAM) sequence after the gRNA, default
+#' NGG
+#' @param PAM.size PAM length, default 3
+#' @param findPairedgRNAOnly Choose whether to only search for paired gRNAs in
+#' such an orientation that the first one is on minus strand called reverse
+#' gRNA and the second one is on plus strand called forward gRNA. TRUE or
+#' FALSE, default FALSE
+#' @param annotatePaired Indicate whether to output paired information, default
+#' TRUE
+#' @param paired.orientation PAMin orientation means the two adjacent PAMs on
+#' the sense and antisense strands face inwards towards each other like N21GG
+#' and CCN21 whereas PAMout orientation means they face away from each other
+#' like CCN21 and N21GG
+#' @param enable.multicore Indicate whether enable parallel processing, default
+#' FALSE. For super long sequences with lots of gRNAs, suggest set it to TRUE
+#' @param n.cores.max Indicating maximum number of cores to use in multi core
+#' mode, i.e., parallel processing, default 6. Please set it to 1 to disable
+#' multicore processing for small dataset.
+#' @param gRNA.pattern Regular expression or IUPAC Extended Genetic Alphabet to
+#' represent gRNA pattern, default is no restriction. To specify that the gRNA
+#' must start with GG for example, then set it to ^GG. Please see
+#' help(translatePattern) for a list of IUPAC Extended Genetic Alphabet.
+#' @param gRNA.size The size of the gRNA, default 20
+#' @param overlap.gRNA.positions The required overlap positions of gRNA and
+#' restriction enzyme cut site, default 17 and 18
+#' @param primeEditing Indicate whether to design gRNAs for prime editing.
+#' Default to FALSE.  If true, please set PBS.length, RT.template.length,
+#' RT.template.pattern, targeted.seq.length.change, bp.after.target.end,
+#' target.start, and target.end accordingly
+#' @param PBS.length Applicable only when primeEditing is set to TRUE. It is
+#' used to specify the number of bases to ouput for primer binding site.
+#' @param RT.template.length Applicable only when primeEditing is set to TRUE.
+#' It is used to specify the number of bases required for RT template, default
+#' to 8 to 18. Please increase the length if the edit is large insertion.  Only
+#' gRNAs with calculated RT.template.length falling into the specified range
+#' will be in the output. It is calculated as the following. RT.template.length
+#' = target.start – cut.start + (target.end - target.start) +
+#' targeted.seq.length.change + bp.after.target.end
+#' @param RT.template.pattern Applicable only when primeEditing is set to TRUE.
+#' It is used to specify the RT template sequence pattern, default to not
+#' ending with C according to https://doi.org/10.1038/s41586-019-1711-4
+#' @param corrected.seq Applicable only when primeEditing is set to TRUE. It is
+#' used to specify the mutated or inserted sequences after successful editing.
+#' @param targeted.seq.length.change Applicable only when primeEditing is set
+#' to TRUE. It is used to specify the number of targeted sequence length
+#' change. Please set it to 0 for base changes, positive numbers for insersion,
+#' and negative number for deletion. For example, 10 means that the corrected
+#' sequence will have 10bp insertion, -10 means that the corrected sequence
+#' will have 10bp deletion, and 0 means only bases have been changed and the
+#' sequence length remains the same
+#' @param bp.after.target.end Applicable only when primeEditing is set to TRUE.
+#' It is used to specify the number of bases to add after the target change end
+#' site as part of RT template. Please refer to RT.template.length for how this
+#' parameter influences the RT.template.length calculation which is used as a
+#' filtering criteria in pregRNA selection.
+#' @param target.start Applicable only when primeEditing is set to TRUE. It is
+#' used to specify the start location in the input sequence to make changes,
+#' which will be used to obtain the RT template sequence. Please also refer to
+#' RT.template.length for how this parameter influences the RT.template.length
+#' calculation which is used as a filtering criteria in pregRNA selection.
+#' @param target.end Applicable only when primeEditing is set to TRUE. It is
+#' used to specify the end location in the input sequnence to make changes,
+#' which will be used to obtain the RT template sequence. Please also refer to
+#' RT.template.length for how this parameter influences the RT.template.length
+#' calculation which is used as a filtering criteria in pregRNA selection.
+#' @param primeEditingPaired.output Applicable only when primeEditing is set to
+#' TRUE. It is used to specify the file path to save pegRNA and the second gRNA
+#' with PBS, RT.template, gRNA sequences, default pairedgRNAsForPE.xls
+#' @param min.gap Minimum distance between two oppositely oriented gRNAs to be
+#' valid paired gRNAs. Default 0
+#' @param max.gap Maximum distance between two oppositely oriented gRNAs to be
+#' valid paired gRNAs. Default 20
+#' @param pairOutputFile The output file for writing paired gRNA information to
+#' @param name.prefix The prefix used when assign name to found gRNAs, default
+#' gRNA, short for guided RNA.
+#' @param baseBeforegRNA Number of bases before gRNA used for calculating gRNA
+#' efficiency, default 4 for spCas9 Please note, for PAM located on the 5
+#' prime, need to specify the number of bases before the PAM sequence plus PAM
+#' size.
+#' @param baseAfterPAM Number of bases after PAM used for calculating gRNA
+#' efficiency, default 3 for spCas9 Please note, for PAM located on the 5
+#' prime, need to include the length of the gRNA plus the extended sequence on
+#' the 3 prime
+#' @param featureWeightMatrixFile Feature weight matrix file used for
+#' calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used.
+#' To use alternative weight matrix file, please input a csv file with first
+#' column containing significant features and the second column containing the
+#' corresponding weights for the features. Please see Doench et al., 2014 for
+#' details.
+#' @param calculategRNAEfficacy Default to FALSE, not to calculate gRNA
+#' efficacy
+#' @param efficacyFile File path to write gRNA efficacies
+#' @param PAM.location PAM location relative to gRNA. For example, spCas9 PAM
+#' is located on the 3 prime while cpf1 PAM is located on the 5 prime
+#' @param rule.set Specify a rule set scoring system for calculating gRNA
+#' efficacy.
+#' @return DNAStringSet consists of potential gRNAs that can be input to
+#' filtergRNAs function directly
+#' @note If the input sequence file contains multiple >300 bp sequences,
+#' suggest create one input file for each sequence and run the
+#' OffTargetAnalysis separately.
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references %% ~put references to the literature/web site here ~
+#' @keywords misc
+#' @examples
+#'     findgRNAs(inputFilePath = system.file("extdata",
+#'         "inputseq.fa", package = "CRISPRseek"),
+#'         pairOutputFile = "testpairedgRNAs.xls",
+#'         findPairedgRNAOnly = TRUE)               
+#' 
+#' 
+#'     ##### predict gRNA efficacy using CRISPRscan
+#'     featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
+#'             package = "CRISPRseek")
+#' 
+#'     findgRNAs(inputFilePath = system.file("extdata",
+#'         "inputseq.fa", package = "CRISPRseek"),
+#'         pairOutputFile = "testpairedgRNAs.xls",
+#'         findPairedgRNAOnly = FALSE,
+#'         calculategRNAEfficacy= TRUE,
+#'         rule.set = "CRISPRscan", 
+#'         baseBeforegRNA = 6, baseAfterPAM = 6,
+#'         featureWeightMatrixFile = featureWeightMatrixFile,
+#'         efficacyFile = "testCRISPRscanEfficacy.xls"
+#'      )
+#' 
+#'      findgRNAs(inputFilePath = system.file("extdata",
+#'         "testCRISPRscan.fa", package = "CRISPRseek"),
+#'         pairOutputFile = "testpairedgRNAs.xls",
+#'         findPairedgRNAOnly = FALSE,
+#'         calculategRNAEfficacy= TRUE,
+#'         rule.set = "CRISPRscan",
+#'         baseBeforegRNA = 6, baseAfterPAM = 6,
+#'         featureWeightMatrixFile = featureWeightMatrixFile,
+#'         efficacyFile = "testCRISPRscanEfficacy.xls"
+#'      )
+#' 
+#'     findgRNAs(inputFilePath = system.file("extdata", 
+#'         "cpf1.fa", package = "CRISPRseek"), 
+#'         findPairedgRNAOnly=FALSE, 
+#'         pairOutputFile = "testpairedgRNAs-cpf1.xls", 
+#'         PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+#'         overlap.gRNA.positions = c(19,23),
+#'         baseBeforegRNA = 8, baseAfterPAM = 23,
+#'         calculategRNAEfficacy= TRUE, 
+#'         featureWeightMatrixFile = system.file("extdata", 
+#'             "DoenchNBT2014.csv", package = "CRISPRseek"),
+#'        efficacyFile = "testcpf1Efficacy.xls")
+#' 
+#'     findgRNAs(inputFilePath = system.file("extdata", 
+#'              "cpf1.fa", package = "CRISPRseek"), 
+#'              findPairedgRNAOnly=FALSE, 
+#'              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
+#'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+#'              overlap.gRNA.positions = c(19,23),
+#'              baseBeforegRNA = 8, baseAfterPAM = 23,
+#'              calculategRNAEfficacy= TRUE, 
+#'              featureWeightMatrixFile = system.file("extdata", 
+#'                  "DoenchNBT2014.csv", package = "CRISPRseek"),
+#'             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
+#'             editingWindow=20, targetBase = "X")
+#' 
+#'     findgRNAs(inputFilePath = system.file("extdata", 
+#'              "cpf1.fa", package = "CRISPRseek"), 
+#'              findPairedgRNAOnly=FALSE, 
+#'              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
+#'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+#'              overlap.gRNA.positions = c(19,23),
+#'              baseBeforegRNA = 8, baseAfterPAM = 23,
+#'              calculategRNAEfficacy= TRUE, 
+#'              featureWeightMatrixFile = system.file("extdata", 
+#'                  "DoenchNBT2014.csv", package = "CRISPRseek"),
+#'             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
+#'             editingWindow=20, targetBase = "C")
+#' 
+#'      inputSeq <-  DNAStringSet(paste(
+#' "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
+#' "TCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
+#'      gRNAs <-  findgRNAs(inputFilePath =  inputSeq,
+#'          pairOutputFile = "testpairedgRNAs1.xls",
+#'          PAM.size = 3L,
+#'          gRNA.size = 20L,
+#'          overlap.gRNA.positions = c(17L,18L),
+#'          PBS.length = 15,
+#'          corrected.seq = "T",
+#'          RT.template.pattern = "D$",
+#'          RT.template.length = 8:30, 
+#'          targeted.seq.length.change = 0,
+#'          bp.after.target.end = 15,
+#'          target.start = 46,
+#'          target.end = 46,
+#'          paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
+#'          primeEditing = TRUE, findPairedgRNAOnly = TRUE)
+#' @importFrom Biostrings readDNAStringSet reverseComplement DNAStringSet
+#' @importFrom BiocGenerics do.call rbind lapply unlist table cbind 
+#' @importFrom IRanges Views IRanges findOverlaps width
+#' @importFrom seqinr s2c
+#' @importFrom S4Vectors orderIntegerPairs queryHits subjectHits 
+#' @importFrom utils write.table read.csv
+#' @export 
 findgRNAs <-
     function (inputFilePath, 
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,

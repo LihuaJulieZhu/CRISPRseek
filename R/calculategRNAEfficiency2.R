@@ -6,6 +6,8 @@
 
 #CRISPRseek:::calculategRNAEfficiency2(extendedSequence,aa.cut = -1, per.peptide = -1)
 
+#' @importFrom reticulate py_discover_config
+#' @importFrom BiocGenerics lapply
 
 calculategRNAEfficiency2 <- function(extendedSequence,  
      aa.cut = -1, per.peptide = -1)

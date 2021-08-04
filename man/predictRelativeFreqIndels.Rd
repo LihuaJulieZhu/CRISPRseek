@@ -7,10 +7,11 @@
 predictRelativeFreqIndels(extendedSequence, method = "Lindel")
 }
 \arguments{
-\item{extendedSequence}{A vector of DNA sequences of length 60bp. It consists 30bp before the cut site
-and 30bp after the cut site.}
+\item{extendedSequence}{A vector of DNA sequences of length 60bp. It
+consists 30bp before the cut site and 30bp after the cut site.}
 
-\item{method}{the prediction method. default to Lindel. Currently only Lindel method are implemented.}
+\item{method}{the prediction method. default to Lindel. Currently only
+Lindel method are implemented.}
 }
 \value{
 A list with the same length as the input extendedSequence. 
@@ -23,6 +24,19 @@ predicted indel frequency, and the location of the predicted indels.
 The warning message for the Lindel method is as follows.
 
 Warning: No PAM sequence is identified. Please check your sequence and try again.
+
+A list with the same length as the input extendedSequence.
+
+Each list item either contains a warning message, or a predicted fraction of
+frameshift in the mutational outcomes plus a data frame with three columns.
+
+The three columns are the alignment of predicted indel sequence to the
+original unedited sequence, predicted indel frequency, and the location of
+the predicted indels. The warning message for the Lindel method is as
+follows.
+
+Warning: No PAM sequence is identified. Please check your sequence and try
+again.
 }
 \description{
 Predict insertions and deletions, and associated reletive frequecies induced by CRISPR/Cas9 editing
@@ -46,6 +60,12 @@ if (interactive())
     indelFreq <- predictRelativeFreqIndels(extendedSequence, method = "Lindel") 
 
 
+
+extendedSequence <- c("AAA", "TAACGTTATCAACGCCTATATTAAAGCGACCGTCGGTTGAACTGCGTGGATCAATGCGTC")
+if (interactive())
+    indelFreq <- predictRelativeFreqIndels(extendedSequence, method = "Lindel") 
+
+
 }
 \references{
 Wei Chen, Aaron McKenna, Jacob Schreiber et al.,
@@ -53,7 +73,33 @@ Massively parallel profiling and predictive modeling of the
 outcomes of CRISPR/Cas9-mediated double-strand break repair, 
 Nucleic Acids Research, Volume 47, Issue 15, 05 September 2019, 
 Pages 7989–8003, https://doi.org/10.1093/nar/gkz487
+
+Wei Chen, Aaron McKenna, Jacob Schreiber et al., Massively
+parallel profiling and predictive modeling of the outcomes of
+CRISPR/Cas9-mediated double-strand break repair, Nucleic Acids Research,
+Volume 47, Issue 15, 05 September 2019, Pages 7989–8003,
+https://doi.org/10.1093/nar/gkz487
 }
 \author{
+Hui Mao and Lihua Julie Zhu
+Predict insertions and deletions induced by CRISPR/Cas9 editing
+
+Predict insertions and deletions, and associated reletive frequecies induced
+by CRISPR/Cas9 editing
+
+Predict relative indel frequency around target sites of CRISPR/Cas9 system.
+Currently only Lindel method using logistic regression is implemented in
+CRISPRseek.
+
+Lindel is compatible with both Python2.7 and Python3.5 or higher.
+
+By default, reticulate uses the version of Python found on your PATH (i.e.
+Sys.which("python")).
+
+Use the function use_python in reticulate library to set the python path to
+a specific version. For example, use_python('/opt/anaconda3/lib/python3.7')
+
+\code{}This function implements the Lindel method
+
 Hui Mao and Lihua Julie Zhu
 }

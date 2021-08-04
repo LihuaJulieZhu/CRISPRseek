@@ -1,3 +1,9 @@
+#' @importFrom utils read.csv write.table read.table
+#' @importFrom BiocGenerics cbind unlist lapply
+#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom BSgenome getSeq
+#' @importFrom S4Vectors merge
+#' @importFrom IRanges width
 filterOffTargetWithoutBSgenome <- function (scores, 
     min.score = 0.01, topN = 200, topN.OfftargetTotalScore = 20, 
     annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, 

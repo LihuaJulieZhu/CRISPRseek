@@ -57,6 +57,110 @@
     }
 }
 
+
+
+#' Search for off targets in a sequence as DNAString
+#' 
+#' Search for off targets for given gRNAs, sequence and maximum mismatches
+#' 
+#' %% ~~ If necessary, more details than the description above ~~
+#' 
+#' @param gRNAs DNAStringSet object containing a set of gRNAs. Please note the
+#' sequences must contain PAM appended after gRNAs, e.g.,
+#' ATCGAAATTCGAGCCAATCCCGG where ATCGAAATTCGAGCCAATCC is the gRNA and CGG is
+#' the PAM
+#' @param seqs DNAString object containing a DNA sequence.
+#' @param seqname Specify the name of the sequence
+#' @param max.mismatch Maximum mismatch allowed in off target search, default
+#' 3. Warning: will be considerably slower if it is set to greater than 3
+#' @param PAM.size Size of PAM, default 3
+#' @param gRNA.size Size of gRNA, default 20
+#' @param PAM PAM as regular expression for appending to the gRNA, default NGG
+#' for SpCas9, change to TTTN for cpf1.
+#' @param PAM.pattern Regular expression of PAM, default N[A|G]G$ for spCas9.
+#' For cpf1, ^TTTN since it is a 5 prime PAM sequence
+#' @param allowed.mismatch.PAM Maximum number of mismatches allowed in the
+#' offtargets comparing to the PAM sequence. Default to 2 for NGG PAM
+#' @param PAM.location PAM location relative to gRNA. For example, spCas9 PAM
+#' is located on the 3 prime while cpf1 PAM is located on the 5 prime
+#' @param outfile File path to temporarily store the search results
+#' @param baseEditing Indicate whether to design gRNAs for base editing.
+#' Default to FALSE If TRUE, please set baseEditing = TRUE, targetBase and
+#' editingWidow accordingly.
+#' @param targetBase Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the target base for base editing systems, default to C for
+#' converting C to T in the CBE system. Please change it to A if you intend to
+#' use the ABE system.
+#' @param editingWindow Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the effective editing window to consider for the offtargets
+#' search only, default to 4 to 8 which is for the original CBE system. Please
+#' change it accordingly if the system you use have a different editing window,
+#' or you would like to include offtargets with the target base in a larger
+#' editing window.
+#' @return a data frame contains 
+#' \itemize{
+#' \item{IsMismatch.posX} - {indicator variable indicating
+#' whether this position X is mismatch or not, (1 means yes and 0 means not). X takes on values from 1 to gRNA.size, representing all positions in the guide RNA (gRNA). }
+#' \item{strand} - {strand of
+#' the match, + for plus and - for minus strand}
+#' \item{chrom} - {chromosome of the off
+#' target}
+#' \item{chromStart} - {start position of the off target}
+#' \item{chromEnd} - {end
+#' position of the off target}
+#' \item{name} - {gRNA name}
+#' \item{gRNAPlusPAM} - {gRNA sequence
+#' with PAM sequence concatenated}
+#' \item{OffTargetSequence} - {the genomic sequence of
+#' the off target}
+#' \item{n.mismatch} - {number of mismatches between the off target and
+#' the gRNA}
+#' \item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g.,
+#' chr14:31665685-31665707}
+#' \item{score} - {set to 100, and will be updated in
+#' getOfftargetScore}
+#' }
+#' @note %% ~~further notes~~
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references %% ~put references to the literature/web site here ~
+#' @keywords misc
+#' @examples
+#' 
+#'  all.gRNAs <- findgRNAs(inputFilePath =
+#'        system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
+#'        pairOutputFile = "pairedgRNAs.xls",
+#'        findPairedgRNAOnly = TRUE)
+
+#'   hits <- searchHits(all.gRNAs[1], 
+#'       seqs = DNAString(
+#'            "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"), 
+#'       seqname = "myseq", max.mismatch = 10, outfile = "test_searchHits")
+
+#'   colnames(hits)
+
+    ### test PAM located at 5 prime
+#'   all.gRNAs <- findgRNAs(inputFilePath =
+#'           DNAStringSet(
+#'               "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"),
+#'           pairOutputFile = "pairedgRNAs.xls",
+#'           findPairedgRNAOnly = FALSE,
+#'           PAM = "TTTN", PAM.location = "5prime")
+
+#'    hits <- searchHits(all.gRNAs[1], seqs = DNAString(
+#'        "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"), 
+#'        seqname = "myseq", 
+#'        max.mismatch = 0, 
+#'        outfile = "test_searchHits", PAM.location = "5prime",
+#'        PAM.pattern = "^T[A|T]NN", allowed.mismatch.PAM = 0, PAM = "TTTN")
+#'    colnames(hits)
+
+#' @importFrom Biostrings PDict matchPDict reverseComplement
+#' @importFrom IRanges Views width
+#' @importFrom BiocGenerics rep.int
+#' @importFrom utils read.table
+#' @importFrom XVector subseq
+#' @export
 searchHits <-
     function (gRNAs,seqs,seqname,
 	max.mismatch = 3, PAM.size = 3, gRNA.size = 20, 

@@ -1,3 +1,86 @@
+#' annotate off targets 
+#' 
+#' Annotate Off targets to indicate whether each one (respectively) is inside an exon or intron, as well as
+#' the gene ID if inside the gene.
+#' 
+#' %% ~~ If necessary, more details than the description above ~~
+#' 
+#' @param scores a data frame output from getOfftargetScore or filterOfftarget.
+#' It contains
+#' \itemize{
+#' \item{strand} - {strand of the off target ((+) for plus and (-) for minus
+#' strand)}
+#' \item{chrom} - {chromosome of the off target}
+#' \item{chromStart} - {start position of
+#' the off target}
+#'\item{chromEnd} - {end position of the off target}
+#'\item{name} - {gRNA
+#' name}
+#' \item{gRNAPlusPAM} - {gRNA sequence with PAM sequence concatenated}
+#' \item{OffTargetSequence} - {the genomic sequence of the off target}
+#' \item{n.mismatch} - {number of mismatches between the off target and the gRNA}
+#' \item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g., chr14:31665685-31665707}
+#' \item{score} - {score of the off target}
+#' \item{mismatch.distance2PAM} - {a comma separated
+#' distances of all mismatches to PAM, e.g., 14,11 means one mismatch is 14 bp
+#' away from PAM and the other mismatch is 11 bp away from PAM}
+#' \item{alignment} - {alignment between gRNA and off target, e.g., ......G..C.......... means
+#' that this off target aligns with gRNA except that G and C are
+#' mismatches}
+#' \item{NGG} - {this off target contains canonical PAM or not, 1 for yes
+#' and 0 for no}
+#' \item{mean.neighbor.distance.mismatch} - {mean distance between
+#' neighboring mismatches}
+#' }
+#' @param txdb TxDb object. For creating and using TxDb object, please refer to
+#' GenomicFeatures package. \\
+#' For a list of existing TxDb object, please search
+#' for annotation package starting with Txdb at
+#' http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData,
+#' such as 
+#' \itemize{
+#' \item{TxDb.Rnorvegicus.UCSC.rn5.refGene} - {for rat}
+#' \item{TxDb.Mmusculus.UCSC.mm10.knownGene} - {for mouse}
+#' \item{TxDb.Hsapiens.UCSC.hg19.knownGene} - {for human}
+#' \item{TxDb.Dmelanogaster.UCSC.dm3.ensGene} - {for Drosophila}
+#' \item{TxDb.Celegans.UCSC.ce6.ensGene} - {for C.elegans}
+#' }
+#' @param orgAnn organism annotation mapping such as org.Hs.egSYMBOL. Which lives in the
+#' org.Hs.eg.db package for humans.
+#' @param ignore.strand default to TRUE
+#' 
+#' @return a Data Frame with Off Target annotation
+#' @note %% ~~further notes~~
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael
+#' Brodsky. CRISPRseek: a Bioconductor package to identify target-specific
+#' guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One Sept 23rd 2014
+#' @keywords misc
+#' @examples
+#' 
+#'     library(CRISPRseek)
+#'     #library("BSgenome.Hsapiens.UCSC.hg19")
+#'     library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#'     library(org.Hs.eg.db)
+#'     hitsFile <-  system.file("extdata", "hits.txt", package="CRISPRseek")
+#'     hits <- read.table(hitsFile, sep = "\t", header = TRUE, 
+#'         stringsAsFactors = FALSE)
+#'     featureVectors <- buildFeatureVectorForScoring(hits)
+#'     scores <- getOfftargetScore(featureVectors)
+#'     outputDir <- getwd() 
+#'     results <- annotateOffTargets(scores, 
+#'         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'          orgAnn = org.Hs.egSYMBOL)
+#'     results
+#' @importFrom GenomeInfoDb seqlevels 
+#' @importFrom BSgenome seqnames 
+#' @importFrom IRanges IRanges overlapsAny findOverlaps 
+#' @importFrom GenomicRanges GRanges GRangesList 
+#' @importFrom BiocGenerics cbind rbind unlist toTable 
+#' @importFrom S4Vectors queryHits subjectHits Rle
+#' @importFrom methods as
+#' @export 
 annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE)
 {
     score.RD <- GRanges(seqnames = Rle(scores$chrom), 

@@ -1,0 +1,3 @@
+### use theano as backend
+#### the input file needs to have a header line which will be skipped when calculating the efficacy
+python2.7 DeepCpf1.py input_example2.txt output_example2.txt

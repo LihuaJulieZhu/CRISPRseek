@@ -1,3 +1,9 @@
+
+#' @importFrom BiocGenerics subset unlist lapply rbind
+#' @importFrom hash hash values
+#' @importFrom utils read.csv
+
+
 getOfftargetScore2 <-
     function(featureVectors, 
         subPAM.activity = hash( AA =0,

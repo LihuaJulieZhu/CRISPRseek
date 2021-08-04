@@ -1,3 +1,81 @@
+#' Write the hits of sequence search to a file
+#' 
+#' write the hits of sequence search to a file, internal function used by
+#' searchHits
+#' 
+#' %% ~~ If necessary, more details than the description above ~~
+#' 
+#' @param gRNA DNAString object with gRNA sequence with PAM appended
+#' immediately after,e.g., ACGTACGTACGTACTGACGTCGG with 20bp gRNA sequence plus
+#' 3bp PAM sequence CGG
+#' @param seqname chromosome name as character, e.g., chr1
+#' @param matches XStringViews object storing matched chromosome locations
+#' @param strand strand of the match, + for plus strand and - for minus strand
+#' @param file file path where the hits is written to
+#' @param gRNA.size gRNA size, default 20
+#' @param PAM PAM as regular expression for filtering the hits, default NGG for
+#' spCas9. For cpf1, TTTN.
+#' @param PAM.pattern Regular expression of protospacer-adjacent motif (PAM),
+#' default N[A|G]G$ for spCas9. For cpf1, ^TTTN since it is a 5 prime PAM
+#' sequence
+#' @param max.mismatch maximum mismatch allowed within the gRNA (excluding PAM
+#' portion) for filtering the hits, default 4
+#' @param chrom.len length of the matched chromosome
+#' @param append TRUE if append to existing file, false if start a new file
+#' @param PAM.location PAM location relative to gRNA. For example, spCas9 PAM
+#' is located on the 3 prime while cpf1 PAM is located on the 5 prime
+#' @param PAM.size Size of PAM, default 3
+#' @param allowed.mismatch.PAM Number of degenerative bases in the PAM
+#' sequence, default to 1 for N[A|G]G PAM
+#' @param BSgenomeName BSgenome object. Please refer to available.genomes in
+#' BSgenome package. For example, 
+#' \itemize{
+#' \item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
+#' \item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
+#' \item{BSgenome.Celegans.UCSC.ce6} - {for ce6}
+#' \item{BSgenome.Rnorvegicus.UCSC.rn5} - {for rn5}
+#' \item{BSgenome.Drerio.UCSC.danRer7} - {for Zv9}
+#' \item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
+#' }
+#' @param baseEditing Indicate whether to design gRNAs for base editing.
+#' Default to FALSE If TRUE, please set baseEditing = TRUE, targetBase and
+#' editingWidow accordingly.
+#' @param targetBase Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the target base for base editing systems, default to C for
+#' converting C to T in the CBE system. Please change it to A if you intend to
+#' use the ABE system.
+#' @param editingWindow Applicable only when baseEditing is set to TRUE. It is
+#' used to indicate the effective editing window to consider for the offtargets
+#' search only, default to 4 to 8 which is for the original CBE system. Please
+#' change it accordingly if the system you use have a different editing window,
+#' or you would like to include offtargets with the target base in a larger
+#' editing window.
+#' @return results are saved in the file specified by file
+#' @note %% ~~further notes~~
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references
+#' http://bioconductor.org/packages/2.8/bioc/vignettes/BSgenome/inst/doc/
+#' GenomeSearching.pdf
+#' @keywords misc
+#' @examples
+#' 
+#'     library("BSgenome.Hsapiens.UCSC.hg19")
+#'     gRNAPlusPAM <- DNAString("ACGTACGTACGTACTGACGTCGG")
+#'     x <- DNAString("AAGCGCGATATGACGTACGTACGTACTGACGTCGG")
+#'     chrom.len <- nchar(as.character(x))
+#'     m <- matchPattern(gRNAPlusPAM, x)
+#'     names(m) <- "testing"
+#'     writeHits2(gRNA = gRNAPlusPAM, seqname = "chr1", 
+#'         PAM = "NGG", PAM.pattern = "NNN$", allowed.mismatch.PAM = 2,
+#'         matches = m, strand = "+", file = "exampleWriteHits.txt", 
+#'         chrom.len = chrom.len, append = FALSE, BSgenomeName = Hsapiens)
+#' @importFrom Biostrings hasLetterAt DNAStringSet neditAt DNAString nchar matchPattern
+#' @importFrom BiocGenerics unlist cbind rep.int lapply table start end
+#' @importFrom seqinr s2c
+#' @importFrom utils write.table
+#' @importFrom methods as
+#' @export
 writeHits2 <-
     function (gRNA, seqname, matches, strand, file, gRNA.size = 20L, 
         PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 4L, 

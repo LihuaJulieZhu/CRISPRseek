@@ -1,3 +1,126 @@
+#' filter off targets and generate reports.
+#' 
+#' filter off targets that meet the criteria set by users such as minimum
+#' score, topN. In addition, off target was annotated with flank sequence, gRNA
+#' cleavage efficiency and whether it is inside an exon or not if fetchSequence
+#' is set to TRUE and annotateExon is set to TRUE
+#' 
+#' %% ~~ If necessary, more details than the description above ~~
+#' 
+#' @param scores a data frame output from getOfftargetScore. It contains 
+#' \itemize{
+#' \item{strand} - {strand of the off target, + for plus and - for minus strand}
+#' \item{chrom} - {chromosome of the off target}
+#' \item{chromStart} - {start position of the offtarget}
+#' \item{chromEnd} - {end position of the offtarget}
+#' \item{name} - {gRNA name} 
+#' \item{gRNAPlusPAM} - {gRNA sequence with PAM sequence concatenated}
+#' \item{OffTargetSequence} - {the genomic sequence of the off target}
+#' \item{n.mismatch} - {number of mismatches between the off target and the gRNA}
+#' \item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g., chr14:31665685-31665707}
+#' \item{score} - {score of the off target}
+#' \item{mismatch.distance2PAM} - {a comma separated
+#' distances of all mismatches to PAM, e.g., 14,11 means one mismatch is 14 bp
+#' away from PAM and the other mismatch is 11 bp away from PAM}
+#' \item{alignment} - {alignment between gRNA and off target, e.g., ......G..C.......... means
+#' that this off target aligns with gRNA except that G and C are
+#' mismatches}
+#' \item{NGG} - {this off target contains canonical PAM or not, 1 for yes
+#' and 0 for no)} 
+#' \item{mean.neighbor.distance.mismatch} - {mean distance between
+#' neighboring mismatches}
+#' }
+#' @param min.score minimum score of an off target to included in the final
+#' output, default 0.5
+#' @param topN top N off targets to be included in the final output, default
+#' 100
+#' @param topN.OfftargetTotalScore top N off target used to calculate the total
+#' off target score, default 10
+#' @param annotateExon Choose whether or not to indicate whether the off target
+#' is inside an exon or not, default TRUE
+#' @param txdb TxDb object, for creating and using TxDb object, please refer to
+#' GenomicFeatures package. For a list of existing TxDb object, please search
+#' for annotation package starting with Txdb at
+#' http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData,
+#' such as TxDb.Rnorvegicus.UCSC.rn5.refGene for rat,
+#' TxDb.Mmusculus.UCSC.mm10.knownGene for mouse,
+#' TxDb.Hsapiens.UCSC.hg19.knownGene for human,
+#' TxDb.Dmelanogaster.UCSC.dm3.ensGene for Drosophila and
+#' TxDb.Celegans.UCSC.ce6.ensGene for C.elegans
+#' @param orgAnn organism annotation mapping such as org.Hs.egSYMBOL in
+#' org.Hs.eg.db package for human
+#' @param ignore.strand default to TRUE
+#' @param outputDir the directory where the off target analysis and reports
+#' will be written to
+#' @param oneFilePergRNA write to one file for each gRNA or not, default to
+#' FALSE
+#' @param fetchSequence Fetch flank sequence of off target or not, default TRUE
+#' @param upstream upstream offset from the off target start, default 200
+#' @param downstream downstream offset from the off target end, default 200
+#' @param BSgenomeName BSgenome object. Please refer to available.genomes in
+#' BSgenome package. For example, 
+#' \itemize{
+#' \item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
+#' \item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
+#' \item{BSgenome.Celegans.UCSC.ce6} - {for ce6}
+#' \item{BSgenome.Rnorvegicus.UCSC.rn5} - {for rn5}
+#' \item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
+#' }
+#' @param baseBeforegRNA Number of bases before gRNA used for calculating gRNA
+#' efficiency, default 4
+#' @param baseAfterPAM Number of bases after PAM used for calculating gRNA
+#' efficiency, default 3
+#' @param featureWeightMatrixFile Feature weight matrix file used for
+#' calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used.
+#' To use alternative weight matrix file, please input a csv file with first
+#' column containing significant features and the second column containing the
+#' corresponding weights for the features. Please see Doench et al., 2014 for
+#' details.
+#' @param rule.set Specify a rule set scoring system for calculating gRNA
+#' efficacy.
+#' @param calculategRNAefficacyForOfftargets Default to TRUE to output gRNA
+#' efficacy for offtargets as well as ontargets. Set it to FALSE if only need
+#' gRNA efficacy calculated for ontargets only to speed up the analysis. Please
+#' refer to https://support.bioconductor.org/p/133538/#133661 for potential use
+#' cases of offtarget efficacies.
+#' @return \item{offtargets }{a data frame with off target analysis results}
+#' \item{summary }{a data frame with summary of the off target analysis
+#' results}
+#' @note %% ~~further notes~~
+#' @author Lihua Julie Zhu
+#' @seealso offTargetAnalysis
+#' @references Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I,
+#' Sullender M, Ebert BL, Xavier RJ, Root DE. Rational design of highly active
+#' sgRNAs for CRISPR-Cas9-mediated gene inactivation. Nat Biotechnol. 2014 Sep
+#' 3. doi: 10.1038 nbt.3026 Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin
+#' and Michael Brodsky. CRISPRseek: a Bioconductor package to identify
+#' target-specific guide RNAs for CRISPR-Cas9 genome-editing systems. Plos One
+#' Sept 23rd 2014
+#' @keywords misc
+#' @examples
+#' 
+#'     library(CRISPRseek)
+#'     library("BSgenome.Hsapiens.UCSC.hg19")
+#'     library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#'     library(org.Hs.eg.db)
+#'     hitsFile <-  system.file("extdata", "hits.txt", package="CRISPRseek")
+#'     hits <- read.table(hitsFile, sep = "\t", header = TRUE, 
+#'         stringsAsFactors = FALSE)
+#'     featureVectors <- buildFeatureVectorForScoring(hits)
+#'     scores <- getOfftargetScore(featureVectors)
+#'     outputDir <- getwd() 
+#'     results <- filterOffTarget(scores, BSgenomeName = Hsapiens, 
+#'         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'          orgAnn = org.Hs.egSYMBOL, outputDir = outputDir, 
+#'         min.score = 0.1, topN = 10, topN.OfftargetTotalScore = 5)
+#'     results$offtargets
+#'     results$summary
+#' @importFrom utils read.csv write.table read.table
+#' @importFrom BiocGenerics unlist cbind 
+#' @importFrom BSgenome getSeq
+#' @importFrom S4Vectors merge
+#' @importFrom GenomeInfoDb seqlengths
+#' @export
 filterOffTarget <-
     function(scores, min.score = 0.01, topN = 200, topN.OfftargetTotalScore = 20,
     annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir, oneFilePergRNA = FALSE,
