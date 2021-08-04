@@ -1,0 +1,17 @@
+LOCUS       Hsap_GATA1_ex2                     46 bp    dna     linear   UNK
+DEFINITION  CRISPRseek output for inputseq sequence
+ACCESSION   unknown
+FEATURES             Location/Qualifiers
+     misc_bind       17..18
+                     /note="gRNAf"
+     misc_bind       39..40
+                     /note="gRNAf"
+     misc_bind       40..41
+                     /note="gRNAf"
+     misc_bind       complement(19..20)
+                     /note="gRNAr"
+     misc_bind       complement(6..7)
+                     /note="gRNAr"
+ORIGIN
+        1 ccagtttgtg gatcctgctc tggtgtcctc cacaccagaa tcaggg
+//
