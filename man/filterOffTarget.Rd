@@ -21,9 +21,13 @@ filterOffTarget(
   BSgenomeName,
   baseBeforegRNA = 4,
   baseAfterPAM = 3,
+  gRNA.size = 20,
+  PAM.location = "3prime",
+  PAM.size = 3,
   featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", package =
     "CRISPRseek"),
-  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+  chrom_acc,
   calculategRNAefficacyForOfftargets = TRUE
 )
 }
@@ -107,6 +111,13 @@ efficiency, default 4}
 \item{baseAfterPAM}{Number of bases after PAM used for calculating gRNA
 efficiency, default 3}
 
+\item{gRNA.size}{The size of the gRNA, default 20 for spCas9}
+
+\item{PAM.location}{PAM location relative to gRNA. For example, spCas9 PAM
+is located on the 3 prime while cpf1 PAM is located on the 5 prime}
+
+\item{PAM.size}{PAM length, default 3 for spCas9}
+
 \item{featureWeightMatrixFile}{Feature weight matrix file used for
 calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used.
 To use alternative weight matrix file, please input a csv file with first
@@ -116,6 +127,9 @@ details.}
 
 \item{rule.set}{Specify a rule set scoring system for calculating gRNA
 efficacy.}
+
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+information with 1 indicating accessible and 0 not accessible.}
 
 \item{calculategRNAefficacyForOfftargets}{Default to TRUE to output gRNA
 efficacy for offtargets as well as ontargets. Set it to FALSE if only need

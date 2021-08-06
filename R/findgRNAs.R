@@ -4,7 +4,8 @@
     baseAfterPAM = 3,
     reverse.subject = FALSE,
     PAM.location = "3prime",
-    baseEditing = FALSE, targetBase = "C", editingWindow = 4:8)
+    baseEditing = FALSE, targetBase = "C", editingWindow = 4:8
+    )
 {
      seq.len <- nchar(as.character(subject))
      pos.PAMs <- unlist(gregexpr(PAM, subject, perl = TRUE,
@@ -223,7 +224,7 @@
 #' help(translatePattern) for a list of IUPAC Extended Genetic Alphabet.
 #' @param gRNA.size The size of the gRNA, default 20
 #' @param overlap.gRNA.positions The required overlap positions of gRNA and
-#' restriction enzyme cut site, default 17 and 18
+#' restriction enzyme cut site, default 17 and 18. For Cpf1,you may set it to 19 and 23.
 #' @param primeEditing Indicate whether to design gRNAs for prime editing.
 #' Default to FALSE.  If true, please set PBS.length, RT.template.length,
 #' RT.template.pattern, targeted.seq.length.change, bp.after.target.end,
@@ -294,7 +295,10 @@
 #' @param PAM.location PAM location relative to gRNA. For example, spCas9 PAM
 #' is located on the 3 prime while cpf1 PAM is located on the 5 prime
 #' @param rule.set Specify a rule set scoring system for calculating gRNA
-#' efficacy.
+#' efficacy. Please note that if specifying DeepCpf1, please specify other
+#' parameters accordingly for CRISPR-Cpf1 gRNAs.
+#' @param chrom_acc Optional binary variable indicating chromatin accessibility 
+#' information with 1 indicating accessible and 0 not accessible.
 #' @return DNAStringSet consists of potential gRNAs that can be input to
 #' filtergRNAs function directly
 #' @note If the input sequence file contains multiple >300 bp sequences,
@@ -342,11 +346,10 @@
 #'         findPairedgRNAOnly=FALSE, 
 #'         pairOutputFile = "testpairedgRNAs-cpf1.xls", 
 #'         PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
-#'         overlap.gRNA.positions = c(19,23),
-#'         baseBeforegRNA = 8, baseAfterPAM = 23,
+#'         overlap.gRNA.positions = c(19, 23),
+#'         baseBeforegRNA = 8, baseAfterPAM = 26,
 #'         calculategRNAEfficacy= TRUE, 
-#'         featureWeightMatrixFile = system.file("extdata", 
-#'             "DoenchNBT2014.csv", package = "CRISPRseek"),
+#'         rule.set = "DeepCpf1",
 #'        efficacyFile = "testcpf1Efficacy.xls")
 #' 
 #'     findgRNAs(inputFilePath = system.file("extdata", 
@@ -355,25 +358,23 @@
 #'              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
 #'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
 #'              overlap.gRNA.positions = c(19,23),
-#'              baseBeforegRNA = 8, baseAfterPAM = 23,
+#'              baseBeforegRNA = 8, baseAfterPAM = 26,
 #'              calculategRNAEfficacy= TRUE, 
-#'              featureWeightMatrixFile = system.file("extdata", 
-#'                  "DoenchNBT2014.csv", package = "CRISPRseek"),
-#'             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
-#'             editingWindow=20, targetBase = "X")
+#'              rule.set = "DeepCpf1",
+#'              efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
+#'              editingWindow=20, targetBase = "X")
 #' 
 #'     findgRNAs(inputFilePath = system.file("extdata", 
 #'              "cpf1.fa", package = "CRISPRseek"), 
 #'              findPairedgRNAOnly=FALSE, 
 #'              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
 #'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
-#'              overlap.gRNA.positions = c(19,23),
-#'              baseBeforegRNA = 8, baseAfterPAM = 23,
+#'              overlap.gRNA.positions = c(19, 23),
+#'              baseBeforegRNA = 8, baseAfterPAM = 26,
 #'              calculategRNAEfficacy= TRUE, 
-#'              featureWeightMatrixFile = system.file("extdata", 
-#'                  "DoenchNBT2014.csv", package = "CRISPRseek"),
-#'             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
-#'             editingWindow=20, targetBase = "C")
+#'              rule.set = "DeepCpf1",
+#'              efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
+#'              editingWindow=20, targetBase = "C")
 #' 
 #'      inputSeq <-  DNAStringSet(paste(
 #' "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
@@ -393,6 +394,7 @@
 #'          target.end = 46,
 #'          paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
 #'          primeEditing = TRUE, findPairedgRNAOnly = TRUE)
+#'
 #' @importFrom Biostrings readDNAStringSet reverseComplement DNAStringSet
 #' @importFrom BiocGenerics do.call rbind lapply unlist table cbind 
 #' @importFrom IRanges Views IRanges findOverlaps width
@@ -400,6 +402,7 @@
 #' @importFrom S4Vectors orderIntegerPairs queryHits subjectHits 
 #' @importFrom utils write.table read.csv
 #' @export 
+
 findgRNAs <-
     function (inputFilePath, 
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
@@ -426,7 +429,9 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
         baseAfterPAM = 3,
 	calculategRNAEfficacy = FALSE, efficacyFile,
         PAM.location = "3prime",
-        rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"))
+        rule.set = c("Root_RuleSet1_2014", 
+            "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+        chrom_acc)
 {
     rule.set <- match.arg(rule.set)
     paired.orientation <- match.arg(paired.orientation)
@@ -692,6 +697,14 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
         {
           effi <- calculategRNAEfficiencyCRISPRscan(all.gRNAs.df[,5], 
               featureWeightMatrix = featureWeightMatrix)
+        }
+        else if (rule.set == "DeepCpf1")
+        {
+           if (missing(chrom_acc))
+                effi <- round(deepCpf1(extendedSequence = all.gRNAs.df[,5]), 3)
+           else
+		effi <- round(deepCpf1(extendedSequence = all.gRNAs.df[,5], 
+                 chrom_acc = chrom_acc), 3)
         }
         extendedSequences <- cbind(all.gRNAs.df, effi)
         colnames(extendedSequences)  <- c("gRNAplusPAM", "name", "start", "strand", 

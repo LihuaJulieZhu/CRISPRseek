@@ -9,9 +9,10 @@ filterOffTargetWithoutBSgenome <- function (scores,
     annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, 
     outputDir, oneFilePergRNA = FALSE, fetchSequence = TRUE, 
     upstream = 200, downstream = 200, BSgenomeName, baseBeforegRNA = 4, 
-    baseAfterPAM = 3, featureWeightMatrixFile = system.file("extdata", 
+    baseAfterPAM = 3, gRNA.size = 20, PAM.location = "3prime", PAM.size = 3,
+    featureWeightMatrixFile = system.file("extdata", 
         "DoenchNBT2014.csv", package = "CRISPRseek"), rule.set = c("Root_RuleSet1_2014", 
-        "Root_RuleSet2_2016", "CRISPRscan"),
+        "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"), chrom_acc,
     genomeSeq, useBSgenome = FALSE) 
 {
     rule.set <- match.arg(rule.set)
@@ -129,12 +130,24 @@ filterOffTargetWithoutBSgenome <- function (scores,
     if (dim(ontargets)[1] > 0) {
         chr <- as.character(ontargets$chrom)
         strand <- as.character(ontargets$strand)
-        Start <- ifelse(strand == "-", as.numeric(as.character(ontargets$chromStart)) - 
-            baseAfterPAM, as.numeric(as.character(ontargets$chromStart)) - 
-            baseBeforegRNA)
-        End <- ifelse(strand == "-", as.numeric(as.character(ontargets$chromEnd)) + 
-            as.numeric(baseBeforegRNA), as.numeric(as.character(ontargets$chromEnd)) + 
-            as.numeric(baseAfterPAM))
+        if (PAM.location == "3prime")
+        {
+           Start <- ifelse(strand == "-", as.numeric(as.character(ontargets$chromStart)) - 
+             baseAfterPAM, as.numeric(as.character(ontargets$chromStart)) - 
+             baseBeforegRNA)
+           End <- ifelse(strand == "-", as.numeric(as.character(ontargets$chromEnd)) + 
+             as.numeric(baseBeforegRNA), as.numeric(as.character(ontargets$chromEnd)) + 
+             as.numeric(baseAfterPAM))
+         }
+        else
+        {
+           Start <- ifelse(strand=="-",
+              as.numeric(as.character( Offtargets$chromStart)) - baseAfterPAM + gRNA.size,
+              as.numeric(as.character( Offtargets$chromStart)) - baseBeforegRNA + PAM.size)
+           End <- ifelse(strand=="-",
+              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseBeforegRNA) - PAM.size,
+              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseAfterPAM) - gRNA.size)
+        }
         starts <- unlist(apply(cbind(Start, 1), 1, max))
         if (useBSgenome)
         {
@@ -163,6 +176,11 @@ filterOffTargetWithoutBSgenome <- function (scores,
         else if (rule.set == "CRISPRscan") {
             gRNAefficiency <- calculategRNAEfficiencyCRISPRscan(extendedSequence, 
                 featureWeightMatrix = featureWeightMatrix)
+        }
+        else if (rule.set == "DeepCpf1")
+        {
+	    gRNAefficiency <- round(deepCpf1(extendedSequence = extendedSequence, 
+                 chrom_acc = chrom_acc), 3)
         }
         ontargets <- cbind(ontargets, gRNAefficacy = gRNAefficiency)
         Offtargets <- merge(Offtargets, ontargets, all = TRUE)

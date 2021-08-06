@@ -27,7 +27,7 @@
 #' @param minREpatternSize Minimum restriction enzyme recognition pattern
 #' length required for the enzyme pattern to be searched for, default 4
 #' @param overlap.gRNA.positions The required overlap positions of gRNA and
-#' restriction enzyme cut site, default 17 and 18
+#' restriction enzyme cut site, default 17 and 18. For Cpf1, you can set it to 19 and 23.
 #' @param findPairedgRNAOnly Choose whether to only search for paired gRNAs in
 #' such an orientation that the first one is on minus strand called reverse
 #' gRNA and the second one is on plus strand called forward gRNA. TRUE or
@@ -229,6 +229,8 @@
 #' efficacy. Please note that Root_RuleSet2_2016 requires the following python
 #' packages with specified verion and python 2.7.  1. scikit-learn 0.16.1 2.
 #' pickle 3. pandas 4. numpy 5. scipy
+#' @param chrom_acc Optional binary variable indicating chromatin accessibility 
+#' information with 1 indicating accessible and 0 not accessible.
 #' @param calculategRNAefficacyForOfftargets Default to TRUE to output gRNA
 #' efficacy for offtargets as well as ontargets. Set it to FALSE if only need
 #' gRNA efficacy calculated for ontargets only to speed up the analysis. Please
@@ -471,7 +473,8 @@ offTargetAnalysis <-
           TT = 0),
      subPAM.position = c(22, 23),
      PAM.location = "3prime",
-     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+     chrom_acc,
      calculategRNAefficacyForOfftargets = TRUE,
      mismatch.activity.file = system.file("extdata", 
          "NatureBiot2016SuppTable19DoenchRoot.csv", 
@@ -565,21 +568,21 @@ offTargetAnalysis <-
                baseBeforegRNA = baseBeforegRNA, 
 	       baseAfterPAM = baseAfterPAM ,
     	       calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile,
-               rule.set = rule.set)
+               rule.set = rule.set, chrom_acc = chrom_acc)
          else
 	    potential.gRNAs <- findgRNAs(inputFilePath,
                overlap.gRNA.positions = overlap.gRNA.positions,
               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
               primeEditing = primeEditing,
               PBS.length = PBS.length,
-                RT.template.length = RT.template.length,
-                RT.template.pattern = RT.template.pattern,
-                corrected.seq = corrected.seq,
-                targeted.seq.length.change = targeted.seq.length.change,
-                bp.after.target.end = bp.after.target.end,
-                target.start = target.start,
-                target.end = target.end,
-             primeEditingPaired.output =  primeEditingPaired.output,
+               RT.template.length = RT.template.length,
+               RT.template.pattern = RT.template.pattern,
+               corrected.seq = corrected.seq,
+               targeted.seq.length.change = targeted.seq.length.change,
+               bp.after.target.end = bp.after.target.end,
+               target.start = target.start,
+               target.end = target.end,
+               primeEditingPaired.output =  primeEditingPaired.output,
                findPairedgRNAOnly = findPairedgRNAOnly,
                annotatePaired = annotatePaired,
                paired.orientation = paired.orientation,
@@ -590,7 +593,7 @@ offTargetAnalysis <-
                PAM.location = PAM.location,
                gRNA.size = gRNA.size, min.gap = min.gap,
                max.gap = max.gap, name.prefix = gRNA.name.prefix, 
-               format = format,  rule.set = rule.set)
+               format = format,  rule.set = rule.set, chrom_acc = chrom_acc)
 	if (length(potential.gRNAs) == 0)
         {
 		return(cat("no gRNAs found!"))
@@ -841,8 +844,11 @@ if (dim(hits)[1] > 0)
             topN.OfftargetTotalScore = topN.OfftargetTotalScore, 
             upstream = upstream, downstream = downstream, 
             annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA, 
-	    baseAfterPAM = baseAfterPAM, featureWeightMatrixFile = featureWeightMatrixFile,
-            rule.set = rule.set, calculategRNAefficacyForOfftargets = calculategRNAefficacyForOfftargets)
+	    baseAfterPAM = baseAfterPAM, gRNA.size = gRNA.size,
+            PAM.location = PAM.location, PAM.size = PAM.size,
+            featureWeightMatrixFile = featureWeightMatrixFile,
+            rule.set = rule.set, chrom_acc = chrom_acc,
+            calculategRNAefficacyForOfftargets = calculategRNAefficacyForOfftargets)
   #saveRDS(offTargets, file = "offTargets.RDS") 
     cat("Done annotating\n")
     summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t", 

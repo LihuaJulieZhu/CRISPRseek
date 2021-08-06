@@ -82,7 +82,8 @@ offTargetAnalysis(
     = 0, TC = 0, TG = 0.038961039, TT = 0),
   subPAM.position = c(22, 23),
   PAM.location = "3prime",
-  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+  chrom_acc,
   calculategRNAefficacyForOfftargets = TRUE,
   mismatch.activity.file = system.file("extdata",
     "NatureBiot2016SuppTable19DoenchRoot.csv", package = "CRISPRseek"),
@@ -122,7 +123,7 @@ restriction enzyme recognition pattern}
 length required for the enzyme pattern to be searched for, default 4}
 
 \item{overlap.gRNA.positions}{The required overlap positions of gRNA and
-restriction enzyme cut site, default 17 and 18}
+restriction enzyme cut site, default 17 and 18. For Cpf1, you can set it to 19 and 23.}
 
 \item{findPairedgRNAOnly}{Choose whether to only search for paired gRNAs in
 such an orientation that the first one is on minus strand called reverse
@@ -385,6 +386,9 @@ located on the 5 prime end}
 efficacy. Please note that Root_RuleSet2_2016 requires the following python
 packages with specified verion and python 2.7.  1. scikit-learn 0.16.1 2.
 pickle 3. pandas 4. numpy 5. scipy}
+
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+information with 1 indicating accessible and 0 not accessible.}
 
 \item{calculategRNAefficacyForOfftargets}{Default to TRUE to output gRNA
 efficacy for offtargets as well as ontargets. Set it to FALSE if only need

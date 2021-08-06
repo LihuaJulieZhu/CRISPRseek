@@ -70,6 +70,10 @@
 #' efficiency, default 4
 #' @param baseAfterPAM Number of bases after PAM used for calculating gRNA
 #' efficiency, default 3
+#' @param gRNA.size The size of the gRNA, default 20 for spCas9
+#' @param PAM.location PAM location relative to gRNA. For example, spCas9 PAM
+#' is located on the 3 prime while cpf1 PAM is located on the 5 prime
+#' @param PAM.size PAM length, default 3 for spCas9
 #' @param featureWeightMatrixFile Feature weight matrix file used for
 #' calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used.
 #' To use alternative weight matrix file, please input a csv file with first
@@ -78,6 +82,8 @@
 #' details.
 #' @param rule.set Specify a rule set scoring system for calculating gRNA
 #' efficacy.
+#' @param chrom_acc Optional binary variable indicating chromatin accessibility 
+#' information with 1 indicating accessible and 0 not accessible.
 #' @param calculategRNAefficacyForOfftargets Default to TRUE to output gRNA
 #' efficacy for offtargets as well as ontargets. Set it to FALSE if only need
 #' gRNA efficacy calculated for ontargets only to speed up the analysis. Please
@@ -125,10 +131,11 @@ filterOffTarget <-
     function(scores, min.score = 0.01, topN = 200, topN.OfftargetTotalScore = 20,
     annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir, oneFilePergRNA = FALSE,
     fetchSequence = TRUE, upstream = 200, downstream = 200, BSgenomeName,
-    baseBeforegRNA = 4, baseAfterPAM = 3,
+    baseBeforegRNA = 4, baseAfterPAM = 3, gRNA.size = 20, PAM.location = "3prime", PAM.size = 3,
     featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", 
 	package = "CRISPRseek"),
-    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan"),
+    rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+    chrom_acc,
    calculategRNAefficacyForOfftargets = TRUE
 )
 {
@@ -278,12 +285,24 @@ filterOffTarget <-
     {
 	chr <- as.character(Offtargets$chrom)
         strand <- as.character(Offtargets$strand)
-        Start <- ifelse(strand=="-",
+        if (PAM.location == "3prime") 
+        {
+           Start <- ifelse(strand=="-",
               as.numeric(as.character( Offtargets$chromStart)) - baseAfterPAM,
               as.numeric(as.character( Offtargets$chromStart)) - baseBeforegRNA)
-        End <- ifelse(strand=="-",
+           End <- ifelse(strand=="-",
               as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseBeforegRNA),
               as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseAfterPAM))
+        }
+        else
+        {
+	   Start <- ifelse(strand=="-",
+              as.numeric(as.character( Offtargets$chromStart)) - baseAfterPAM + gRNA.size,
+              as.numeric(as.character( Offtargets$chromStart)) - baseBeforegRNA + PAM.size)
+           End <- ifelse(strand=="-",
+              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseBeforegRNA) - PAM.size,
+              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseAfterPAM) - gRNA.size)
+        }
     }
     if ((calculategRNAefficacyForOfftargets && dim(Offtargets)[1] > 0) || (!calculategRNAefficacyForOfftargets && dim(ontargets)[1] > 0))
     {
@@ -292,6 +311,7 @@ filterOffTarget <-
         
         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
            end = ends, strand = strand, width = NA, as.character = TRUE)
+saveRDS(extendedSequence, file ="extendedSequence.RDS")
         if (rule.set == "Root_RuleSet1_2014")
 	{
             gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 
@@ -306,6 +326,11 @@ filterOffTarget <-
         {
             gRNAefficiency <- calculategRNAEfficiencyCRISPRscan(extendedSequence,
               featureWeightMatrix = featureWeightMatrix)
+        }
+        else if (rule.set == "DeepCpf1")
+        {
+	    gRNAefficiency <- round(deepCpf1(extendedSequence = extendedSequence, 
+                 chrom_acc = chrom_acc), 3)
         }
        if (!calculategRNAefficacyForOfftargets && dim(ontargets)[1] > 0)
        {

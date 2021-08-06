@@ -41,7 +41,8 @@ findgRNAs(
   calculategRNAEfficacy = FALSE,
   efficacyFile,
   PAM.location = "3prime",
-  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan")
+  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+  chrom_acc
 )
 }
 \arguments{
@@ -98,7 +99,7 @@ help(translatePattern) for a list of IUPAC Extended Genetic Alphabet.}
 \item{gRNA.size}{The size of the gRNA, default 20}
 
 \item{overlap.gRNA.positions}{The required overlap positions of gRNA and
-restriction enzyme cut site, default 17 and 18}
+restriction enzyme cut site, default 17 and 18. For Cpf1,you may set it to 19 and 23.}
 
 \item{primeEditing}{Indicate whether to design gRNAs for prime editing.
 Default to FALSE.  If true, please set PBS.length, RT.template.length,
@@ -190,7 +191,11 @@ efficacy}
 is located on the 3 prime while cpf1 PAM is located on the 5 prime}
 
 \item{rule.set}{Specify a rule set scoring system for calculating gRNA
-efficacy.}
+efficacy. Please note that if specifying DeepCpf1, please specify other
+parameters accordingly for CRISPR-Cpf1 gRNAs.}
+
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+information with 1 indicating accessible and 0 not accessible.}
 }
 \value{
 DNAStringSet consists of potential gRNAs that can be input to
@@ -248,11 +253,10 @@ OffTargetAnalysis separately.
         findPairedgRNAOnly=FALSE, 
         pairOutputFile = "testpairedgRNAs-cpf1.xls", 
         PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
-        overlap.gRNA.positions = c(19,23),
-        baseBeforegRNA = 8, baseAfterPAM = 23,
+        overlap.gRNA.positions = c(19, 23),
+        baseBeforegRNA = 8, baseAfterPAM = 26,
         calculategRNAEfficacy= TRUE, 
-        featureWeightMatrixFile = system.file("extdata", 
-            "DoenchNBT2014.csv", package = "CRISPRseek"),
+        rule.set = "DeepCpf1",
        efficacyFile = "testcpf1Efficacy.xls")
 
     findgRNAs(inputFilePath = system.file("extdata", 
@@ -261,25 +265,23 @@ OffTargetAnalysis separately.
              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
              overlap.gRNA.positions = c(19,23),
-             baseBeforegRNA = 8, baseAfterPAM = 23,
+             baseBeforegRNA = 8, baseAfterPAM = 26,
              calculategRNAEfficacy= TRUE, 
-             featureWeightMatrixFile = system.file("extdata", 
-                 "DoenchNBT2014.csv", package = "CRISPRseek"),
-            efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
-            editingWindow=20, targetBase = "X")
+             rule.set = "DeepCpf1",
+             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
+             editingWindow=20, targetBase = "X")
 
     findgRNAs(inputFilePath = system.file("extdata", 
              "cpf1.fa", package = "CRISPRseek"), 
              findPairedgRNAOnly=FALSE, 
              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
-             overlap.gRNA.positions = c(19,23),
-             baseBeforegRNA = 8, baseAfterPAM = 23,
+             overlap.gRNA.positions = c(19, 23),
+             baseBeforegRNA = 8, baseAfterPAM = 26,
              calculategRNAEfficacy= TRUE, 
-             featureWeightMatrixFile = system.file("extdata", 
-                 "DoenchNBT2014.csv", package = "CRISPRseek"),
-            efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
-            editingWindow=20, targetBase = "C")
+             rule.set = "DeepCpf1",
+             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
+             editingWindow=20, targetBase = "C")
 
      inputSeq <-  DNAStringSet(paste(
 "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
@@ -299,6 +301,7 @@ OffTargetAnalysis separately.
          target.end = 46,
          paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
          primeEditing = TRUE, findPairedgRNAOnly = TRUE)
+
 }
 \references{
 %% ~put references to the literature/web site here ~
