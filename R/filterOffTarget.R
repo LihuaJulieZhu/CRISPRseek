@@ -311,7 +311,6 @@ filterOffTarget <-
         
         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
            end = ends, strand = strand, width = NA, as.character = TRUE)
-saveRDS(extendedSequence, file ="extendedSequence.RDS")
         if (rule.set == "Root_RuleSet1_2014")
 	{
             gRNAefficiency <- calculategRNAEfficiency(extendedSequence, 

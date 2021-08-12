@@ -28,7 +28,7 @@
 #' 
 #' @import keras
 #' @importFrom mltools one_hot
-#' @importFrom dplyr select ends_with mutate_if
+#' @importFrom dplyr select ends_with mutate_if slice
 #' @importFrom data.table as.data.table
 #' @importFrom stats predict
 #'
@@ -57,7 +57,7 @@ deepCpf1 <- function(extendedSequence, chrom_acc){
   if (missing(extendedSequence))
      stop("extendedSequence is required for predicting efficacy using DeepCpf1 algorithm!")
   len <- unlist(lapply(extendedSequence, nchar))
-  if (sum(len == 34) == 0)
+  if (sum(len == 34, na.rm = TRUE) == 0)
   {
       warning("None of the extendedSequences has length of 34 which is required for DeepCpf1 algorithm!")
       return(rep(NA, length(extendedSequence)))
@@ -68,19 +68,21 @@ deepCpf1 <- function(extendedSequence, chrom_acc){
   if (!missing(chrom_acc))
   { 
       in_df <- as.data.frame(cbind(sequence = sequence, chrom_acc = chrom_acc, len = len))
-      in_df <- in_df[in_df[, 3] == 34, ]
+      in_df <- subset(in_df, in_df[, 3] == 34)
       CA = as.numeric(in_df[,2]) * 100
       CA <- array(as.numeric(CA), dim = c(length(CA), 1))
   }
   else
   {
       in_df <- as.data.frame(cbind(sequence = sequence, len = len))
-      in_df <- in_df[in_df[, 2] ==  34, ]
+      in_df <- subset(in_df, in_df[, 2] ==  34)
   }
 
-  SEQ <- as.data.table(strsplit(in_df[,1],"")) %>%
+  SEQ <- as.data.table(strsplit(paste0("ACGT", in_df[,1]),"")) %>%
     mutate_if(is.character, as.factor) %>%
-    one_hot
+    one_hot(dropUnusedLevels = FALSE, dropCols = FALSE) %>% 
+    slice(-c(1:4))
+    
 
   SEQ <- array(c(t(select(as.data.frame(SEQ), ends_with("A"))),
                  t(select(as.data.frame(SEQ), ends_with("C"))),
@@ -176,11 +178,11 @@ deepCpf1 <- function(extendedSequence, chrom_acc){
    if (missing(chrom_acc))
    {
      temp <- cbind(extendedSequence = in_df[,1], effi = effi)
-     as.numeric(temp[match(sequence, temp[,1]),2])
+     as.numeric(temp[match(sequence, temp[,1]),2]) /100
    }
    else
    {
       temp <- cbind(extendedSequence = paste0(in_df[,1],in_df[,2]), effi = effi)
-      as.numeric(temp[match(paste0(sequence,chrom_acc), temp[,1]),2])
+      as.numeric(temp[match(paste0(sequence,chrom_acc), temp[,1]),2]) /100
    }
 }
