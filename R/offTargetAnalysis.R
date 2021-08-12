@@ -293,6 +293,11 @@
 #' profiling and predictive modeling of the outcomes of CRISPR/Cas9-mediated
 #' double-strand break repair, Nucleic Acids Research, Volume 47, Issue 15, 05
 #' September 2019, Pages 7989–8003, https://doi.org/10.1093/nar/gkz487
+#'
+#' Kim et al., Deep learning improves prediction of CRISPR–Cpf1 
+#' guide RNA activityNat Biotechnol 36, 239–241 (2018). 
+#' https://doi.org/10.1038/nbt.4061
+#'
 #' @keywords misc
 #' @examples
 #' 
@@ -346,16 +351,23 @@
 #'             featureWeightMatrixFile = featureWeightMatrixFile, 
 #'             outputDir = outputDir, overwrite = TRUE)
 #' 
-#'        ######## PAM is on the 5 prime side
-#'        results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
-#'             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
-#'             annotatePaired = FALSE,
-#'             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-#'             orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
-#'             outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
-#'             PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
-#'             subPAM.position = c(1,2))
+#'        ######## PAM is on the 5 prime side, e.g., Cpf1
+#'        results <- offTargetAnalysis(inputFilePath = system.file("extdata",  
+#'               "cpf1-2.fa", package = "CRISPRseek"), findgRNAsWithREcutOnly =  FALSE,
+#'           findPairedgRNAOnly = FALSE,
+#'           annotatePaired = FALSE,
+#'           BSgenomeName = Hsapiens,
+#'           chromToSearch = "chr8",     
+#'           txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'           orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
+#'           baseBeforegRNA = 8, baseAfterPAM = 26,
+#'           rule.set = "DeepCpf1", 
+#'           overlap.gRNA.positions = c(19, 23), 
+#'           useEfficacyFromInputSeq = FALSE,
+#'           outputDir = getwd(), 
+#'           overwrite = TRUE, PAM.location = "5prime",PAM.size = 4,
+#'           PAM = "TTTN", PAM.pattern = "^TNNN", allowed.mismatch.PAM = 2,
+#'           subPAM.position = c(1,2))
 #'  
 #'         results1 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
 #'                  REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
@@ -490,6 +502,42 @@ offTargetAnalysis <-
     scoring.method <- match.arg(scoring.method)
     exportAllgRNAs <- match.arg(exportAllgRNAs)
     rule.set <- match.arg(rule.set)
+    if (rule.set == "DeepCpf1")
+    {
+        baseBeforegRNA <- 8
+        baseAfterPAM <- 26
+        if (scoring.method == "CFDscore" && subPAM.activity$TT < 1)
+          subPAM.activity = hash( AA =0,
+              AC = 0,
+              AG = 0,
+          AT = 0.1,
+          CA = 0,
+          CC = 0,
+          CG = 0,
+          CT = 0.05,
+          GA = 0,
+          GC = 0,
+          GG = 0,
+          GT = 0.05,
+          TA = 0.2,
+          TC = 0.1,
+          TG = 0.1,
+          TT = 1)
+    }
+    else if (rule.set %in% c("Root_RuleSet1_2014", 
+        "Root_RuleSet2_2016", "CRISPRscan"))
+    {
+        if (PAM.location == "3prime")
+        {
+            baseBeforegRNA <- 4
+            baseAfterPAM <- 3
+        }
+        else
+        {
+            baseBeforegRNA <- 4 + PAM.size
+            baseAfterPAM <- 3 + gRNA.size
+        }
+    }
     if (scoring.method ==  "CFDscore") 
     {
         mismatch.activity <- read.csv(mismatch.activity.file)

@@ -418,6 +418,43 @@ offTargetAnalysisWithoutBSgenome <-
     scoring.method <- match.arg(scoring.method)
     exportAllgRNAs <- match.arg(exportAllgRNAs)
     rule.set <- match.arg(rule.set)
+
+    if (rule.set == "DeepCpf1")
+    {
+        baseBeforegRNA <- 8
+        baseAfterPAM <- 26
+        if (scoring.method == "CFDscore" && subPAM.activity$TT < 1)
+          subPAM.activity = hash( AA =0,
+          AC = 0,
+          AG = 0,
+          AT = 0.1,
+          CA = 0,
+          CC = 0,
+          CG = 0,
+          CT = 0.05,
+          GA = 0,
+          GC = 0,
+          GG = 0,
+          GT = 0.05,
+          TA = 0.2,
+          TC = 0.1,
+          TG = 0.1,
+          TT = 1)
+    }
+    else if (rule.set %in% c("Root_RuleSet1_2014",
+        "Root_RuleSet2_2016", "CRISPRscan"))
+    {
+        if (PAM.location == "3prime")
+        {
+            baseBeforegRNA <- 4
+            baseAfterPAM <- 3
+        }
+        else
+        {
+            baseBeforegRNA <- 4 + PAM.size
+            baseAfterPAM <- 3 + gRNA.size
+        }
+    }
     if (scoring.method ==  "CFDscore") 
     {
         mismatch.activity <- read.csv(mismatch.activity.file)

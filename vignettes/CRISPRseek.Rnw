@@ -472,6 +472,9 @@ genomic DNA without double-stranded DNA cleavage. Nature 533, 420–424 (2016).
 \bibitem[Gaudelli et al., 2017]{Gaudelli et al., 2017}Gaudelli, N. M. et al. 
 Programmable base editing of A or T to G or C in genomic DNA without 
 DNA cleavage. Nature 551, 464–471 (2017).
+\bibitem[Kim et al., 2018]{Kim et al., 2018}Kim et al., Deep learning improves prediction of CRISPR–Cpf1
+guide RNA activityNat Biotechnol 36, 239–241 (2018).
+https://doi.org/10.1038/nbt.4061
 \bibitem[Chen et al., 2019]{Che et al., 2019}Wei Chen, Aaron McKenna, Jacob Schreiber et al.,
 Massively parallel profiling and predictive modeling of the 
 outcomes of CRISPR/Cas9-mediated double-strand break repair, 

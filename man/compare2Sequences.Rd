@@ -54,7 +54,7 @@ compare2Sequences(
     = 0, TC = 0, TG = 0.038961039, TT = 0),
   subPAM.position = c(22, 23),
   PAM.location = "3prime",
-  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016"),
+  rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
   mismatch.activity.file = system.file("extdata",
     "NatureBiot2016SuppTable19DoenchRoot.csv", package = "CRISPRseek")
 )
