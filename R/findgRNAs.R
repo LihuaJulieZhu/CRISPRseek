@@ -170,42 +170,42 @@
 }
 
 findgRNAs <- function (inputFilePath,
-        baseEditing = FALSE,
-        targetBase = "C",
-        editingWindow = 4:8,
-        format = "fasta",
-        PAM = "NGG",
-        PAM.size = 3,
-        findPairedgRNAOnly = FALSE,
-        annotatePaired = TRUE,
-        paired.orientation = c("PAMout", "PAMin"),
-        enable.multicore = FALSE,
-        n.cores.max = 6,
-        gRNA.pattern = "",
-        gRNA.size = 20,
-	      overlap.gRNA.positions = c(17,18),
-        primeEditing = FALSE,
-        PBS.length = 13L,
-        RT.template.length = 8:28,
-        RT.template.pattern = "D$",
-        corrected.seq,
-        targeted.seq.length.change,
-        bp.after.target.end = 15L,
-        target.start,
-        target.end,
-        primeEditingPaired.output = "pairedgRNAsForPE.xls",
-        min.gap = 0,
-        max.gap = 20,
-        pairOutputFile,
-        name.prefix = "",
-	      featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv",
-        package = "CRISPRseek"),
-        baseBeforegRNA = 4,
-        baseAfterPAM = 3,
-	      calculategRNAEfficacy = FALSE,
-        efficacyFile,
-        PAM.location = "3prime",
-        rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan")) {
+                       baseEditing = FALSE,
+                       targetBase = "C",
+                       editingWindow = 4:8,
+                       format = "fasta",
+                       PAM = "NGG",
+                       PAM.size = 3,
+                       findPairedgRNAOnly = FALSE,
+                       annotatePaired = TRUE,
+                       paired.orientation = c("PAMout", "PAMin"),
+                       enable.multicore = FALSE,
+                       n.cores.max = 6,
+                       gRNA.pattern = "",
+                       gRNA.size = 20,
+                       overlap.gRNA.positions = c(17,18),
+                       primeEditing = FALSE,
+                       PBS.length = 13L,
+                       RT.template.length = 8:28,
+                       RT.template.pattern = "D$",
+                       corrected.seq,
+                       targeted.seq.length.change,
+                       bp.after.target.end = 15L,
+                       target.start,
+                       target.end,
+                       primeEditingPaired.output = "pairedgRNAsForPE.xls",
+                       min.gap = 0,
+                       max.gap = 20,
+                       pairOutputFile,
+                       name.prefix = "",
+                       featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv",
+                       package = "CRISPRseek"),
+                       baseBeforegRNA = 4,
+                       baseAfterPAM = 3,
+                       calculategRNAEfficacy = FALSE,
+                       efficacyFile,
+                       PAM.location = "3prime",
+                       rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan")) {
 
     rule.set <- match.arg(rule.set)
     paired.orientation <- match.arg(paired.orientation)
@@ -218,13 +218,10 @@ findgRNAs <- function (inputFilePath,
     	if (! file.exists(inputFilePath)) {
            stop("inputfile specified as ", inputFilePath, " does not exists!")
         }
-        if (format == "fasta" || format == "fastq")
-        {
-            subjects <- readDNAStringSet(inputFilePath, format, use.names = TRUE)
-        }
-        else
-        {
-            stop("format needs to be either fasta or fastq !")
+        if (format == "fasta" || format == "fastq") {
+          subjects <- readDNAStringSet(inputFilePath, format, use.names = TRUE)
+        } else {
+          stop("format needs to be either fasta or fastq !")
         }
     } else {
 	    subjects <- inputFilePath
@@ -236,8 +233,7 @@ findgRNAs <- function (inputFilePath,
     min.subject <- gRNA.size + PAM.size
     subjects <-  subjects[width(subjects) >= min.subject,]
     if (length(subjects) == 0) {
-      stop("The input file contains no sequence! This could be caused by
-          wrong format of the file. If file is created in mac, you could
+      stop("The input file contains no sequence! This could be caused by wrong format of the file. If file is created in mac, you could
           reformat to text by typing tr \"\\r\" \"\\n\" >newfile in the
           command line")
     }
