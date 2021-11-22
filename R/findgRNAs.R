@@ -23,7 +23,7 @@
         starts.gRNA <- subset(starts.gRNA, starts.gRNA <= (seq.len - gRNA.size + 1)) 
         starts.gRNA <- subset(starts.gRNA, starts.gRNA > 0)
         ends.gRNA <- starts.gRNA + gRNA.size - 1
-        if (gRNA.pattern != "")
+        if (gRNA.pattern != "" && length(starts.gRNA))
         {
             gRNA.seqs <- as.character(Views(subject, 
                start = starts.gRNA,
@@ -53,7 +53,7 @@
             starts.gRNA <- starts.gRNA[n.targetBase == 1]
             ends.gRNA <- ends.gRNA[n.targetBase == 1]
        }       
-      if (length(pos.PAMs) > 0)
+      if (length(pos.PAMs) > 0 && length(starts.gRNA))
       {
          if (PAM.location == "3prime")
             seq <- as.character(Views(subject,
@@ -78,17 +78,17 @@
                 end = extended.ends))
          }
          if (reverse.subject)
-         {
-            gRNAs.cut <- cbind(seq, paste( subjectname,"_gR",
+           {
+              gRNAs.cut <- cbind(seq, paste( subjectname,"_gR",
                 (seq.len - (starts.gRNA + cut.site -1 ) + 1), "r", sep = ""),
                 (seq.len - starts.gRNA + 1), "-", extendedSequence)
-         }
-        else
-        {
-            gRNAs.cut <-
+           }
+         else
+           {
+              gRNAs.cut <-
                 cbind(seq, paste(subjectname,"_gR", (starts.gRNA + cut.site - 1),
                 "f", sep = ""), starts.gRNA, "+", extendedSequence)
-        }
+           }
       }
       else
       {
