@@ -418,7 +418,11 @@ offTargetAnalysisWithoutBSgenome <-
     scoring.method <- match.arg(scoring.method)
     exportAllgRNAs <- match.arg(exportAllgRNAs)
     rule.set <- match.arg(rule.set)
-
+    PAM.p.letters <- strsplit(PAM.pattern, split="")[[1]]
+    if (PAM.location == "3prime" && PAM.p.letters[length(PAM.p.letters)] != "$")
+           PAM.pattern <- paste0(PAM.pattern, "$")
+    if (PAM.location == "5prime" && PAM.p.letters[1] != "^")
+           PAM.pattern <- paste0("^", PAM.pattern)
     if (rule.set == "DeepCpf1")
     {
         baseBeforegRNA <- 8

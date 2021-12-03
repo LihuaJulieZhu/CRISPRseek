@@ -1,8 +1,6 @@
-
 #' @importFrom BiocGenerics subset unlist lapply rbind
 #' @importFrom hash hash values
 #' @importFrom utils read.csv
-
 
 getOfftargetScore2 <-
     function(featureVectors, 
@@ -44,6 +42,7 @@ getOfftargetScore2 <-
     ##### the mismatch activity  is given as pos 20, 19, 18,....1 distance from PAM,    ##### Position named as 1, 2, 3, .....20 though 
     ##### and the featureVectors is in the same order now
     ##### so no need to reverse any more. weights = rev(weights)
+    featureVectors <- subset(featureVectors, !grepl("N", subPAM))
     featureVectors$score <- 1
     featureVectors$score <- as.numeric(values(
         subPAM.activity, keys = as.character(featureVectors$subPAM))) 

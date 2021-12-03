@@ -35,5 +35,12 @@ test_that("test_getOfftargetScore2", {
 
     scores <- CRISPRseek:::getOfftargetScore2(featureVectors)
     expect_equal(featureVectors$score, scores$score, tolerance = 0.001)
+
+    fvNinPAM <- readRDS(system.file("extdata", "featureVecorsWithNinPAM.RDS",
+            package = "CRISPRseek"))
+    cat("checking N in PAM...")
+    expect_equal(dim(CRISPRseek:::getOfftargetScore2(fvNinPAM))[1], 1)
 })
+
+
 

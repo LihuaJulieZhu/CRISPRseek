@@ -502,6 +502,11 @@ offTargetAnalysis <-
     scoring.method <- match.arg(scoring.method)
     exportAllgRNAs <- match.arg(exportAllgRNAs)
     rule.set <- match.arg(rule.set)
+    PAM.p.letters <- strsplit(PAM.pattern, split="")[[1]]
+    if (PAM.location == "3prime" && PAM.p.letters[length(PAM.p.letters)] != "$")
+      PAM.pattern <- paste0(PAM.pattern, "$")
+    if (PAM.location == "5prime" && PAM.p.letters[1] != "^")
+      PAM.pattern <- paste0("^", PAM.pattern)
     if (rule.set == "DeepCpf1")
     {
         baseBeforegRNA <- 8
@@ -876,6 +881,7 @@ if (dim(hits)[1] > 0)
         subPAM.position = subPAM.position, 
         PAM.location = PAM.location, PAM.size = PAM.size)
     cat("Calculating scores ...\n")
+    #save(featureVectors, file="featureVectors.RData")
     if ( scoring.method ==  "CFDscore")
         scores <- getOfftargetScore2(featureVectors, 
             subPAM.activity = subPAM.activity,

@@ -264,6 +264,11 @@ compare2Sequences <- function(inputFile1Path, inputFile2Path, inputNames=c("Seq1
         exportAllgRNAs <- match.arg(exportAllgRNAs)
         searchDirection <- match.arg(searchDirection)
         rule.set <- match.arg(rule.set)
+        PAM.p.letters <- strsplit(PAM.pattern, split="")[[1]]
+        if (PAM.location == "3prime" && PAM.p.letters[length(PAM.p.letters)] != "$")
+           PAM.pattern <- paste0(PAM.pattern, "$")
+        if (PAM.location == "5prime" && PAM.p.letters[1] != "^")
+           PAM.pattern <- paste0("^", PAM.pattern)
         if (scoring.method == "Hsu-Zhang")
         {
              if (length(weights) !=  gRNA.size)
