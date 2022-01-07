@@ -1,4 +1,4 @@
-.getgRNA.cut.sites <- function(subject, subjectname, PAM ="NGG", 
+.getgRNA.cut.sites <- function(subject, subjectname, PAM ="NGG",
     gRNA.pattern = "", gRNA.size = 20, cut.site = 17,
     PAM.size = 3, calculategRNAEfficacy = TRUE, baseBeforegRNA = 4,
     baseAfterPAM = 3,
@@ -19,13 +19,13 @@
         if (PAM.location == "3prime")
             starts.gRNA <- pos.PAMs - gRNA.size
         else
-            starts.gRNA <- pos.PAMs + PAM.size 
-        starts.gRNA <- subset(starts.gRNA, starts.gRNA <= (seq.len - gRNA.size + 1)) 
+            starts.gRNA <- pos.PAMs + PAM.size
+        starts.gRNA <- subset(starts.gRNA, starts.gRNA <= (seq.len - gRNA.size + 1))
         starts.gRNA <- subset(starts.gRNA, starts.gRNA > 0)
         ends.gRNA <- starts.gRNA + gRNA.size - 1
         if (gRNA.pattern != "" && length(starts.gRNA))
         {
-            gRNA.seqs <- as.character(Views(subject, 
+            gRNA.seqs <- as.character(Views(subject,
                start = starts.gRNA,
                end = ends.gRNA))
             pos.set2 <- unlist(gregexpr(gRNA.pattern, gRNA.seqs,
@@ -37,9 +37,9 @@
             if (PAM.location == "3prime")
                 starts.gRNA <- pos.PAMs - gRNA.size
             else
-                starts.gRNA <- pos.PAMs + PAM.size 
+                starts.gRNA <- pos.PAMs + PAM.size
             ends.gRNA <- starts.gRNA + gRNA.size - 1
-          
+
             pos.PAMs <- pos.PAMs[ends.gRNA <= length(subject)]
 	    starts.gRNA <- starts.gRNA[ends.gRNA <= length(subject)]
             ends.gRNA <- ends.gRNA[ends.gRNA <= length(subject)]
@@ -52,7 +52,7 @@
             pos.PAMs <- pos.PAMs[n.targetBase == 1]
             starts.gRNA <- starts.gRNA[n.targetBase == 1]
             ends.gRNA <- ends.gRNA[n.targetBase == 1]
-       }       
+       }
       if (length(pos.PAMs) > 0 && length(starts.gRNA))
       {
          if (PAM.location == "3prime")
@@ -63,7 +63,7 @@
             seq <- as.character(Views(subject,
                 start = starts.gRNA - PAM.size,
                 end = ends.gRNA))
-      
+
           extendedSequence <- seq
           if (calculategRNAEfficacy)
           {
@@ -92,7 +92,7 @@
       }
       else
       {
- 	gRNAs.cut <- "" 
+ 	gRNAs.cut <- ""
       }
      }
      else
@@ -177,14 +177,14 @@
 
 
 #' Find potential gRNAs
-#' 
+#'
 #' Find potential gRNAs for an input file containing sequences in fasta format
-#' 
+#'
 #' If users already has a fasta file that contains a set of potential gRNAs,
 #' then users can call filergRNAs directly although the easiest way is to call
 #' the one-stop-shopping function OffTargetAnalysis with findgRNAs set to
 #' FALSE.
-#' 
+#'
 #' @param inputFilePath Sequence input file path or a DNAStringSet object that
 #' contains sequences to be searched for potential gRNAs
 #' @param baseEditing Indicate whether to design gRNAs for base editing.
@@ -297,7 +297,7 @@
 #' @param rule.set Specify a rule set scoring system for calculating gRNA
 #' efficacy. Please note that if specifying DeepCpf1, please specify other
 #' parameters accordingly for CRISPR-Cpf1 gRNAs.
-#' @param chrom_acc Optional binary variable indicating chromatin accessibility 
+#' @param chrom_acc Optional binary variable indicating chromatin accessibility
 #' information with 1 indicating accessible and 0 not accessible.
 #' @return DNAStringSet consists of potential gRNAs that can be input to
 #' filtergRNAs function directly
@@ -312,24 +312,24 @@
 #'     findgRNAs(inputFilePath = system.file("extdata",
 #'         "inputseq.fa", package = "CRISPRseek"),
 #'         pairOutputFile = "testpairedgRNAs.xls",
-#'         findPairedgRNAOnly = TRUE)               
-#' 
-#' 
+#'         findPairedgRNAOnly = TRUE)
+#'
+#'
 #'     ##### predict gRNA efficacy using CRISPRscan
 #'     featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
 #'             package = "CRISPRseek")
-#' 
+#'
 #'     findgRNAs(inputFilePath = system.file("extdata",
 #'         "inputseq.fa", package = "CRISPRseek"),
 #'         pairOutputFile = "testpairedgRNAs.xls",
 #'         findPairedgRNAOnly = FALSE,
 #'         calculategRNAEfficacy= TRUE,
-#'         rule.set = "CRISPRscan", 
+#'         rule.set = "CRISPRscan",
 #'         baseBeforegRNA = 6, baseAfterPAM = 6,
 #'         featureWeightMatrixFile = featureWeightMatrixFile,
 #'         efficacyFile = "testCRISPRscanEfficacy.xls"
 #'      )
-#' 
+#'
 #'      findgRNAs(inputFilePath = system.file("extdata",
 #'         "testCRISPRscan.fa", package = "CRISPRseek"),
 #'         pairOutputFile = "testpairedgRNAs.xls",
@@ -340,42 +340,43 @@
 #'         featureWeightMatrixFile = featureWeightMatrixFile,
 #'         efficacyFile = "testCRISPRscanEfficacy.xls"
 #'      )
-#' 
-#'     findgRNAs(inputFilePath = system.file("extdata", 
-#'         "cpf1.fa", package = "CRISPRseek"), 
-#'         findPairedgRNAOnly=FALSE, 
-#'         pairOutputFile = "testpairedgRNAs-cpf1.xls", 
-#'         PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+#'    if (interactive()) {
+#'      findgRNAs(inputFilePath = system.file("extdata",
+#'         "cpf1.fa", package = "CRISPRseek"),
+#'         findPairedgRNAOnly=FALSE,
+#'         pairOutputFile = "testpairedgRNAs-cpf1.xls",
+#'         PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
 #'         overlap.gRNA.positions = c(19, 23),
 #'         baseBeforegRNA = 8, baseAfterPAM = 26,
-#'         calculategRNAEfficacy= TRUE, 
+#'         calculategRNAEfficacy= TRUE,
 #'         rule.set = "DeepCpf1",
 #'        efficacyFile = "testcpf1Efficacy.xls")
-#' 
-#'     findgRNAs(inputFilePath = system.file("extdata", 
-#'              "cpf1.fa", package = "CRISPRseek"), 
-#'              findPairedgRNAOnly=FALSE, 
-#'              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
-#'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+#'
+#'      findgRNAs(inputFilePath = system.file("extdata",
+#'              "cpf1.fa", package = "CRISPRseek"),
+#'              findPairedgRNAOnly=FALSE,
+#'              pairOutputFile = "testpairedgRNAs-cpf1.xls",
+#'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
 #'              overlap.gRNA.positions = c(19,23),
 #'              baseBeforegRNA = 8, baseAfterPAM = 26,
-#'              calculategRNAEfficacy= TRUE, 
+#'              calculategRNAEfficacy= TRUE,
 #'              rule.set = "DeepCpf1",
-#'              efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
+#'              efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
 #'              editingWindow=20, targetBase = "X")
-#' 
-#'     findgRNAs(inputFilePath = system.file("extdata", 
-#'              "cpf1.fa", package = "CRISPRseek"), 
-#'              findPairedgRNAOnly=FALSE, 
-#'              pairOutputFile = "testpairedgRNAs-cpf1.xls", 
-#'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+#'
+#'      findgRNAs(inputFilePath = system.file("extdata",
+#'              "cpf1.fa", package = "CRISPRseek"),
+#'              findPairedgRNAOnly=FALSE,
+#'              pairOutputFile = "testpairedgRNAs-cpf1.xls",
+#'              PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
 #'              overlap.gRNA.positions = c(19, 23),
 #'              baseBeforegRNA = 8, baseAfterPAM = 26,
-#'              calculategRNAEfficacy= TRUE, 
+#'              calculategRNAEfficacy= TRUE,
 #'              rule.set = "DeepCpf1",
 #'              efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
 #'              editingWindow=20, targetBase = "C")
-#' 
+#'    }
+#'
 #'      inputSeq <-  DNAStringSet(paste(
 #' "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
 #' "TCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
@@ -387,32 +388,32 @@
 #'          PBS.length = 15,
 #'          corrected.seq = "T",
 #'          RT.template.pattern = "D$",
-#'          RT.template.length = 8:30, 
+#'          RT.template.length = 8:30,
 #'          targeted.seq.length.change = 0,
 #'          bp.after.target.end = 15,
 #'          target.start = 46,
 #'          target.end = 46,
-#'          paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
+#'          paired.orientation = "PAMin", min.gap = 20, max.gap = 90,
 #'          primeEditing = TRUE, findPairedgRNAOnly = TRUE)
 #'
 #' @importFrom Biostrings readDNAStringSet reverseComplement DNAStringSet
-#' @importFrom BiocGenerics do.call rbind lapply unlist table cbind 
+#' @importFrom BiocGenerics do.call rbind lapply unlist table cbind
 #' @importFrom IRanges Views IRanges findOverlaps width
 #' @importFrom seqinr s2c
-#' @importFrom S4Vectors orderIntegerPairs queryHits subjectHits 
+#' @importFrom S4Vectors orderIntegerPairs queryHits subjectHits
 #' @importFrom utils write.table read.csv
-#' @export 
+#' @export
 
 findgRNAs <-
-    function (inputFilePath, 
+    function (inputFilePath,
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
         format = "fasta", PAM = "NGG", PAM.size = 3,
         findPairedgRNAOnly = FALSE, annotatePaired = TRUE,
         paired.orientation = c("PAMout", "PAMin"),
         enable.multicore = FALSE, n.cores.max = 6,
-        gRNA.pattern = "", gRNA.size = 20, 
+        gRNA.pattern = "", gRNA.size = 20,
 	overlap.gRNA.positions = c(17,18),
-primeEditing = FALSE, 
+primeEditing = FALSE,
         PBS.length = 13L,
         RT.template.length = 8:28,
         RT.template.pattern = "D$",
@@ -423,20 +424,20 @@ primeEditing = FALSE,
         target.end,
 primeEditingPaired.output = "pairedgRNAsForPE.xls",
         min.gap = 0, max.gap = 20, pairOutputFile, name.prefix = "",
-	featureWeightMatrixFile = system.file("extdata", 
-           "DoenchNBT2014.csv", package = "CRISPRseek"), 
-        baseBeforegRNA = 4, 
+	featureWeightMatrixFile = system.file("extdata",
+           "DoenchNBT2014.csv", package = "CRISPRseek"),
+        baseBeforegRNA = 4,
         baseAfterPAM = 3,
 	calculategRNAEfficacy = FALSE, efficacyFile,
         PAM.location = "3prime",
-        rule.set = c("Root_RuleSet1_2014", 
+        rule.set = c("Root_RuleSet1_2014",
             "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
         chrom_acc)
 {
     rule.set <- match.arg(rule.set)
     paired.orientation <- match.arg(paired.orientation)
     if (missing(inputFilePath)) {
-        stop("inputFilePath containing the searching sequence 
+        stop("inputFilePath containing the searching sequence
 	   or a DNAStringSet object is required!")
     }
     cut.site <- min(overlap.gRNA.positions)
@@ -462,13 +463,13 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
     PAM <- paste("(?=", PAM, ")", sep="")
 
     gRNA.pattern <- translatePattern(gRNA.pattern)
-    min.subject <- gRNA.size + PAM.size 
+    min.subject <- gRNA.size + PAM.size
     subjects <-  subjects[width(subjects) >= min.subject,]
     if (length(subjects) == 0)
     {
-        stop("The input file contains no sequence! This could be caused by 
-            wrong format of the file. If file is created in mac, you could 
-            reformat to text by typing tr \"\\r\" \"\\n\" >newfile in the 
+        stop("The input file contains no sequence! This could be caused by
+            wrong format of the file. If file is created in mac, you could
+            reformat to text by typing tr \"\\r\" \"\\n\" >newfile in the
             command line")
     }
     toAppend = FALSE
@@ -476,24 +477,24 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
     names(subjects) <- gsub("'", "", names(subjects))
     names(subjects) <- gsub(" ", "", names(subjects))
     names(subjects) <- gsub("\t", ":", names(subjects))
-     
+
     all.gRNAs.df <- do.call(rbind, lapply(1:length(subjects), function(p)
    {
         subject <- subjects[[p]]
         subjectname <- names(subjects)[p]
         revsubject <- reverseComplement(subject)
-        plus.gRNAs <- 
-           .getgRNA.cut.sites(subject, subjectname, PAM = PAM, 
-               gRNA.pattern = gRNA.pattern, 
+        plus.gRNAs <-
+           .getgRNA.cut.sites(subject, subjectname, PAM = PAM,
+               gRNA.pattern = gRNA.pattern,
                gRNA.size = gRNA.size,
                cut.site = cut.site,
-               PAM.size = PAM.size, 
+               PAM.size = PAM.size,
                calculategRNAEfficacy = calculategRNAEfficacy,
                baseBeforegRNA = baseBeforegRNA,
                baseAfterPAM = baseAfterPAM,
                PAM.location = PAM.location,
                baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
-       
+
        minus.gRNAs <-
            .getgRNA.cut.sites(revsubject, subjectname, PAM = PAM,
                gRNA.pattern = gRNA.pattern,
@@ -537,7 +538,7 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
 	            colNames = FALSE
 	        }
             write.table(temp, file = pairOutputFile, sep = "\t",
-                row.names = FALSE, quote = FALSE, append = toAppend, 
+                row.names = FALSE, quote = FALSE, append = toAppend,
 	            col.names = colNames)
             if (n.minus.gRNAs > 0 && n.plus.gRNAs > 0)
             {
@@ -573,20 +574,20 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
                 }
                 if (length(minus.index) > 0 && length(plus.index) > 0)
                 {
-                    paired <- cbind(minus.gRNAs[minus.index,1], 
-                        minus.gRNAs[minus.index, 2], plus.gRNAs[plus.index,1], 
+                    paired <- cbind(minus.gRNAs[minus.index,1],
+                        minus.gRNAs[minus.index, 2], plus.gRNAs[plus.index,1],
                         plus.gRNAs[plus.index, 2],
                         gap = gap)
-                    colnames(paired)[1:5] <- c( "ReversegRNAPlusPAM", 
-                        "ReversegRNAName", "ForwardgRNAPlusPAM", 
+                    colnames(paired)[1:5] <- c( "ReversegRNAPlusPAM",
+                        "ReversegRNAName", "ForwardgRNAPlusPAM",
                         "ForwardgRNAName", "gap")
                     if(findPairedgRNAOnly)
                     {
                         plus.index <- unique(plus.index)
                         minus.index <- unique(minus.index)
-                        all.gRNAs <- DNAStringSet(c(plus.gRNAs[plus.index, 1], 
+                        all.gRNAs <- DNAStringSet(c(plus.gRNAs[plus.index, 1],
                             minus.gRNAs[minus.index,1]))
-                        names(all.gRNAs) <- c(plus.gRNAs[plus.index,2], 
+                        names(all.gRNAs) <- c(plus.gRNAs[plus.index,2],
                             minus.gRNAs[minus.index,2])
                         forEffi <- rbind(plus.gRNAs[plus.index,], minus.gRNAs[minus.index,])
                     }
@@ -605,25 +606,25 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
                            bp.after.target.end = bp.after.target.end,
                            target.start = target.start,
                            target.end = target.end,
-                           primeEditingPaired.output =  primeEditingPaired.output, 
+                           primeEditingPaired.output =  primeEditingPaired.output,
                            col.names = colNames, append = toAppend)
                          paired <- paired[,1:5]
                          all.gRNAs <- DNAStringSet(c(as.character(paired[,3]),
                             as.character(paired[,1])))
                          names(all.gRNAs) <- c(as.character(paired[,4]),
-                            as.character(paired[,2])) 
+                            as.character(paired[,2]))
                          all.gRNAs <- unique(all.gRNAs)
-                         forEffi <- forEffi[forEffi[,2] %in% names(all.gRNAs),] 
+                         forEffi <- forEffi[forEffi[,2] %in% names(all.gRNAs),]
                     }
                     if (dim(paired)[1] == 1)
                     {
-                        write.table(paired, file = pairOutputFile, sep = "\t", 
+                        write.table(paired, file = pairOutputFile, sep = "\t",
                             row.names = FALSE, quote = FALSE, append = toAppend,
 			                col.names = colNames)
                      }
                     else
                     {
-                        write.table(paired[order(as.character(paired[,4])), ], 
+                        write.table(paired[order(as.character(paired[,4])), ],
                             file = pairOutputFile, sep = "\t", row.names = FALSE,
                             quote = FALSE, append = toAppend, col.names = colNames)
                     }
@@ -682,12 +683,12 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
         featureWeightMatrix <- read.csv(featureWeightMatrixFile, header=TRUE)
         if(rule.set == "Root_RuleSet1_2014")
         {
-          effi <- calculategRNAEfficiency(all.gRNAs.df[,5], 
-	    baseBeforegRNA = baseBeforegRNA, 
-	    featureWeightMatrix = featureWeightMatrix, 
+          effi <- calculategRNAEfficiency(all.gRNAs.df[,5],
+	    baseBeforegRNA = baseBeforegRNA,
+	    featureWeightMatrix = featureWeightMatrix,
             enable.multicore = enable.multicore,
             n.cores.max = n.cores.max,
-            gRNA.size = gRNA.size) 
+            gRNA.size = gRNA.size)
         }
         else if (rule.set == "Root_RuleSet2_2016")
         {
@@ -695,7 +696,7 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
         }
         else if (rule.set == "CRISPRscan")
         {
-          effi <- calculategRNAEfficiencyCRISPRscan(all.gRNAs.df[,5], 
+          effi <- calculategRNAEfficiencyCRISPRscan(all.gRNAs.df[,5],
               featureWeightMatrix = featureWeightMatrix)
         }
         else if (rule.set == "DeepCpf1")
@@ -703,15 +704,15 @@ primeEditingPaired.output = "pairedgRNAsForPE.xls",
            if (missing(chrom_acc))
                 effi <- round(deepCpf1(extendedSequence = all.gRNAs.df[,5]), 3)
            else
-		effi <- round(deepCpf1(extendedSequence = all.gRNAs.df[,5], 
+		effi <- round(deepCpf1(extendedSequence = all.gRNAs.df[,5],
                  chrom_acc = chrom_acc), 3)
         }
         extendedSequences <- cbind(all.gRNAs.df, effi)
-        colnames(extendedSequences)  <- c("gRNAplusPAM", "name", "start", "strand", 
+        colnames(extendedSequences)  <- c("gRNAplusPAM", "name", "start", "strand",
 	    "extendedSequence", "gRNAefficacy")
         if (PAM.location == "3prime")
-            extendedSequences[nchar(extendedSequences[,5]) 
-	        < baseBeforegRNA + gRNA.size + PAM.size + baseAfterPAM, 6] <- 
+            extendedSequences[nchar(extendedSequences[,5])
+	        < baseBeforegRNA + gRNA.size + PAM.size + baseAfterPAM, 6] <-
                 "extended sequence too short"
         else
             extendedSequences[nchar(extendedSequences[,5])
