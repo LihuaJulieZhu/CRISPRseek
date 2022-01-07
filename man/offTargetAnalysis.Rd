@@ -289,7 +289,7 @@ is inside an exon or not, default TRUE}
 GenomicFeatures package. For a list of existing TxDb object, please search
 for annotation package starting with Txdb at
 http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData,
-such as 
+such as
 \itemize{
 \item{TxDb.Rnorvegicus.UCSC.rn5.refGene} - for rat
 \item{TxDb.Mmusculus.UCSC.mm10.knownGene} - for mouse
@@ -387,7 +387,7 @@ efficacy. Please note that Root_RuleSet2_2016 requires the following python
 packages with specified verion and python 2.7.  1. scikit-learn 0.16.1 2.
 pickle 3. pandas 4. numpy 5. scipy}
 
-\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility
 information with 1 indicating accessible and 0 not accessible.}
 
 \item{calculategRNAefficacyForOfftargets}{Default to TRUE to output gRNA
@@ -450,35 +450,35 @@ efficacy, indels and their frequencies.
 	outputDir <- getwd()
 	inputFilePath <- system.file("extdata", "inputseq.fa",
             package = "CRISPRseek")
-	REpatternFile <- system.file("extdata", "NEBenzymes.fa", 
+	REpatternFile <- system.file("extdata", "NEBenzymes.fa",
             package = "CRISPRseek")
-	results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE, 
-            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+	results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
+            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
             annotatePaired = FALSE,
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
             outputDir = outputDir, overwrite = TRUE)
- 
+
        #### predict indels and their frequecies for target sites
 
        if (interactive())
        {
           results <- offTargetAnalysis(inputFilePath,findgRNAsWithREcutOnly = TRUE,
-            findPairedgRNAOnly = FALSE, 
+            findPairedgRNAOnly = FALSE,
             annotatePaired = FALSE,
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
-            outputDir = outputDir, overwrite = TRUE, 
+	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
+            outputDir = outputDir, overwrite = TRUE,
             predIndelFreq=TRUE, predictIndelFreq.onTargetOnly= TRUE)
-  
+
           names(results$indelFreq)
           head(results$indelFreq[[1]])
           ### save the indel frequences to tab delimited files, one file for each target/offtarget site.
           mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), sep = "\t", row.names = FALSE)
-       }
-       #### predict gRNA efficacy using CRISPRscan  
+
+       #### predict gRNA efficacy using CRISPRscan
        featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
             package = "CRISPRseek")
 
@@ -490,57 +490,57 @@ efficacy, indels and their frequencies.
             orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
             rule.set = "CRISPRscan",
             baseBeforegRNA = 6, baseAfterPAM = 6,
-            featureWeightMatrixFile = featureWeightMatrixFile, 
+            featureWeightMatrixFile = featureWeightMatrixFile,
             outputDir = outputDir, overwrite = TRUE)
 
        ######## PAM is on the 5 prime side, e.g., Cpf1
-       results <- offTargetAnalysis(inputFilePath = system.file("extdata",  
+       results <- offTargetAnalysis(inputFilePath = system.file("extdata",
               "cpf1-2.fa", package = "CRISPRseek"), findgRNAsWithREcutOnly =  FALSE,
           findPairedgRNAOnly = FALSE,
           annotatePaired = FALSE,
           BSgenomeName = Hsapiens,
-          chromToSearch = "chr8",     
+          chromToSearch = "chr8",
           txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
           orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
           baseBeforegRNA = 8, baseAfterPAM = 26,
-          rule.set = "DeepCpf1", 
-          overlap.gRNA.positions = c(19, 23), 
+          rule.set = "DeepCpf1",
+          overlap.gRNA.positions = c(19, 23),
           useEfficacyFromInputSeq = FALSE,
-          outputDir = getwd(), 
+          outputDir = getwd(),
           overwrite = TRUE, PAM.location = "5prime",PAM.size = 4,
           PAM = "TTTN", PAM.pattern = "^TNNN", allowed.mismatch.PAM = 2,
           subPAM.position = c(1,2))
- 
-        results1 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
-                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+
+        results1 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
+                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
                  annotatePaired = FALSE,
                  BSgenomeName = Hsapiens, chromToSearch = "chrX",
-                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
+                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
                  outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
                  PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
                  subPAM.position = c(1,2), baseEditing = TRUE, editingWindow =20, targetBase = "G")
 
-        results.testBE <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE, 
-                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE, 
+        results.testBE <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
+                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
                  annotatePaired = FALSE,
                  BSgenomeName = Hsapiens, chromToSearch = "chrX",
-                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4, 
+                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
                  outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
                  PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
-                 subPAM.position = c(1,2), baseEditing = TRUE, 
+                 subPAM.position = c(1,2), baseEditing = TRUE,
                  editingWindow = 10:20, targetBase = "A")
 
         inputFilePath <- DNAStringSet(paste(
 "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAA",
 "CTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
         names(inputFilePath) <- "testPE"
-        results3 <- offTargetAnalysis(inputFilePath, 
+        results3 <- offTargetAnalysis(inputFilePath,
             gRNAoutputName = "testPEgRNAs",
             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-            orgAnn = org.Hs.egSYMBOL, max.mismatch = 1, 
+            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+            orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
             outputDir = outputDir, overwrite = TRUE,
             PAM.size = 3L,
             gRNA.size = 20L,
@@ -548,13 +548,14 @@ efficacy, indels and their frequencies.
             PBS.length = 15,
             corrected.seq = "T",
             RT.template.pattern = "D$",
-            RT.template.length = 8:30, 
+            RT.template.length = 8:30,
             targeted.seq.length.change = 0,
             bp.after.target.end = 15,
             target.start = 20,
             target.end = 20,
-            paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
+            paired.orientation = "PAMin", min.gap = 20, max.gap = 90,
             primeEditing = TRUE, findPairedgRNAOnly = TRUE)
+       }
 }
 \references{
 Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran,
@@ -588,8 +589,8 @@ profiling and predictive modeling of the outcomes of CRISPR/Cas9-mediated
 double-strand break repair, Nucleic Acids Research, Volume 47, Issue 15, 05
 September 2019, Pages 7989–8003, https://doi.org/10.1093/nar/gkz487
 
-Kim et al., Deep learning improves prediction of CRISPR–Cpf1 
-guide RNA activityNat Biotechnol 36, 239–241 (2018). 
+Kim et al., Deep learning improves prediction of CRISPR–Cpf1
+guide RNA activityNat Biotechnol 36, 239–241 (2018).
 https://doi.org/10.1038/nbt.4061
 }
 \seealso{
