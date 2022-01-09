@@ -32,13 +32,13 @@ filterOffTarget(
 )
 }
 \arguments{
-\item{scores}{a data frame output from getOfftargetScore. It contains 
+\item{scores}{a data frame output from getOfftargetScore. It contains
 \itemize{
 \item{strand} - {strand of the off target, + for plus and - for minus strand}
 \item{chrom} - {chromosome of the off target}
 \item{chromStart} - {start position of the offtarget}
 \item{chromEnd} - {end position of the offtarget}
-\item{name} - {gRNA name} 
+\item{name} - {gRNA name}
 \item{gRNAPlusPAM} - {gRNA sequence with PAM sequence concatenated}
 \item{OffTargetSequence} - {the genomic sequence of the off target}
 \item{n.mismatch} - {number of mismatches between the off target and the gRNA}
@@ -51,7 +51,7 @@ away from PAM and the other mismatch is 11 bp away from PAM}
 that this off target aligns with gRNA except that G and C are
 mismatches}
 \item{NGG} - {this off target contains canonical PAM or not, 1 for yes
-and 0 for no)} 
+and 0 for no)}
 \item{mean.neighbor.distance.mismatch} - {mean distance between
 neighboring mismatches}
 }}
@@ -96,7 +96,7 @@ FALSE}
 \item{downstream}{downstream offset from the off target end, default 200}
 
 \item{BSgenomeName}{BSgenome object. Please refer to available.genomes in
-BSgenome package. For example, 
+BSgenome package. For example,
 \itemize{
 \item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
 \item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
@@ -128,7 +128,7 @@ details.}
 \item{rule.set}{Specify a rule set scoring system for calculating gRNA
 efficacy.}
 
-\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility
 information with 1 indicating accessible and 0 not accessible.}
 
 \item{calculategRNAefficacyForOfftargets}{Default to TRUE to output gRNA
@@ -161,14 +161,14 @@ is set to TRUE and annotateExon is set to TRUE
     library(TxDb.Hsapiens.UCSC.hg19.knownGene)
     library(org.Hs.eg.db)
     hitsFile <-  system.file("extdata", "hits.txt", package="CRISPRseek")
-    hits <- read.table(hitsFile, sep = "\t", header = TRUE, 
+    hits <- read.table(hitsFile, sep = "\t", header = TRUE,
         stringsAsFactors = FALSE)
     featureVectors <- buildFeatureVectorForScoring(hits)
     scores <- getOfftargetScore(featureVectors)
-    outputDir <- getwd() 
-    results <- filterOffTarget(scores, BSgenomeName = Hsapiens, 
+    outputDir <- getwd()
+    results <- filterOffTarget(scores, BSgenomeName = Hsapiens,
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-         orgAnn = org.Hs.egSYMBOL, outputDir = outputDir, 
+         orgAnn = org.Hs.egSYMBOL, outputDir = outputDir,
         min.score = 0.1, topN = 10, topN.OfftargetTotalScore = 5)
     results$offtargets
     results$summary
