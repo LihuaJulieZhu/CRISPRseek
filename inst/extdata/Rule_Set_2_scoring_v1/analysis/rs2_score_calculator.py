@@ -27,7 +27,7 @@ def get_parser():
 if __name__ == '__main__':
     args = get_parser().parse_args()
     seq = args.seq.upper()
-    if len(seq)!=30: 
+    if len(seq)!=30:
         print("Please enter a 30mer sequence.")
         sys.exit(1)
     aa_cut = args.aa_cut
@@ -40,11 +40,12 @@ if __name__ == '__main__':
         model_file = model_file_2
     try:
         with open(model_file, 'rb') as f:
-            model= pickle.load(f)    
+            model= pickle.load(f)
     except:
         raise Exception("could not find model stored to file %s" % model_file)
     if seq[25:27] == 'GG':
         score = model_comparison.predict(seq, aa_cut, per_peptide, model=model)
         print('Rule set 2 score: %.4f'% (score))
     else:
+        print('Rule set 2 score: %.4f'% (score))
         print >> sys.stderr, 'Calculates on-target scores for sgRNAs with NGG PAM only.'
