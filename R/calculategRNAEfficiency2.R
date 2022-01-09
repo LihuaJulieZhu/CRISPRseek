@@ -7,6 +7,10 @@
 #CRISPRseek:::calculategRNAEfficiency2(extendedSequence,aa.cut = -1, per.peptide = -1)
 
 #' @importFrom reticulate py_discover_config
+#' @importFrom reticulate conda_list
+#' @importFrom reticulate conda_create
+#' @importFrom reticulate conda_install
+#' @importFrom reticulate py_run_string
 #' @importFrom BiocGenerics lapply
 
 calculategRNAEfficiency2 <- function(extendedSequence, aa.cut = -1, per.peptide = -1) {
@@ -95,6 +99,7 @@ calculategRNAEfficiency2 <- function(extendedSequence, aa.cut = -1, per.peptide 
           }
         },
         error = function(e) {
+          print(e)
           stop("Python 2.7 is required for calculating gRNA efficacy using Rule_Set_2_scoring published in JG. Doench, et al., Nbt, Jan 2016! Check CRISPRseek manual for details.")
         }
       )
