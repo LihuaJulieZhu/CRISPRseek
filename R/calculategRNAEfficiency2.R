@@ -50,7 +50,7 @@ calculategRNAEfficiency2 <- function(extendedSequence, aa.cut = -1, per.peptide 
           if (file.exists("py2_missing_modules.txt")) {
             file.remove("py2_missing_modules.txt")
           }
-          path_py2 <- conda_list()[first(which(conda_list()$name == "py2")), 2]
+          path_py2 <- conda_list()[which(conda_list()$name == "py2")[1], 2]
           bin_py2 <- substring(path_py2, 1, nchar(path_py2) - 7)
           py2 <- FALSE
 
@@ -87,7 +87,7 @@ calculategRNAEfficiency2 <- function(extendedSequence, aa.cut = -1, per.peptide 
             conda_install("py2", "scikit-learn==0.16.1", pip = TRUE)
             conda_install("py2", "matplotlib", pip = TRUE)
             conda_install("py2", "biopython") # pip will install 1.77, which is not supported by python2.7 any longer, conda will install 1.76
-            path_py2 <- conda_list()[first(which(conda_list()$name == "py2")), 2] # first here in case more than two py2 avail, conda_install() seems would always install to the first one.
+            path_py2 <- conda_list()[which(conda_list()$name == "py2")[1], 2] # first here in case more than two py2 avail, conda_install() seems would always install to the first one.
             bin_py2 <- substring(path_py2, 1, nchar(path_py2) - 7)
             Sys.setenv(RETICULATE_PYTHON = path_py2)
             Sys.setenv(PATH = paste(bin_py2, Sys.getenv("PATH"), sep = ":"))
