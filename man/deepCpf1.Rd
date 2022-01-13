@@ -12,23 +12,23 @@ sequences. Each sequence should be 34 bp long as specified by
 http://deepcrispr.info/, i.e., 4bp before the 5' PAM, 4bp PAM, 20bp gRNA,
 and 6bp after 3' of gRNA.}
 
-\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility
 information with 1 indicating accessible and 0 not accessible.}
 }
 \value{
 a numeric vector with prediced CRISPR-Cpf1 gRNA efficacy
-taking into account chromatin accessibility 
+taking into account chromatin accessibility
 information if accessibility information is provided
 }
 \description{
 DeepCpf1 algorithm from https://doi.org/10.1038/nbt.4061, which
-takes in 34 bp target sequences with/without chromatin 
-accessibility information and returns predicted CRISPR-Cpf1 gRNA efficacy 
+takes in 34 bp target sequences with/without chromatin
+accessibility information and returns predicted CRISPR-Cpf1 gRNA efficacy
 for each input sequence.
 }
 \details{
 Having chromatin accessibility information will aid in the accuracy
-of the scores, but one can still get accurate scoring with only the 
+of the scores, but one can still get accurate scoring with only the
 34 bp target sequences.
 }
 \examples{
@@ -45,11 +45,13 @@ extendedSequence <- c('GTTATTTGAGCAATGCCACTTAATAAACATGTAA',
  'TGACTTTGAATGGAGTCGTGAGCGCAAGAACGCT')
 chrom_acc <- c(0,1, 0, 1)
 
+if (interactive()) {
  deepCpf1(extendedSequence = extendedSequence, chrom_acc = chrom_acc)
 }
+}
 \references{
-Kim et al., Deep learning improves prediction of CRISPR–Cpf1 
-guide RNA activityNat Biotechnol 36, 239–241 (2018). 
+Kim et al., Deep learning improves prediction of CRISPR–Cpf1
+guide RNA activityNat Biotechnol 36, 239–241 (2018).
 https://doi.org/10.1038/nbt.4061
 }
 \author{

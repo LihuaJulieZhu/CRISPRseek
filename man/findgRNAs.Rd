@@ -194,7 +194,7 @@ is located on the 3 prime while cpf1 PAM is located on the 5 prime}
 efficacy. Please note that if specifying DeepCpf1, please specify other
 parameters accordingly for CRISPR-Cpf1 gRNAs.}
 
-\item{chrom_acc}{Optional binary variable indicating chromatin accessibility 
+\item{chrom_acc}{Optional binary variable indicating chromatin accessibility
 information with 1 indicating accessible and 0 not accessible.}
 }
 \value{
@@ -219,7 +219,7 @@ OffTargetAnalysis separately.
     findgRNAs(inputFilePath = system.file("extdata",
         "inputseq.fa", package = "CRISPRseek"),
         pairOutputFile = "testpairedgRNAs.xls",
-        findPairedgRNAOnly = TRUE)               
+        findPairedgRNAOnly = TRUE)
 
 
     ##### predict gRNA efficacy using CRISPRscan
@@ -231,7 +231,7 @@ OffTargetAnalysis separately.
         pairOutputFile = "testpairedgRNAs.xls",
         findPairedgRNAOnly = FALSE,
         calculategRNAEfficacy= TRUE,
-        rule.set = "CRISPRscan", 
+        rule.set = "CRISPRscan",
         baseBeforegRNA = 6, baseAfterPAM = 6,
         featureWeightMatrixFile = featureWeightMatrixFile,
         efficacyFile = "testCRISPRscanEfficacy.xls"
@@ -247,41 +247,42 @@ OffTargetAnalysis separately.
         featureWeightMatrixFile = featureWeightMatrixFile,
         efficacyFile = "testCRISPRscanEfficacy.xls"
      )
-
-    findgRNAs(inputFilePath = system.file("extdata", 
-        "cpf1.fa", package = "CRISPRseek"), 
-        findPairedgRNAOnly=FALSE, 
-        pairOutputFile = "testpairedgRNAs-cpf1.xls", 
-        PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+   if (interactive()) {
+     findgRNAs(inputFilePath = system.file("extdata",
+        "cpf1.fa", package = "CRISPRseek"),
+        findPairedgRNAOnly=FALSE,
+        pairOutputFile = "testpairedgRNAs-cpf1.xls",
+        PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
         overlap.gRNA.positions = c(19, 23),
         baseBeforegRNA = 8, baseAfterPAM = 26,
-        calculategRNAEfficacy= TRUE, 
+        calculategRNAEfficacy= TRUE,
         rule.set = "DeepCpf1",
        efficacyFile = "testcpf1Efficacy.xls")
 
-    findgRNAs(inputFilePath = system.file("extdata", 
-             "cpf1.fa", package = "CRISPRseek"), 
-             findPairedgRNAOnly=FALSE, 
-             pairOutputFile = "testpairedgRNAs-cpf1.xls", 
-             PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+     findgRNAs(inputFilePath = system.file("extdata",
+             "cpf1.fa", package = "CRISPRseek"),
+             findPairedgRNAOnly=FALSE,
+             pairOutputFile = "testpairedgRNAs-cpf1.xls",
+             PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
              overlap.gRNA.positions = c(19,23),
              baseBeforegRNA = 8, baseAfterPAM = 26,
-             calculategRNAEfficacy= TRUE, 
+             calculategRNAEfficacy= TRUE,
              rule.set = "DeepCpf1",
-             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE, 
+             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
              editingWindow=20, targetBase = "X")
 
-    findgRNAs(inputFilePath = system.file("extdata", 
-             "cpf1.fa", package = "CRISPRseek"), 
-             findPairedgRNAOnly=FALSE, 
-             pairOutputFile = "testpairedgRNAs-cpf1.xls", 
-             PAM="TTTN", PAM.location = "5prime", PAM.size = 4, 
+     findgRNAs(inputFilePath = system.file("extdata",
+             "cpf1.fa", package = "CRISPRseek"),
+             findPairedgRNAOnly=FALSE,
+             pairOutputFile = "testpairedgRNAs-cpf1.xls",
+             PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
              overlap.gRNA.positions = c(19, 23),
              baseBeforegRNA = 8, baseAfterPAM = 26,
-             calculategRNAEfficacy= TRUE, 
+             calculategRNAEfficacy= TRUE,
              rule.set = "DeepCpf1",
              efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
              editingWindow=20, targetBase = "C")
+   }
 
      inputSeq <-  DNAStringSet(paste(
 "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
@@ -294,12 +295,12 @@ OffTargetAnalysis separately.
          PBS.length = 15,
          corrected.seq = "T",
          RT.template.pattern = "D$",
-         RT.template.length = 8:30, 
+         RT.template.length = 8:30,
          targeted.seq.length.change = 0,
          bp.after.target.end = 15,
          target.start = 46,
          target.end = 46,
-         paired.orientation = "PAMin", min.gap = 20, max.gap = 90, 
+         paired.orientation = "PAMin", min.gap = 20, max.gap = 90,
          primeEditing = TRUE, findPairedgRNAOnly = TRUE)
 
 }
