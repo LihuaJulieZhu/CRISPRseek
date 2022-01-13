@@ -7,4 +7,4 @@ require("BSgenome.Mmusculus.UCSC.mm10") || stop("unable to load Package: BSgenom
 require("TxDb.Mmusculus.UCSC.mm10.knownGene") || stop("unable to load Package:TxDb.Mmusculus.UCSC.mm10.knownGene")
 require("org.Mm.eg.db") || stop("unable to load Package:org.Mm.eg.db")
 require("testthat") || stop("unable to load testthat")
-test_check("CRISPRseek")
+#test_check("CRISPRseek")
