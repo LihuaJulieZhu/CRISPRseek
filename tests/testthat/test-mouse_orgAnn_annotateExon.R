@@ -25,22 +25,22 @@ test_that("test_mouse_orgAnn_annotateExon",  {
         header = TRUE, stringsAsFactors = FALSE)
 
    summary.WithorgAnn <- read.table(
-	system.file("extdata/testMouse/WithorgAnn",
-	"Summary.xls", package = "CRISPRseek"), sep = "\t", header = TRUE,
-	stringsAsFactors = FALSE)
+	        system.file("extdata/testMouse/WithorgAnn",
+	           "Summary.xls", package = "CRISPRseek"), sep = "\t", header = TRUE,
+	        stringsAsFactors = FALSE)
    offtarget.WithorgAnn  <- read.table(
-	system.file("extdata/testMouse/WithorgAnn",
-	"OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
-	header = TRUE, stringsAsFactors = FALSE)
+	     system.file("extdata/testMouse/WithorgAnn",
+	          "OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
+	     header = TRUE, stringsAsFactors = FALSE)
 
    summary.NOTannotateExon <- read.table(
-	system.file("extdata/testMouse/NOTannotateExon",
-	"Summary.xls", package = "CRISPRseek"), sep = "\t", header = TRUE,
-	stringsAsFactors = FALSE)
+	     system.file("extdata/testMouse/NOTannotateExon",
+ 	         "Summary.xls", package = "CRISPRseek"), sep = "\t", header = TRUE,
+	     stringsAsFactors = FALSE)
    offtarget.NOTannotateExon  <- read.table(
-	system.file("extdata/testMouse/NOTannotateExon",
-	"OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
-	header = TRUE, stringsAsFactors = FALSE)
+	     system.file("extdata/testMouse/NOTannotateExon",
+	         "OfftargetAnalysis.xls", package = "CRISPRseek"), sep = "\t",
+	      header = TRUE, stringsAsFactors = FALSE)
 
    summary.WithorgAnn <- summary.WithorgAnn[,1:21]
    summary.NOorgAnn <- summary.NOorgAnn [,1:21]
@@ -83,12 +83,12 @@ test_that("test_mouse_orgAnn_annotateExon",  {
     cat("Testing for mouse without orgAnn...\n")
 
     expect_warning(offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
-	  findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
-	  BSgenomeName = Mmusculus, annotateExon=TRUE, 
+	        findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
+	        BSgenomeName = Mmusculus, annotateExon=TRUE, 
           chromToSearch = chroms,
           min.score = 0.5, topN = 100, outputDir = outputDir, 
-	  overwrite = TRUE, max.mismatch=1, 
-	  txdb = TxDb.Mmusculus.UCSC.mm10.knownGene))
+	        overwrite = TRUE, max.mismatch=1, 
+	        txdb = TxDb.Mmusculus.UCSC.mm10.knownGene))
 	
     summary <- read.table("Summary.xls", sep = "\t", header = TRUE, 
 		     stringsAsFactors = FALSE)
@@ -103,16 +103,16 @@ test_that("test_mouse_orgAnn_annotateExon",  {
     expect_equal(offtarget.NOorgAnn, offtarget,tolerance = 0.001)
     cat("Testing for mouse without orgAnn...\n")
     offTargetAnalysis(inputFilePath, findgRNAs = TRUE, 
-  	findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
-        BSgenomeName = Mmusculus, annotateExon=FALSE, 
-        chromToSearch = chroms,
+  	     findgRNAsWithREcutOnly = FALSE, findPairedgRNAOnly = FALSE,
+         BSgenomeName = Mmusculus, annotateExon=FALSE, 
+         chromToSearch = chroms,
          min.score = 0.5, topN = 100, outputDir = outputDir, 
-	  overwrite = TRUE, max.mismatch=1)
+	       overwrite = TRUE, max.mismatch=1)
 	
     summary <- read.table("Summary.xls", sep = "\t", header = TRUE, 
-	stringsAsFactors = FALSE)
+	      stringsAsFactors = FALSE)
     offtarget <- read.table("OfftargetAnalysis.xls", sep = "\t", header = TRUE, 
-	stringsAsFactors = FALSE)
+	      stringsAsFactors = FALSE)
     if (!test.gRNAPlusPAM)
    {
        summary <- summary[, -exclude.sum.col]
