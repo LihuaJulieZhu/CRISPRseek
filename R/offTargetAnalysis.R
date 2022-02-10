@@ -503,6 +503,8 @@ offTargetAnalysis <-
     scoring.method <- match.arg(scoring.method)
     exportAllgRNAs <- match.arg(exportAllgRNAs)
     rule.set <- match.arg(rule.set)
+    exportAllgRNAs <- match.arg(exportAllgRNAs)
+    paired.orientation <- match.arg(paired.orientation)
     PAM.p.letters <- strsplit(PAM.pattern, split="")[[1]]
     if (PAM.location == "3prime" && PAM.p.letters[length(PAM.p.letters)] != "$")
         PAM.pattern <- paste0(PAM.pattern, "$")
@@ -605,7 +607,7 @@ offTargetAnalysis <-
     {
         cat("Searching for gRNAs ...\n")
 	      efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
-	      if (chromToSearch == "" || useEfficacyFromInputSeq)
+	      if ((length(chromToSearch) == 1 && chromToSearch == "") || useEfficacyFromInputSeq)
             potential.gRNAs <- findgRNAs(inputFilePath,
                overlap.gRNA.positions = overlap.gRNA.positions,
                baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
