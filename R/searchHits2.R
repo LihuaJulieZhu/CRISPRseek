@@ -205,7 +205,8 @@ searchHits2 <-
     outfile <- tempfile(tmpdir = getwd())
     max.mismatch <- max.mismatch
     seqnames <- seqnames(BSgenomeName)
-    if (chromToSearch != "all")
+    if (length(chromToSearch) > 1 || 
+            (length(chromToSearch) == 1 && chromToSearch != "all"))
         seqnames <- intersect(seqnames, chromToSearch)
     if (length(chromToExclude) >0)
 	seqnames <- setdiff(seqnames, chromToExclude)
