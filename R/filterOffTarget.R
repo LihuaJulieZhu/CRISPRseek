@@ -274,12 +274,24 @@ filterOffTarget <-
     {
 	chr <- as.character(ontargets$chrom)
         strand <- as.character(ontargets$strand)
-        Start <- ifelse(strand=="-",
-              as.numeric(as.character( ontargets$chromStart)) - baseAfterPAM,
-              as.numeric(as.character( ontargets$chromStart)) - baseBeforegRNA)
-        End <- ifelse(strand=="-",
-              as.numeric(as.character( ontargets$chromEnd)) + as.numeric(baseBeforegRNA),
-              as.numeric(as.character( ontargets$chromEnd)) + as.numeric(baseAfterPAM))
+        if (PAM.location == "3prime")
+        {
+           Start <- ifelse(strand=="-",
+              as.numeric(as.character(ontargets$chromStart)) - baseAfterPAM,
+              as.numeric(as.character(ontargets$chromStart)) - baseBeforegRNA)
+           End <- ifelse(strand=="-",
+              as.numeric(as.character(ontargets$chromEnd)) + as.numeric(baseBeforegRNA),
+              as.numeric(as.character(ontargets$chromEnd)) + as.numeric(baseAfterPAM))
+        }
+        else
+        {
+           Start <- ifelse(strand=="-",
+              as.numeric(as.character(ontargets$chromStart)) - baseAfterPAM + gRNA.size,
+              as.numeric(as.character(ontargets$chromStart)) - baseBeforegRNA + PAM.size)
+           End <- ifelse(strand=="-",
+              as.numeric(as.character(ontargets$chromEnd)) + as.numeric(baseBeforegRNA) - PAM.size,
+              as.numeric(as.character(ontargets$chromEnd)) + as.numeric(baseAfterPAM) - gRNA.size)
+        }
     }
     else if (calculategRNAefficacyForOfftargets && dim(Offtargets)[1] > 0)
     {
@@ -288,11 +300,11 @@ filterOffTarget <-
         if (PAM.location == "3prime")
         {
            Start <- ifelse(strand=="-",
-              as.numeric(as.character( Offtargets$chromStart)) - baseAfterPAM,
-              as.numeric(as.character( Offtargets$chromStart)) - baseBeforegRNA)
+              as.numeric(as.character(Offtargets$chromStart)) - baseAfterPAM,
+              as.numeric(as.character(Offtargets$chromStart)) - baseBeforegRNA)
            End <- ifelse(strand=="-",
-              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseBeforegRNA),
-              as.numeric(as.character( Offtargets$chromEnd)) + as.numeric(baseAfterPAM))
+              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(baseBeforegRNA),
+              as.numeric(as.character(Offtargets$chromEnd)) + as.numeric(baseAfterPAM))
         }
         else
         {
@@ -308,7 +320,6 @@ filterOffTarget <-
     {
         starts <- unlist(apply(cbind(Start,1), 1, max))
         ends <- unlist(apply(cbind(End, seqlengths(BSgenomeName)[chr]), 1,min))
-
         extendedSequence <- getSeq(BSgenomeName, names = chr, start = starts,
            end = ends, strand = strand, width = NA, as.character = TRUE)
         if (rule.set == "Root_RuleSet1_2014")
