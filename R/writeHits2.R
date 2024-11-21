@@ -76,24 +76,34 @@
 #' @importFrom utils write.table
 #' @importFrom methods as
 #' @export
-writeHits2 <-
-    function (gRNA, seqname, matches, strand, file, gRNA.size = 20L, 
-        PAM = "NGG", PAM.pattern = "N[A|G]G$", max.mismatch = 4L, 
-        chrom.len, append = FALSE,
-        PAM.location = "3prime", PAM.size = 3L,
-        allowed.mismatch.PAM = 1L,
-        BSgenomeName, baseEditing = FALSE, targetBase = "C", editingWindow = 4:8) 
-{
-    if (missing(gRNA) || class(gRNA) != "DNAString") {
+writeHits2 <- function (gRNA = NULL, 
+                        seqname = NULL, 
+                        matches = NULL, 
+                        strand = NULL, 
+                        file = tempfile(), 
+                        gRNA.size = 20L, 
+                        PAM = "NGG", 
+                        PAM.pattern = "N[A|G]G$", 
+                        max.mismatch = 4L, 
+                        chrom.len = NULL, 
+                        append = FALSE,
+                        PAM.location = "3prime", 
+                        PAM.size = 3L,
+                        allowed.mismatch.PAM = 1L,
+                        BSgenomeName = NULL, 
+                        baseEditing = FALSE, 
+                        targetBase = "C", 
+                        editingWindow = 4:8) {
+    if (is.null(gRNA) || class(gRNA) != "DNAString") {
         stop("gRNA is required as a DNAString object!")
     }	
-    if (missing(seqname)) {
+    if (is.null(seqname)) {
         stop("seqname is required as character!")
     }
-    if (missing(matches) || class(matches) != "XStringViews") {
+    if (is.null(matches) || class(matches) != "XStringViews") {
         stop("matches is required as XStringViews object!")
     }
-    if (missing(strand)) {
+    if (is.null(strand)) {
         stop("strand is required as + or - !")
     }
     if (file.exists(file) && !append) 

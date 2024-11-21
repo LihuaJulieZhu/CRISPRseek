@@ -2,22 +2,22 @@
 % Please edit documentation in R/compare2Sequences.R
 \name{compare2Sequences}
 \alias{compare2Sequences}
-\title{Compare 2 input sequences/sequence sets for possible guide RNAs (gRNAs)}
+\title{Compare two input sequences/sequence sets for possible guide RNAs (gRNAs)}
 \usage{
 compare2Sequences(
-  inputFile1Path,
-  inputFile2Path,
+  inputFile1Path = NULL,
+  inputFile2Path = NULL,
   inputNames = c("Seq1", "Seq2"),
   format = c("fasta", "fasta"),
   header = FALSE,
   findgRNAsWithREcutOnly = FALSE,
   searchDirection = c("both", "1to2", "2to1"),
-  BSgenomeName,
+  BSgenomeName = NULL,
   baseEditing = FALSE,
   targetBase = "C",
   editingWindow = 4:8,
   editingWindow.offtargets = 4:8,
-  REpatternFile = system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
+  REpatternFile = REpatternFile_default(),
   minREpatternSize = 6,
   findgRNAs = c(TRUE, TRUE),
   removegRNADetails = c(FALSE, FALSE),
@@ -34,29 +34,23 @@ compare2Sequences(
   PAM.pattern = "NNG$|NGN$",
   allowed.mismatch.PAM = 1,
   max.mismatch = 3,
-  outputDir,
+  outputDir = NULL,
   upstream = 0,
   downstream = 0,
-  weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613,
-    0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
+  weights = weights_default,
   overwrite = FALSE,
   baseBeforegRNA = 4,
   baseAfterPAM = 3,
-  featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", package =
-    "CRISPRseek"),
+  featureWeightMatrixFile = featureWeightMatrixFile_default(),
   foldgRNAs = FALSE,
- 
-    gRNA.backbone = "GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+  gRNA.backbone = gRNA.backbone_default,
   temperature = 37,
   scoring.method = c("Hsu-Zhang", "CFDscore"),
-  subPAM.activity = hash(AA = 0, AC = 0, AG = 0.259259259, AT = 0, CA = 0, CC = 0, CG =
-    0.107142857, CT = 0, GA = 0.069444444, GC = 0.022222222, GG = 1, GT = 0.016129032, TA
-    = 0, TC = 0, TG = 0.038961039, TT = 0),
+  subPAM.activity = subPAM.activity_default,
   subPAM.position = c(22, 23),
   PAM.location = "3prime",
   rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
-  mismatch.activity.file = system.file("extdata",
-    "NatureBiot2016SuppTable19DoenchRoot.csv", package = "CRISPRseek")
+  mismatch.activity.file = mismatch.activity.file_default()
 )
 }
 \arguments{
@@ -234,7 +228,7 @@ Biotechnology 2016}
 }
 \value{
 Return a data frame with all potential gRNAs from both sequences. In
-addition, a tab delimited file scoresFor2InputSequences.xls is also saved in
+addition, a tab delimited file scoresFor2InputSequences.xlsx is also saved in
 the outputDir, sorted by scoreDiff descending. 
 \item{name}{name of the gRNA}
 \item{gRNAPlusPAM}{gRNA plus PAM sequence}
@@ -275,14 +269,15 @@ sequence.
             package = "CRISPRseek")
     REpatternFile <- system.file("extdata", "NEBenzymes.fa", 
             package = "CRISPRseek")
+    outputDir <- tempdir()
     seqs <- compare2Sequences(inputFile1Path, inputFile2Path,
-        outputDir = getwd(), 
+        outputDir = outputDir, 
         REpatternFile = REpatternFile, overwrite = TRUE)
 
     seqs2 <- compare2Sequences(inputFile1Path, inputFile2Path,
                inputNames=c("Seq1", "Seq2"),
                scoring.method = "CFDscore",
-               outputDir = getwd(), 
+               outputDir = outputDir, 
                overwrite = TRUE, baseEditing = TRUE)
 
     inputFile1Path <- 
@@ -305,13 +300,13 @@ DNAStringSet(
     seqs <- compare2Sequences(inputFile1Path, inputFile2Path,
           inputNames=c("Seq1", "Seq2"),
           scoring.method = "CFDscore",
-          outputDir = getwd(), 
+          outputDir = outputDir, 
           overwrite = TRUE)
 
     seqs2 <- compare2Sequences(inputFile1Path, inputFile2Path,
                inputNames=c("Seq1", "Seq2"),
                scoring.method = "CFDscore",
-               outputDir = getwd(), 
+               outputDir = outputDir, 
                overwrite = TRUE, baseEditing = TRUE)
 }
 \references{

@@ -129,7 +129,7 @@
 #' 
 #'  all.gRNAs <- findgRNAs(inputFilePath =
 #'        system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
-#'        pairOutputFile = "pairedgRNAs.xls",
+#'        pairOutputFile = "pairedgRNAs.xlsx",
 #'        findPairedgRNAOnly = TRUE)
 
 #'   hits <- searchHits(all.gRNAs[1], 
@@ -143,7 +143,7 @@
 #'   all.gRNAs <- findgRNAs(inputFilePath =
 #'           DNAStringSet(
 #'               "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"),
-#'           pairOutputFile = "pairedgRNAs.xls",
+#'           pairOutputFile = "pairedgRNAs.xlsx",
 #'           findPairedgRNAOnly = FALSE,
 #'           PAM = "TTTN", PAM.location = "5prime")
 
@@ -160,6 +160,7 @@
 #' @importFrom BiocGenerics rep.int
 #' @importFrom utils read.table
 #' @importFrom XVector subseq
+#' @importFrom rlang warn inform
 #' @export
 searchHits <-
     function (gRNAs,seqs,seqname,
@@ -169,10 +170,10 @@ searchHits <-
         outfile,
         baseEditing = FALSE, targetBase = "C", editingWindow = 4:8) 
 {
-    if (missing(gRNAs) || class(gRNAs) != "DNAStringSet") {
+    if (is.null(gRNAs) || class(gRNAs) != "DNAStringSet") {
         stop("gRNAs is required as a DNAStringSet object!")
     }
-    if (missing(seqs) || class(seqs) != "DNAString") {
+    if (is.null(seqs) || class(seqs) != "DNAString") {
         stop("seq is required as a DNAString object!")
     }
     if (width(gRNAs)[1] == (gRNA.size + PAM.size))
@@ -187,7 +188,7 @@ searchHits <-
         stop("the gRNA length needs to be equal to the 
             specified gRNA.size (or gRNA.size plus PAM.size\n)");
     }
-    cat(">>> Finding all hits in sequence", seqname, "...\n")
+    inform(paste0("  >>> Finding all hits in sequence ", seqname, " ..."))
         .searchHitsInOneSeq3(gRNAs = gRNAs, seqs = seqs, 
              seqname = seqname,
              PAM = PAM, gRNA.size = gRNA.size,
@@ -196,7 +197,7 @@ searchHits <-
              allowed.mismatch.PAM = allowed.mismatch.PAM,
              PAM.location = PAM.location,
              baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow)
-    cat(">>> DONE searching\n")
+    inform(paste0("  >>> DONE searching in sequence ", seqname, "!"))
     if (file.exists(outfile))
     {
         hits <- read.table(outfile, sep="\t", header = TRUE, 

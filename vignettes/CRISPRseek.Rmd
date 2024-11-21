@@ -1,0 +1,415 @@
+---
+title: "CRISPRseek: design of guide RNA and off-target analysis"
+author:
+- name: Lihua Julie Zhu
+  affiliation: UMass Chan Medical School, Worcester, USA
+- name: Kai Hu
+  affiliation: UMass Chan Medical School, Worcester, USA
+- name: Michael Brodsky
+  affiliation: UMass Chan Medical School, Worcester, USA
+output:
+  BiocStyle::html_document:
+    toc_float: true
+  BiocStyle::pdf_document: default
+package: CRISPRseek
+link-citations: yes
+bibliography: bibliography.bib
+abstract: |
+  The `r Biocpkg("CRISPRseek")` [@zhu2014] package provides a range of funtions for identifying and analyzing guide RNAs (gRNAs) in CRISPR-based experiments. It generates detailed reports that include information on potential off-targets, restriction enzyme recognition sites, potential gRNA pairings for double nickases, and more.
+vignette: |
+  %\VignetteIndexEntry{CRISPRseek: guide RNA design and off-target analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, 
+                      warning = FALSE,
+          					  tidy = FALSE, 
+          					  fig.width = 6, 
+          					  fig.height = 6,
+          					  fig.align = "center")
+# Handle the biofilecache error
+library(BiocFileCache)
+bfc <- BiocFileCache()
+res <- bfcquery(bfc, "annotationhub.index.rds", field = "rname", exact = TRUE) 
+bfcremove(bfc, rids = res$rid)
+```
+
+# Introduction
+CRISPR-Cas nucleases and their derivatives, such as _nickases_ and _gene expression regulators_, have become the most popular tools for genome modification and gene expression regulation in both model organisms and human cells [@mali2013; @hsu2013]. The CRISPR-Cas system uses a guide RNA (gRNA) to direct the Cas nuclease to target DNA sequence that is adjacent to a Protospace Adjacent Motif (PAM). The Cas enzyme then creates a double-strand break at the target site, initiating the gene modification. Following the cut, various editing outcomes, such as short insertions and deletions (INDELs) as well as point mutations, can occur through different DNA damage repair mechanisms [@chen2019]. In the most widely used CRISPR system from _Streptococcus pyogenes_, the gRNA consists of 20 nucleotides, with the preferred PAM being "NGG" (or "NAG" with reduced activity).
+
+A key limitation of CRISPR systems is their potential to cleave DNA sequences that do no perfectly match the gRNA target, known as "off-target effects". Therefore, designing gRNAs with low off-target activity is crucial for the effective application of CRISPR systems [@zhu2015]. Several strategies can help minimize off-target effects:
+
++ Evaluate gRNA candidates for potential off-target matches in the genome.
++ Analyze flanking sequences of off-target sites to determine if they lie within critical regions, such as exons.
++ Leverage specific target sequence arrangements, such as using paired nickases, which create double-strand breaks only when the two sites are properly spaced and oriented.
++ Use restriction enzyme recognition sites overlapping the target sites to monitor cleavage events.
+
+We developed the `r Biocpkg("CRISPRseek")` package to assist with all the above steps. Key features include:
+
++ **gRNA identification**:
+  + Identify candidate gRNAs within an input sequence using experimentally relevant constraints.
+  + **Double nickase pairs**: Automatically identify gRNA pairs suitable for double nickases.
+  + **Restriction site overlap**: Detect if gRNAs overlap with restriction enzyme recognition sites.
++ **Off-target analysis**:
+  + **Off-target search**: Search the genome for off-targets with a user-defined maximum number of mismatches and/or bulges.
+  + **Off-target scoring**: Calculate and rank off-target scores based on mismatches, bulges, and a penalty weight matrix using different algorithms.
+  + **Off-target annotation**: Annotate off-targets with flanking sequences, such as whether they are within exons.
+  + **Off-target filtering**: Filter off-targets according to user-defined criteria.
+
+The `r Biocpkg("CRISPRseek")` package generates several reports. Key output includes:
+
+  + **Summary.xlsx**: Summarizes detected gRNAs, ranked by total topN off-target score, and includes restriction enzyme cut sites and potential gRNA pairings.
+  + **OfftargetAnalysis.xlsx**: Contains detailed off-target information, such as off-target sequences, associated scores, alignments, among others.
+  + **REcutDetails.xlsx**: Lists detailed information about restriction enzyme cut sites for each gRNA.
+  + **pairedgRNAs.xlsx**: Provides potential gRNA pairs suitable for use with double nickases.
+
+The `r Biocpkg("CRISPRseek")` package is highly flexible, allowing users to customize gRNA and PAM sequence requirements for different CRISPR systems across various bacterial species. It can also be easily extended to incorporate improved weight matrices or scoring methods for off-target analysis as new experimental and computational results emerge.
+
+# Core functions
+Key functions implemented in the `r Biocpkg("CRISPRseek")`, along with their roles, input parameters, and outputs, are illustrated in the diagram below. For convenience, we highly recommend using the one-stop wrapper function, `offtargetAnalysis()`, which streamlines the entire gRNA identification and off-target analysis workflow.
+
+```{r, fig.cap = "Analytical workflow and core functions in CRISPRseek", echo = FALSE, out.width = "90%", out.height = "90%"}
+png <- system.file("extdata", "core_functions.png", package = "CRISRPseek")
+png <- "~/GitHub/CRISPRseek/inst/extdata/core_functions.png"
+
+knitr::include_graphics(png)
+```
+
+# Example use scenarios {#examples}
+In this section, we will demonstrate different gRNA design scenarios using the `offtargetAnalysis()` function. Some of its core parameters are described below. Type `?offtargetAnalysis` for detailed description of all supported parameters.
+
++ "inputFilePath": 
+  + Path to an input sequence file or a `DNAStringSet` object containing sequences to be searched for potential gRNAs.
++ "findgRNAs": 
+  + Defaults to TRUE. Specifies whether to find gRNAs from the sequences in `inputFilePath`. Set to FALSE if the input file already contains user-selected gRNAs plus PAM.
++ "findgRNAsWithREcutOnly":	
+  + Defaults to TRUE. Specifies whether to search for gRNAs that overlap with restriction enzyme recognition sites only.
++ "REpatternFile": 
+  + Path to a file containing restriction enzyme cut patterns.
++ "findPairedgRNAOnly": 
+  + Defaults to FALSE. Specifies whether to search only for paired gRNAs in such an orientation that the first one is on the minus strand (reverse gRNA) and the second one is on plus strand (forward gRNA).
++ "annotatePaired": 
+  + Defaults to TRUE. Specifies whether to output paired gRNA information.
++ "PAM": 
+  + Defaults to "NGG". Defines the protospacer adjacent motif sequence.	
++ "BSgenomeName": 
+  + A `BSgenome` object containing the target genome sequence, used for off-target search.
++ "genomeSeqFile": 
+  + Alternative to `BSgenomeName`. Specifies the path to a custom target genome file in FASTA format, used for off-target search. It is applicable when `BSgenomeName` is NOT set. When `genomeSeqFile` is set, the `annotateExon`, `txdb`, and `orgAnn` parameters will be ignored.
++ "chromToSearch": 
+  + Defaults to "all", meaning all chromosomes in the target genome are searched for off-targets. Set to a specific chromosome (e.g., "chrX") to restrict the search to that chromsome only.
++ "max.mismatch": 
+  + Defaults to 3. Maximum number of mismatches allowed in off-target search. Warning: search will be considerably slower if set to a value greater than 3.
++ "findOffTargetsWithBulge": 
+  + Defaults to FALSE. Specifies whether to search for off-targets with bulges.
++ "DNA_bulge": 
+  + Defaults to 2. Maximum number of DNA bulges allowed in off-target search.
++ "RNA_bulge": 
+  + Defaults to 2. Maximum number of RNA bulges allowed in off-target search.
++ "annotateExon": 
+  + Defaults to TRUE. Specifies whether to annotate if off-targets are within exons. If set to TRUE, provide "txdb" and "orgAnn" for annotation.
++ "txdb": 
+  + A `TxDb` object containing organism-specific annotation data, required for `annotateExon`.
++ "orgAnn: 
+  + An `OrgDb` object containing organism-specific annotation mapping information, required for `annotateExon`.
++ "outputDir": 
+  + Defaults to the current working directotry. Specifies the path to the directory where the analysis results will be saved.
++ "baseEditing": 
+  + Defaults to FALSE. Specifies whether to design gRNAs for base editing.
++ "primeEditing": 
+  + Defaults to FALSE. Specifies whether to design gRNAs for prime editing.
++ "predIndelFreq": 
+  + Defaults to FALSE. Specifies whether to output the predicted INDELs and their frequencies.
+
+To annotate the resulting off-targets to nearby exons, the following parameters are required: "annotateExon", "BSgenomeName", "txdb", and "orgAnn". 
+
++ To find the BSgenome for other species, use the `available.genomes()` function in the `r Biocpkg("BSgenome")` package. Common examples include `r Biocpkg("BSgenome.Hsapiens.UCSC.hg19")` (hg19), `r Biocpkg("BSgenome.Hsapiens.UCSC.hg38")` (hg38), `r Biocpkg("BSgenome.Mmusculus.UCSC.mm10")` (mm10), `r Biocpkg("BSgenome.Celegans.UCSC.ce6")` (ce6). 
++ To find a list of existing `TxDb` objects, search for annotation packages starting with "TxDb" at [Bioconductor](http://www.bioconductor.org/packages/release/BiocViews.html). Examples include `r Biocpkg("TxDb.Hsapiens.UCSC.hg19.knownGene")` (for hg19) and `r Biocpkg("TxDb.Mmusculus.UCSC.mm10.knownGene")` (for mm10). To build custom `TxDb`, refer to the `r Biocpkg("GenomicFeatures")` and `r Biocpkg("txdbmaker")` packages.
++ To find a list of existing `OrgDb` packages, search for "OrgDb" at [Bioconductor](http://www.bioconductor.org/packages/release/BiocViews.html). Examples include `r Biocpkg("org.Hs.eg.db")` (for human) and `r Biocpkg("org.Mm.eg.db")` (for mouse).
+
+The `offTargetAnalysis()` function offers two input options:
+
++ Input raw sequence    
+
+By default, the parameter `findgRNAs = TRUE` directs the function to accept a sequence file (via `inputFilePath`), search for potential gRNAs, and then perform off-target analysis.
+
++ Input user-designed gRNAs   
+
+Alternatively, if you already have a list of user-designed gRNAs, you can provide them via `inputFilePath` as well, set `findgRNAs = FALSE`, and the function will perform off-target analysis without searching for gRNAs.
+
+The following examples use a raw sequence as input and, therefore, set `findgRNAs = TRUE`. 
+
+## Using default settings
+By default, the `offTargetAnalysis()` function will identify all potential gRNAs in the given input sequence, perform off-target analysis, and annotate for all identified off-targets. This generates the most comprehensive reports, but comes with the trade-off of the slowest running time. Additionally, we need to load the necessary annotation packages first:
+```{r, message = FALSE}
+library(CRISPRseek)
+library(BSgenome.Hsapiens.UCSC.hg38)
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+library(org.Hs.eg.db)
+```
+
+Note that we set `chromToSearch = "chrX"` to restrict the off-target search to the "chrX" to speed up the analysis.
+```{r}
+inputFilePath <- system.file('extdata', 'inputseq.fa', package = 'CRISPRseek')
+outputDir <- getwd()
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens,
+                         chromToSearch= "chrX", 
+                         
+                         # Annotation packages required for annotation.
+                         txdb = TxDb.Hsapiens.UCSC.hg38.knownGene, 
+                         orgAnn = org.Hs.egSYMBOL,
+                         
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+head(res$summary[, c("names", "gRNAsPlusPAM", "gRNAefficacy")])
+head(res$offtarget[, c("name", "OffTargetSequence", "alignment", "score", "gRNAefficacy")])
+```
+
+## Skipping off-target annotation
+To skip the annotation step, simply set `annotateExon = FALSE`:
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens,
+                         annotateExon = FALSE,
+                         chromToSearch = "chrX",
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+```
+
+## Skipping off-target analysis
+For a quicker gRNA search, you can call the function with `chromToSearch = ""`, which disables the search of identified gRNAs against the reference genome. This will significantly reduce the running time.
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens, # optional
+                         chromToSearch = "",
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+res
+```
+
+Note that setting `chromToSearch = ""` also disables the calculation of gRNA efficacy, which measures how effectively a gRNA facilitates cleavage at the target site. To enable the calculation of gRNA efficacy at the on-target site, specify the chromosome where the on-targets are located (e.g., `chromToSearch = "chrX"`) and set `max.mismatch = 0` to ensure no off-target analysis is performed.
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens,
+                         annotateExon = FALSE,
+                         chromToSearch = "chrX",
+                         max.mismatch = 0,
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+head(res$summary[, c("names", "gRNAsPlusPAM", "gRNAefficacy")])
+```
+
+Four rule sets are currently supported for calculating gRNA efficacy (`rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1")`) [@doench2014; @doench2016; @moreno2015; @kim2018]. By default, "Root_RuleSet_2014" is be used. To use "Root_RuleSet2_2016", first install python 2.7 via Anaconda (As RuleSet2 is implemented with python 2.7), then install the following Python packages: scikit-learn 0.16.1, pickle, pandas, numpy, and scipy. Afterward, in an R session, run the following commands:
+```{r, eval = FALSE}
+Sys.setenv(PATH = paste("/anaconda2/bin", Sys.getenv("PATH"), sep = ":")) 
+system("python --version") # Should output Python 2.7.15.
+```
+
+If `rule.set = "CRISPRscan"`, must also specify the corresponding parameters for `baseBefroegRNA`, `baseAfterPAM`, and `featureWeightMatrixFile` to ensure correct efficacy calculation:
+```{r, eval = FALSE}
+m <- system.file("extdata", "Morenos-Mateo.csv", package = "CRISPRseek")
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens,
+                         annotateExon = FALSE,
+                         chromToSearch = "chrX",
+                         max.mismatch = 0,
+                         rule.set = "CRISPRscan",
+                         baseBeforegRNA = 6,
+                         baseAfterPAM = 6,
+                         featureWeightMatrixFile = m,
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+```
+
+## Searching for off-targets in custom genomes
+If you would like to search for off-targets in custom reference genomes (rather than using a `BSgenome`), you can specify the path to the custom reference sequence file via the `genomeSeqFile` argument. Please note that, when a custom reference is used, arguments `annotateExon`, `BSgenomeName`, `txdb`, and `fetchSequence` will be ignored.
+```{r, eval = FALSE}
+inputFilePath2 <- system.file("extdata", "inputseqWithoutBSgenome.fa", package = "CRISPRseek")
+genomeSeqFile <- system.file("extdata", "genomeSeq.fasta", package = "CRISPRseek")
+
+res <- offTargetAnalysis(inputFilePath = inputFilePath2, 
+                         genomeSeqFile = genomeSeqFile,
+                         outputDir = outputDir, 
+                         overwrite = TRUE)
+head(res$summary)
+```
+
+## Searching for off-targets with bulges {#bulge}
+The `r Biocpkg("CRISPRseek")` supports searching for off-targets with bulges (both RNA bulges and DNA bulges) by integrating the Cas-OFFinder [@bae2014] tool. To enable this, you can call the master function `offTargetAnalysis()` with the argument `findOffTargetsWithBulge = TRUE`. 
+
+There are three parameters specific to bulge searches, with the following default values:
+
++ `method.findOffTargetsWithBulge = "CasOFFinder_v3.0.0b3"`
++ `DNA_bulge = 2`
++ `RNA_bulge = 2`
+
+Note that, currently, `method.findOffTargetsWithBulge` only supports "CasOFFinder_v3.0.0b3", which generates results that may differ from those produced by "CasOFFinder_v2", For more details, refer to this [link](https://github.com/snugel/cas-offinder).
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         findOffTargetsWithBulge = TRUE,
+                         BSgenomeName = Hsapiens,
+                         chromToSearch = "chrX",
+                         annotateExon = FALSE,
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+head(res$offtarget[, c("name", "gRNAPlusPAM_bulge", "OffTargetSequence_bulge", "n.RNABulge", "n.DNABulge", "alignment")])
+```
+
+The columns relevant to the bulge search are described below. If no bulge is detected, both the "gRNAPlusPAM_bulge" and "OffTargetSequence_bulge" columns for that row will both be empty, while the "n.RNABulge" and "n.DNABulge" values will both be 0.
+
++ "gRNAPlusPAM_bulge"
+  + A hyphen ("-") indicates where a DNA bulge occurs.
++ "OffTargetSequence_bulge"
+  + A hyphen ("-") indicates where an RNA bulge occurs.
++ "n.RNABulge"
+  + The counts of RNA bulges.
++ "n.DNABulge"
+  + The counts of DNA bulges.
++ "alignment"
+  + A dot (".") represents base match, a caret ("^") indicates the position of a DNA bulge, and a hyphen ("-") indicates the position of an RNA bulge.
+
+Alternatively, you can use the wrapper function `getOfftargetWithBulge()` to directly output the Cas-OFFinder results. The function accepts input in the form of either a `DNAStringSet` object from `findgRNA()`, or a `list` object from `offTargetAnalysis()`. 
+
+Note that `getOfftargetWithBulge()` currently supports two versions of Cas-OFFinder: "2.4.1" and "3.0.0b3", specified through the `cas_offinder_version` argument, with the default set to "2.4.1". Type `?getOfftargetWithBulges` for more examples.
+```{r}
+gRNA_PAM <- findgRNAs(inputFilePath = system.file("extdata",
+                                                  "inputseq.fa",
+                                                   package = "CRISPRseek"),
+                      pairOutputFile = "testpairedgRNAs.xls",
+                      findPairedgRNAOnly = TRUE)
+res <- getOfftargetWithBulge(gRNA_PAM,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX")
+head(res)
+```
+
+## Scoring off-targets using different methods
+The `scoring.method` argument in `offTargetAnalysis()` determines how off-target scores are calculated. By default, `scoring.method = "Hsu-Zhuang"`, which models the effect of mismatch position on cutting frequency. To account for both mismatch position and type, you can switch to using the CFD score [@doench2016]. To enable this, set `scoring.method = "CFDscore"` and `PAM.pattern = "NNG$|NGN$"`. 
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens,
+                         chromToSearch = "chrX", 
+                         annotateExon = FALSE,
+                         scoring.method = "CFDscore", 
+                         PAM.pattern = "NNG$|NGN$", 
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+head(res$offtarget[, c("name", "gRNAPlusPAM", "score", "alignment")])
+```
+
+## Only reporting desired gRNAs
+You can filter the output to include only the desired gRNAs, such as paired gRNAs or those with specific restriction enzyme recognition sites, by adjusting the following parameters.
+
++ `findPairedgRNAOnly = FALSE`: 
+  + If set to TRUE, only gRNAs in paired configurations will be reported.
+  + To qualify as a pair, the gap between the forward gRNA and the reverse gRNA must fall between `min.gap` (defaults to 0) and `max.gap` (defaults to 20), inclusive. And the reverse gRNA must be positioned before the forward gRNA.  
+  + The identified gRNAs will be annotated with restriction enzyme recognition site for users to review later.
++ `findgRNAsWithREcutOnly = FALSE`:
+  + If set to TRUE, only gRNAs that overlap with a restriction enzyme recognition site will be reported.
+  + Use the `REpatternFile` parameter to specify the file containing the restriction enzyme recognition patterns.
+  + The identified gRNAs will be annotated with pairing information for users to review later.
+
+Both parameters can be set to TRUE simultaneously to report only paired gRNAs, where at least one gRNA in the pair overlaps with a restriction enzyme recognition site.
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         BSgenomeName = Hsapiens,
+                         annotateExon = FALSE,
+                         chromToSearch = "chrX",
+                         findPairedgRNAOnly = TRUE,
+                         findgRNAsWithREcutOnly = TRUE,
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+head(res$summary[, c("names", "gRNAsPlusPAM", "gRNAefficacy", "PairedgRNAName", "REname")])
+```
+
+## Finding gRNAs in long input sequences
+Searching for gRNAs in long input sequences (> 200 kb) may be slow. To improve performance, set `annotatePaired = FALSE`, and enable multicore processing by setting `enable.multicore = TRUE` and adjusting `n.cores.max`. Additionally, we recommend splitting very long sequences into smaller chunks and analyzing each sub-sequence separately. Special thanks to Alex Williams for sharing [this use case](https://support.bioconductor.org/p/72994/). Finally, please ensure that repeat-masked sequences are used as input.
+
+## Finding gRNAs preferentially targeting one allele
+To identify gRNAs that preferentially target one allele, the function `compare2Sequences()`, which takes two input files, can be used. In the following example, file "rs362331C.fa" and "rs362331T.fa" represent two input files that contain sequences differing by a single nucleotide polymorphism (SNP). The results are saved in the file "scoresFor2InputSequences.xlsx". The output file lists all possible gRNA sequences for each of the two input files and provides a cleavage score for each of the two input sequences. To preferentially target one allele, select gRNA sequences that have the lowest score for the other allele. Selected gRNAs can then by examined for off-targets using `offTargetAnalysis()` function with `findgRNAs = FALSE` as described above.
+```{r}
+inputFile1Path <- system.file("extdata", "rs362331C.fa", package="CRISPRseek") 
+inputFile2Path <- system.file("extdata", "rs362331T.fa", package="CRISPRseek") 
+
+res <- compare2Sequences(inputFile1Path,
+                         inputFile2Path, 
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+head(res[, c("name", "gRNAPlusPAM", "scoreForSeq1", "scoreForSeq2", "gRNAefficacy", "scoreDiff")])
+```
+
+## Configuring for base editors
+Cytosine base editors (CBEs) and adenine base editors (ABEs) can introduce specific DNA C-to-T or A-to-G alterations, respectively [@gaudelli2017; @komor2016]. The `offTargetAnalsys()` can design gRNAs optimized for base editing by setting `baseEditing = TRUE`. In this case, the following parameters must also be specified (defaults are for the CBE system developed in the Liu Lab): `targetBase = "C"`, `editingWindow = 4:8`, `editingWindow.offtarget = 4:8`. 
+```{r}
+res <- offTargetAnalysis(inputFilePath = inputFilePath,
+                         chromToSearch = "",
+                         baseEditing = TRUE,
+                         targetBase = "C",
+                         editingWindow = 4:8,
+                         editingWindow.offtargets = 4:8,
+                         outputDir = outputDir,
+                         overwrite = TRUE)
+res
+```
+
+## Configuring for prime editors
+In addition to CBE, the Liu Lab also developed the prime editor (PE) [@anzalone2019], which is more versatile and flexible with high efficacy and without the need to make a DSB or providing donor template. It can be used to make all possible 12 single base changes, 1-44 bp insertions, or 1-80 bp deletions. This editing system can be programmed to correct about 89 percent of human pathogenic variants. 
+
+To design gRNAs and pegRNAs for PE, set `primeEditing = TRUE` together with the following parameters:
+
++ "targeted.seq.length.change"
++ "bp.after.target.end"
++ "PBS.length"
++ "RT.template.length"
++ "RT.template.pattern"
++ "target.start"
++ "target.end"
++ "correct.seq"
++ "findPairedgRNAOnly" (must set to TRUE), 
++ "paired.orientation" (must set to "PAMin")
++ "min.gap" (for paired gRNAs)
++ "max.gap" (for paired gRNAs)
+
+Type `?offTargetAnalysis` for detailed description of each of these parameters.
+```{r}
+inputFilePath <- DNAStringSet("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG")
+res <- offTargetAnalysis(inputFilePath,
+                         chromToSearch = "",
+                         gRNAoutputName = "testPEgRNAs", # Required when inputFilePath is a DNAStringSet object.
+                         primeEditing = TRUE,
+                         targeted.seq.length.change = 0,
+                         bp.after.target.end = 15,
+                         PBS.length = 15,
+                         RT.template.length = 8:30,
+                         RT.template.pattern = "D$",
+                         target.start = 20,
+                         target.end = 20,
+                         corrected.seq = "T",
+                         findPairedgRNAOnly = TRUE,
+                         paired.orientation = "PAMin",
+                         outputDir = outputDir, 
+                         overwrite = TRUE)
+res
+```
+
+
+# Have questions?
+For questions related to usage, please search/post your queries on the [Bioconductor Support Site](https://support.bioconductor.org/new/post/). If you wish to report a bug or request a new feature, kindly raise an issue on the [CRISPRseek](https://github.com/LihuaJulieZhu/CRISPRseek/issues/new) GitHub repository.
+
+# Selected Q & A
+## Can CRISPRseek detect off-targets with bulges?
+Yes, starting from version 1.44.1, `r Biocpkg("CRISPRseek")` supports the detection of off-targets with bulges by integrating Cas-OFFinder [@bae2014]. To learn more, type `?getOfftargetWithBulge` and `?offTargetAnalysis` for detailed documentation.
+
+# How to cite CRISPRseek
+If you use `r Biocpkg("CRISPRseek")` in your work, please cite it as follows:
+```{r citation, message = FALSE}
+citation(package = "CRISPRseek")
+```
+
+# Session info
+Here is the output of `sessionInfo()` on the system on which this document was compiled running pandoc `r rmarkdown::pandoc_version()`:
+```{r sessionInfo, echo = FALSE}
+sessionInfo()
+```

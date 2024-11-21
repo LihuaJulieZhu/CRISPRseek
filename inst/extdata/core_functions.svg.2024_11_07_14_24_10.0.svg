@@ -1,0 +1,1153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="250mm"
+   height="297mm"
+   viewBox="0 0 250 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2 (dc2aeda, 2022-05-15)"
+   sodipodi:docname="core_functions.svg"
+   inkscape:export-filename="dataFlow1.png"
+   inkscape:export-xdpi="266.09525"
+   inkscape:export-ydpi="266.09525"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.47953245"
+     inkscape:cx="365.98149"
+     inkscape:cy="596.41428"
+     inkscape:window-width="1196"
+     inkscape:window-height="790"
+     inkscape:window-x="62"
+     inkscape:window-y="415"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     showguides="false" />
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="Dot"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart"
+       refX="0"
+       refY="0"
+       orient="28"
+       inkscape:stockid="TriangleStart"
+       markerWidth="3.7309999"
+       markerHeight="4.3132949"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="userSpaceOnUse">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <rect
+       x="492.14864"
+       y="836.97624"
+       width="161.15193"
+       height="60.387435"
+       id="rect15632" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="302.13589"
+       height="63.961796"
+       id="rect1501" />
+    <rect
+       x="234.58337"
+       y="124.55754"
+       width="197.21611"
+       height="62.27877"
+       id="rect911" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="295.16806"
+       height="61.034977"
+       id="rect1501-4" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="187.54384"
+       height="69.274803"
+       id="rect1501-4-2" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="291.58713"
+       height="30.783487"
+       id="rect1501-6-3-8" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="187.54384"
+       height="69.274803"
+       id="rect1501-4-2-7" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="187.54384"
+       height="69.274803"
+       id="rect1501-4-2-7-1" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-1" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-2" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-8-2" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-2-0" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="200.66922"
+       height="69.819145"
+       id="rect1501-4-2-7-1-5" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="271.13159"
+       height="60.918335"
+       id="rect1501-6-3-8-2-3" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-2-0-1" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-8-2-9" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-2-0-14" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-4" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="271.13159"
+       height="60.918335"
+       id="rect1501-6-3-8-2-3-5" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-2-0-1-1" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-7" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-8-2-9-3" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-9-2-0-14-4" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-4-7" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-8-2-9-3-2" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-8-2-9-3-7" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="265.89957"
+       height="35.925953"
+       id="rect1501-6-3-8-2-9-3-7-0" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-4-7-9" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-4-7-6" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-4-7-0" />
+    <rect
+       x="226.12617"
+       y="117.35662"
+       width="226.35971"
+       height="55.263218"
+       id="rect1501-4-2-7-1-6-4-4-71" />
+    <marker
+       style="overflow:visible"
+       id="Dot-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-3"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-1"
+       refX="0"
+       refY="0"
+       orient="28"
+       inkscape:stockid="TriangleStart"
+       markerWidth="3.7309999"
+       markerHeight="4.3132949"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="userSpaceOnUse">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-5"
+       refX="0"
+       refY="0"
+       orient="28"
+       inkscape:stockid="TriangleStart"
+       markerWidth="3.7309999"
+       markerHeight="4.3132949"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid"
+       markerUnits="userSpaceOnUse">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-47" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.5;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect61-7-6-3-1-6-3-2-1"
+       width="161.1474"
+       height="37.569267"
+       x="62.088017"
+       y="203.42078"
+       ry="9.0084209" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.46919px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#eeb938;fill-opacity:0.5;stroke:#000000;stroke-width:1.01877;stroke-dasharray:none;stroke-opacity:1"
+       x="87.724731"
+       y="41.852448"
+       id="text12147"
+       transform="scale(1.0187697,0.98157611)"><tspan
+         sodipodi:role="line"
+         id="tspan12145"
+         style="stroke-width:1.01877"
+         x="87.724731"
+         y="41.852448" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.67218px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#ff0000;fill-opacity:0.977528;stroke:#000000;stroke-width:1.01877;stroke-dasharray:none;stroke-opacity:1"
+       x="192.7735"
+       y="224.6723"
+       id="text18002"
+       transform="scale(1.0187697,0.98157611)"><tspan
+         sodipodi:role="line"
+         id="tspan18000"
+         style="stroke-width:1.01877"
+         x="192.7735"
+         y="224.6723" /></text>
+    <rect
+       style="fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.259679;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-4"
+       width="46.494884"
+       height="16.264473"
+       x="12.418116"
+       y="64.073174"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'.Apple Color Emoji UI';-inkscape-font-specification:'.Apple Color Emoji UI';text-align:center;text-anchor:middle;opacity:1;fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
+       x="36.269989"
+       y="70.756264"
+       id="text15032"><tspan
+         sodipodi:role="line"
+         id="tspan15030"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille Bold';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.269989"
+         y="70.756264">Step1<tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15382">:</tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15380"> </tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15200">search for </tspan></tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.269989"
+         y="75.992012"
+         id="tspan15084">gRNA candidates</tspan></text>
+    <rect
+       style="fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.259679;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-4-0"
+       width="46.494884"
+       height="16.264473"
+       x="12.417839"
+       y="114.56997"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'.Apple Color Emoji UI';-inkscape-font-specification:'.Apple Color Emoji UI';text-align:center;text-anchor:middle;fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
+       x="36.269714"
+       y="121.25295"
+       id="text15032-6"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille Bold';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.269714"
+         y="121.25295"
+         id="tspan15084-1">Step2<tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15384">: </tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15366">filter </tspan></tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.269714"
+         y="126.48869"
+         id="tspan15368">gRNAs with RE sites</tspan></text>
+    <rect
+       style="fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.259679;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-4-0-6"
+       width="46.494884"
+       height="16.264473"
+       x="12.417839"
+       y="165.06677"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'.Apple Color Emoji UI';-inkscape-font-specification:'.Apple Color Emoji UI';text-align:center;text-anchor:middle;fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
+       x="36.269714"
+       y="171.74976"
+       id="text15032-6-2"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille Bold';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.269714"
+         y="171.74976"
+         id="tspan15350">Step3<tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15386">: search </tspan></tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.269714"
+         y="176.9855"
+         id="tspan15084-1-9">for off-targets</tspan></text>
+    <rect
+       style="opacity:0.65;fill:#eeb9c3;fill-opacity:0.64;stroke:#000000;stroke-width:0.3;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-7-8-6-2-8-8-6-1-7"
+       width="61.246258"
+       height="26.710041"
+       x="116.83807"
+       y="208.99739"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.99722px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="147.92242"
+       y="215.53673"
+       id="text4292-0-7-5"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92242"
+         y="215.53673"
+         id="tspan14046-4">getOfftargetScore(),</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92242"
+         y="221.53395"
+         id="tspan15643">getOfftargetScore2(),</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92242"
+         y="227.53117"
+         id="tspan15703">filterOfftarget(),</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92242"
+         y="233.52838"
+         id="tspan15705">...</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92242"
+         y="239.5256"
+         id="tspan15647" /></text>
+    <rect
+       style="fill:#14e8c6;fill-opacity:0.05;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-3-1-1"
+       width="41.023544"
+       height="28.938951"
+       x="63.738682"
+       y="207.79364"
+       ry="6.9390292" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="84.237534"
+       y="212.52289"
+       id="text7775-7-1-0"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="212.52289"
+         id="tspan7781-1-8-6"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan15701">hits</tspan>,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="216.31842"
+         id="tspan25723" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="220.11394"
+         id="tspan15653">canonical PAM,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="223.90947"
+         id="tspan15655">scoring.method,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="227.705"
+         id="tspan15657">mismatch.activity.file,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="231.50053"
+         id="tspan15659">weights,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="235.29605"
+         id="tspan15661">...</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="239.09158"
+         id="tspan12339-3" /></text>
+    <rect
+       style="opacity:0.7;fill:#14e8c6;fill-opacity:0.25;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-7-1-8-2"
+       width="31.823645"
+       height="21.935568"
+       x="190.06876"
+       y="211.38463"
+       ry="5.2597466" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="205.94269"
+       y="218.57845"
+       id="text7775-3-6-2-5"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="205.94269"
+         y="218.57845"
+         id="tspan7781-3-1-1-9">Summary.xlsx</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="205.94269"
+         y="221.61487"
+         id="tspan10539-6-9">OfftargetAnalysis.xlsx</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="205.94269"
+         y="224.65128"
+         id="tspan19389">REcutDetails.xlsx</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="205.94269"
+         y="227.6877"
+         id="tspan19391">pairedgRNAs.xlsx</tspan></text>
+    <rect
+       style="fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.259679;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-4-0-6-0"
+       width="46.494884"
+       height="16.264473"
+       x="12.418129"
+       y="214.07318"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'.Apple Color Emoji UI';-inkscape-font-specification:'.Apple Color Emoji UI';text-align:center;text-anchor:middle;fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
+       x="36.19611"
+       y="218.58174"
+       id="text15032-6-2-2"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille Bold';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.19611"
+         y="218.58174"
+         id="tspan15084-1-9-6">Step4<tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille'"
+   id="tspan15386-3">:<tspan
+   style="font-size:3.52778px"
+   id="tspan15551"> score, </tspan></tspan></tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.19611"
+         y="223.81749"
+         id="tspan15553">annotate, and summarize </tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';fill:#000000;fill-opacity:1;stroke-width:0.3"
+         x="36.19611"
+         y="228.75638"
+         id="tspan15542">off-targets</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;opacity:1;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"
+       x="150.92538"
+       y="217.64726"
+       id="text15572"><tspan
+         sodipodi:role="line"
+         id="tspan15570"
+         style="stroke-width:0.3"
+         x="150.92538"
+         y="217.64726">t</tspan></text>
+    <rect
+       style="opacity:1;fill:#eeb9c3;fill-opacity:0.64;stroke:#000000;stroke-width:0.8;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-7-8-6-2-8-8-6-1-7-65"
+       width="66.900558"
+       height="15.41679"
+       x="114.01093"
+       y="245.80077"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:7.05556px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="147.70753"
+       y="255.86597"
+       id="text4292-0-7-5-6"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.05556px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.70753"
+         y="255.86597"
+         id="tspan15647-0">offTargetAnalysis()</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"
+       x="151.00592"
+       y="273.19778"
+       id="text15572-7"><tspan
+         sodipodi:role="line"
+         id="tspan15570-4"
+         style="stroke-width:0.3"
+         x="151.00592"
+         y="273.19778">t</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;opacity:1;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"
+       x="138.44675"
+       y="224.26488"
+       id="text15576"><tspan
+         sodipodi:role="line"
+         id="tspan15574"
+         style="stroke-width:0.3"></tspan></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text15630"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;white-space:pre;shape-inside:url(#rect15632);display:inline;opacity:1;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:1.13386;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"><tspan
+         sodipodi:role="line"
+         id="tspan15634"></tspan></text>
+    <path
+       d="m 107.28379,222.26267 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m 180.60591,222.35196 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-4"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       style="fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.5;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect61-7-6-3-1-6-3-2-1-2"
+       width="161.1474"
+       height="37.569267"
+       x="62.088017"
+       y="153.42078"
+       ry="9.0084209" />
+    <rect
+       style="opacity:0.65;fill:#eeb9c3;fill-opacity:0.64;stroke:#000000;stroke-width:0.3;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-7-8-6-2-8-8-6-1-7-6"
+       width="61.246258"
+       height="26.710041"
+       x="116.83807"
+       y="158.99741"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.29167px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="147.92241"
+       y="165.53673"
+       id="text4292-0-7-5-0"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.29167px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92241"
+         y="165.53673"
+         id="tspan15647-2">searchHits(),</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.29167px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92241"
+         y="170.8284"
+         id="tspan25017">searchHits2(),</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.29167px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92241"
+         y="176.12007"
+         id="tspan25019">getOfftargetWithBulge(),</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.29167px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="147.92241"
+         y="181.41174"
+         id="tspan25021">...</tspan></text>
+    <rect
+       style="fill:#14e8c6;fill-opacity:0.05;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-3-1-1-2"
+       width="41.023544"
+       height="28.938951"
+       x="63.738682"
+       y="157.79364"
+       ry="6.9390292" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="84.237534"
+       y="161.99373"
+       id="text7775-7-1-0-4"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="161.99373"
+         id="tspan12339-3-6"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille Bold'"
+   id="tspan25209">gRNAs</tspan>,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="165.78926"
+         id="tspan25721" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="169.58478"
+         id="tspan25084">seqs/BSgenomeName,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="173.38031"
+         id="tspan25086">chromToSearch,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="177.17584"
+         id="tspan25088">max.mismatch,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="180.97137"
+         id="tspan25090">PAM.pattern</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.237534"
+         y="184.76689"
+         id="tspan25092">...</tspan></text>
+    <rect
+       style="opacity:0.7;fill:#14e8c6;fill-opacity:0.25;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-7-1-8-2-4"
+       width="31.823645"
+       height="21.935568"
+       x="190.06876"
+       y="161.38463"
+       ry="5.2597466" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="206.40364"
+       y="171.7476"
+       id="text7775-3-6-2-5-4"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="206.40364"
+         y="171.7476"
+         id="tspan19391-0">off-target </tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="206.40364"
+         y="175.54314"
+         id="tspan25103">hits</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"
+       x="150.92538"
+       y="167.64726"
+       id="text15572-2"><tspan
+         sodipodi:role="line"
+         id="tspan15570-2"
+         style="stroke-width:0.3"
+         x="150.92538"
+         y="167.64726">t</tspan></text>
+    <path
+       d="m 107.28379,172.26283 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-49"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m 180.60591,172.35212 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-4-5"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       style="fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.5;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect61-7-6-3-1-6-3-2-1-9"
+       width="161.1474"
+       height="37.569267"
+       x="62.088001"
+       y="103.42078"
+       ry="9.0084209" />
+    <rect
+       style="opacity:0.65;fill:#eeb9c3;fill-opacity:0.64;stroke:#000000;stroke-width:0.3;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-7-8-6-2-8-8-6-1-7-0"
+       width="61.246258"
+       height="26.710041"
+       x="116.83806"
+       y="108.99737"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.99722px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="148.18887"
+       y="123.90587"
+       id="text4292-0-7-5-7"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="148.18887"
+         y="123.90587"
+         id="tspan15647-1">filtergRNAs()</tspan></text>
+    <rect
+       style="fill:#14e8c6;fill-opacity:0.05;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-3-1-1-1"
+       width="41.023544"
+       height="28.938951"
+       x="63.738667"
+       y="107.79364"
+       ry="6.9390292" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.175px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="84.244408"
+       y="116.79393"
+       id="text7775-7-1-0-1"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.244408"
+         y="116.79393"
+         id="tspan12339-3-4"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille Bold'"
+   id="tspan25211">all.gRNAs</tspan>,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.244408"
+         y="120.2099"
+         id="tspan25719" /><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.244408"
+         y="123.62588"
+         id="tspan25203">findgRNAsWithREcutonly</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.244408"
+         y="127.04185"
+         id="tspan25205">REpatternFile,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.244408"
+         y="130.45782"
+         id="tspan25207">...</tspan></text>
+    <rect
+       style="opacity:0.7;fill:#14e8c6;fill-opacity:0.25;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-7-1-8-2-8"
+       width="31.823645"
+       height="21.935568"
+       x="190.06871"
+       y="111.38464"
+       ry="5.2597466" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="206.0813"
+       y="121.29208"
+       id="text7775-3-6-2-5-7"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="206.0813"
+         y="121.29208"
+         id="tspan19391-9">filtered</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="206.0813"
+         y="125.0876"
+         id="tspan25166">gRNAs</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"
+       x="150.92537"
+       y="117.64724"
+       id="text15572-0"><tspan
+         sodipodi:role="line"
+         id="tspan15570-6"
+         style="stroke-width:0.3"
+         x="150.92537"
+         y="117.64724">t</tspan></text>
+    <path
+       d="m 107.28376,122.26308 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-0"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m 180.60588,122.35237 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-4-6"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       style="fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.5;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect61-7-6-3-1-6-3-2-1-2-0"
+       width="161.1474"
+       height="37.569267"
+       x="62.088001"
+       y="53.420784"
+       ry="9.0084209" />
+    <rect
+       style="fill:#14e841;fill-opacity:0.02;stroke:#000000;stroke-width:0.85;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect61-7-6-3-1-6-3-2-1-2-0-6"
+       width="168.5218"
+       height="197.04958"
+       x="58.929977"
+       y="48.629444"
+       ry="10.143565" />
+    <rect
+       style="opacity:0.65;fill:#eeb9c3;fill-opacity:0.64;stroke:#000000;stroke-width:0.3;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-7-8-6-2-8-8-6-1-7-6-2"
+       width="61.246258"
+       height="26.710041"
+       x="116.83806"
+       y="58.997414"
+       ry="0" />
+    <rect
+       style="opacity:0.65;fill:#eeb9c3;fill-opacity:0.64;stroke:#000000;stroke-width:0.294863;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-2-7-8-6-2-8-8-6-1-7-6-2-9"
+       width="31.690115"
+       height="14.19311"
+       x="131.61613"
+       y="26.899513"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.99722px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="149.35727"
+       y="74.660522"
+       id="text4292-0-7-5-0-5"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.99722px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-opacity:1"
+         x="149.35727"
+         y="74.660522"
+         id="tspan15647-2-9">findgRNAs()</tspan></text>
+    <rect
+       style="fill:#14e8c6;fill-opacity:0.05;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-3-1-1-2-3"
+       width="41.023544"
+       height="28.938951"
+       x="63.738667"
+       y="57.793648"
+       ry="6.9390292" />
+    <rect
+       style="fill:#14e8c6;fill-opacity:0.05;stroke:#000000;stroke-width:0.343172;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-3-1-1-2-3-8"
+       width="33.315815"
+       height="14.138907"
+       x="83.714516"
+       y="26.829544"
+       ry="3.3902507" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="84.246132"
+       y="67.909966"
+       id="text7775-7-1-0-4-7"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.246132"
+         y="67.909966"
+         id="tspan12339-3-6-9">inputFilePath,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.246132"
+         y="71.70549"
+         id="tspan25246">PAM,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.246132"
+         y="75.501022"
+         id="tspan25248">gRNA.size,</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="84.246132"
+         y="79.296547"
+         id="tspan25250">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.114391;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="100.28277"
+       y="35.025097"
+       id="text7775-7-1-0-4-7-6"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.114391"
+         x="100.28277"
+         y="35.025097"
+         id="tspan25250-7">input, configs</tspan></text>
+    <rect
+       style="opacity:0.7;fill:#14e8c6;fill-opacity:0.25;stroke:#000000;stroke-width:0.3;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-7-1-8-2-4-3"
+       width="31.823645"
+       height="21.935568"
+       x="190.16017"
+       y="61.431438"
+       ry="5.2597466" />
+    <rect
+       style="opacity:0.7;fill:#14e8c6;fill-opacity:0.25;stroke:#000000;stroke-width:0.343172;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1"
+       id="rect61-7-6-7-1-8-2-4-3-5"
+       width="27.672117"
+       height="11.395468"
+       x="179.17473"
+       y="28.23385"
+       ry="2.732424" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="205.8421"
+       y="73.375046"
+       id="text7775-3-6-2-5-4-3"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.1"
+         x="205.8421"
+         y="73.375046"
+         id="tspan19391-0-8">all gRNAs</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.114391;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="192.99109"
+       y="35.047836"
+       id="text7775-3-6-2-5-4-3-5"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';stroke-width:0.114391"
+         x="192.99109"
+         y="35.047836"
+         id="tspan19391-0-8-6">output</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Apple Braille';-inkscape-font-specification:'Apple Braille';text-align:center;text-anchor:middle;fill:#eeb938;fill-opacity:0.3;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.1;paint-order:markers stroke fill"
+       x="150.92537"
+       y="67.647278"
+       id="text15572-2-7"><tspan
+         sodipodi:role="line"
+         id="tspan15570-2-6"
+         style="stroke-width:0.3"
+         x="150.92537"
+         y="67.647278">t</tspan></text>
+    <path
+       d="m 107.28376,72.263154 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-49-1"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m 180.60588,72.352444 c 0,1.88545 1.57445,3.41412 3.51635,3.41412 1.94192,0 3.51637,-1.52869 3.51637,-3.41412 0,-1.88548 -1.57445,-3.41415 -3.51637,-3.41415 -1.94192,0 -3.51635,1.52865 -3.51635,3.41415 z m 4.92599,0 -2.35292,2.28489 -0.31074,-0.30169 2.04212,-1.9832 -2.04212,-1.98278 0.31074,-0.30173 z"
+       id="path25609-7-4-9-4-2-4-5-8"
+       style="opacity:0.8;fill:#eeb938;fill-opacity:0.7;stroke:#000000;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:4.23333px;line-height:1;font-family:Charter;-inkscape-font-specification:'Charter Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.114391;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-opacity:1;paint-order:markers stroke fill"
+       x="147.51144"
+       y="34.994091"
+       id="text4292-0-7-5-0-5-0"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;font-family:Charter;-inkscape-font-specification:'Charter Bold Italic';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.114391;stroke-opacity:1"
+         x="147.51144"
+         y="34.994091"
+         id="tspan15647-2-9-0">core functions</tspan></text>
+    <path
+       style="opacity:1;fill:none;fill-opacity:0.7;stroke:#eeb938;stroke-width:0.85;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Dot);marker-end:url(#TriangleStart);paint-order:normal"
+       d="M 206.07199,83.367005 C 192.06231,103.04017 133.58566,90.194076 95.8391,114.33167"
+       id="path26936"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:0.7;stroke:#eeb938;stroke-width:0.85;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Dot-2);marker-end:url(#TriangleStart-1);paint-order:normal"
+       d="m 206.79623,133.30605 c -14.00968,19.67317 -75.12778,2.50471 -112.874335,26.64231"
+       id="path26936-1"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:0.7;stroke:#eeb938;stroke-width:0.85;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.8;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Dot-0);marker-end:url(#TriangleStart-5);paint-order:normal"
+       d="m 206.26706,183.22611 c -14.00968,19.67317 -77.86489,2.68697 -115.61145,26.82457"
+       id="path26936-13"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>

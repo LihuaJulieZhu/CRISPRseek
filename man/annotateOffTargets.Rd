@@ -64,9 +64,6 @@ the gene ID if inside the gene.
 \details{
 %% ~~ If necessary, more details than the description above ~~
 }
-\note{
-%% ~~further notes~~
-}
 \examples{
 
     library(CRISPRseek)

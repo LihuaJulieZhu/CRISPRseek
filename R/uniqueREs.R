@@ -24,7 +24,6 @@
 #' each gRNA.
 #' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
-#' @seealso
 #' @references %% ~put references to the literature/web site here ~
 #' @keywords misc
 #' @examples
