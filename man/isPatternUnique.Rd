@@ -31,14 +31,9 @@ also occurs in the flanking region.
     seq <- "TGGATTGTATAATCAGCATGGATTTGGAAC"
     patterns <- DNAStringSet(c("TGG", "TGGA", "TGGATA", "TTGGAAC", ""))
     isPatternUnique(seq, patterns)
-    isPatternUnique(seq)
-    isPatternUnique(patterns)
 }
 \references{
 %% ~put references to the literature/web site here ~
-}
-\seealso{
-
 }
 \author{
 Lihua Julie Zhu

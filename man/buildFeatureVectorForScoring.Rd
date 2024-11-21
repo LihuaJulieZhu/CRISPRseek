@@ -86,18 +86,12 @@ Build feature vectors for calculating scores of off targets
 \details{
 %% ~~ If necessary, more details than the description above ~~
 }
-\note{
-%% ~~further notes~~
-}
 \examples{
 
     hitsFile <-  system.file("extdata", "hits.txt", package = "CRISPRseek")
     hits <- read.table(hitsFile, sep= "\t", header = TRUE,
         stringsAsFactors = FALSE)
     buildFeatureVectorForScoring(hits)
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \seealso{
 offTargetAnalysis

@@ -106,7 +106,7 @@ Search for off targets for given gRNAs, sequence and maximum mismatches
 
  all.gRNAs <- findgRNAs(inputFilePath =
        system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
-       pairOutputFile = "pairedgRNAs.xls",
+       pairOutputFile = "pairedgRNAs.xlsx",
        findPairedgRNAOnly = TRUE)
   hits <- searchHits(all.gRNAs[1], 
       seqs = DNAString(
@@ -116,7 +116,7 @@ Search for off targets for given gRNAs, sequence and maximum mismatches
   all.gRNAs <- findgRNAs(inputFilePath =
           DNAStringSet(
               "TAATATTTTAAAATCGGTGACGTGGGCCCAAAACGAGTGCAGTTCCAAAGGCACCCACCTGTGGCAG"),
-          pairOutputFile = "pairedgRNAs.xls",
+          pairOutputFile = "pairedgRNAs.xlsx",
           findPairedgRNAOnly = FALSE,
           PAM = "TTTN", PAM.location = "5prime")
    hits <- searchHits(all.gRNAs[1], seqs = DNAString(

@@ -1,15 +1,11 @@
-Sys.setenv(R_TESTS="")
-require("CRISPRseek") || stop("unable to load Package:CRISPRseek")
-require("BSgenome.Hsapiens.UCSC.hg19") || 
-  stop("unable to load Package:BSgenome.Hsapiens.UCSC.hg19")
-require("org.Hs.eg.db") || stop("unable to load Package:org.Hs.eg.db")
-require("TxDb.Hsapiens.UCSC.hg19.knownGene") || 
-  stop("unable to load TxDb.Hsapiens.UCSC.hg19.knownGene")
-require("BSgenome.Mmusculus.UCSC.mm10") || 
-  stop("unable to load Package: BSgenome.Mmusculus.UCSC.mm10")
-require("TxDb.Mmusculus.UCSC.mm10.knownGene") || 
-  stop("unable to load Package:TxDb.Mmusculus.UCSC.mm10.knownGene")
-require("org.Mm.eg.db") || 
-  stop("unable to load Package:org.Mm.eg.db")
-require("testthat") || stop("unable to load testthat")
+dependencies <- c("CRISPRseek", 
+                  "BSgenome.Hsapiens.UCSC.hg19", 
+                  "org.Hs.eg.db",
+                  "TxDb.Hsapiens.UCSC.hg19.knownGene",
+                  "BSgenome.Mmusculus.UCSC.mm10",
+                  "org.Mm.eg.db",
+                  "TxDb.Mmusculus.UCSC.mm10.knownGene",
+                  "testthat")
+sapply(dependencies, function(x) ifelse(do.call(require, list(x)), "okay", abort(x, "is not loaded for unit testing!")))
 test_check("CRISPRseek")
+

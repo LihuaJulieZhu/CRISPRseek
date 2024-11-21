@@ -8,52 +8,65 @@
 #'
 #' %% ~~ If necessary, more details than the description above ~~
 #'
-#' @param inputFilePath Sequence input file path or a DNAStringSet object that
-#' contains sequences to be searched for potential gRNAs
-#' @param format Format of the input file, fasta, fastq and bed are supported,
-#' default fasta
-#' @param header Indicate whether the input file contains header, default
-#' FALSE, only applies to bed format
-#' @param gRNAoutputName Specify the name of the gRNA outupt file when
-#' inputFilePath is DNAStringSet object instead of file path
-#' @param findgRNAs Indicate whether to find gRNAs from the sequences in the
-#' input file or skip the step of finding gRNAs, default TRUE. Set it to FALSE
-#' if the input file contains user selected gRNAs plus PAM already.
-#' @param exportAllgRNAs Indicate whether to output all potential gRNAs to a
-#' file in fasta format, genbank format or both. Default to both.
-#' @param findgRNAsWithREcutOnly Indicate whether to find gRNAs overlap with
-#' restriction enzyme recognition pattern
-#' @param REpatternFile File path containing restriction enzyme cut patterns
-#' @param minREpatternSize Minimum restriction enzyme recognition pattern
-#' length required for the enzyme pattern to be searched for, default 4
-#' @param overlap.gRNA.positions The required overlap positions of gRNA and
-#' restriction enzyme cut site, default 17 and 18. For Cpf1, you can set it to 19 and 23.
-#' @param findPairedgRNAOnly Choose whether to only search for paired gRNAs in
-#' such an orientation that the first one is on minus strand called reverse
-#' gRNA and the second one is on plus strand called forward gRNA. TRUE or
-#' FALSE, default FALSE
-#' @param annotatePaired Indicate whether to output paired information, default
-#' TRUE
-#' @param paired.orientation PAMin orientation means the two adjacent PAMs on
-#' the sense and antisense strands face inwards towards each other like N21GG
-#' and CCN21 whereas PAMout orientation means they face away from each other
-#' like CCN21 and N21GG
-#' @param min.gap Minimum distance between two oppositely oriented gRNAs to be
-#' valid paired gRNAs. Default 0
-#' @param enable.multicore Indicate whether enable parallel processing, default
-#' FALSE. For super long sequences with lots of gRNAs, suggest set it to TRUE
-#' @param n.cores.max Indicating maximum number of cores to use in multi core
-#' mode, i.e., parallel processing, default 6. Please set it to 1 to disable
-#' multicore processing for small dataset.
-#' @param max.gap Maximum distance between two oppositely oriented gRNAs to be
-#' valid paired gRNAs. Default 20
-#' @param gRNA.name.prefix The prefix used when assign name to found gRNAs,
-#' default gRNA, short for guided RNA.
-#' @param PAM.size PAM length, default 3
-#' @param gRNA.size The size of the gRNA, default 20
-#' @param PAM PAM sequence after the gRNA, default NGG
-#' @param BSgenomeName BSgenome object. Please refer to available.genomes in
-#' BSgenome package. For example,
+#' @param inputFilePath Path to an input sequence file or a `DNAStringSet` 
+#' object containing sequences to be searched for potential gRNAs.
+#' @param format Defaults to "fasta". Format of the input file, "fasta", 
+#' "fastq", and "bed" are supported.
+#' @param header Defaults to FALSE. Indicates whether the input file contains 
+#' header. Only relevant when `format` is set to "bed".
+#' @param gRNAoutputName Defaults to "test". Specifies the name of the gRNA 
+#' output file when `inputFilePath` is a `DNAStringSet` object instead of 
+#' a file path.
+#' @param findgRNAs Defaults to TRUE. Specifies whether to find gRNAs from the 
+#' sequences in `inputFilePath`. Set to FALSE if the input file already contains 
+#' user-selected gRNAs plus PAM.
+#' @param exportAllgRNAs Defaults to "both". Indicates whether to output all 
+#' potential gRNAs to a file in fasta format, genbank format, or both.
+#' @param findgRNAsWithREcutOnly Defaults to TRUE. Specifies whether to search 
+#' for gRNAs that overlap with restriction enzyme recognition sites only.
+#' @param REpatternFile Path to a file containing restriction enzyme cut 
+#' patterns.
+#' @param minREpatternSize Defaults to 4. Minimum restriction enzyme recognition
+#' pattern length required for the enzyme pattern to be searched for.
+#' @param overlap.gRNA.positions Defaults to `c(17, 18)`. Specifies the required 
+#' overlapping positions of the gRNA and restriction enzyme cut site. For Cpf1, 
+#' you can set it to `c(19, 23)`.
+#' @param findPairedgRNAOnly Defaults to FALSE. Specifies whether to search only
+#' for paired gRNAs in such an orientation that the first one is on the minus 
+#' strand (reverse gRNA) and the second one is on plus strand (forward gRNA).
+#' @param annotatePaired Defaults to TRUE. Specifies whether to output paired 
+#' gRNA information.
+#' @param paired.orientation The "PAMin" orientation refers to the scenario 
+#' where the two adjacent PAMs on the sense and antisense strands face inward 
+#' toward each other, such as in "N21GG" and "CCN21". In contrast, the "PAMout" 
+#' orientation occurs when the PAMs face away from each other, as seen in 
+#' "CCN21" and "N21GG".
+#' @param min.gap Defaults to 0. Minimum distance between two oppositely 
+#' oriented gRNAs to be considered as valid paired gRNAs. 
+#' @param enable.multicore Defaults to FALSE. Indicates whether to enable 
+#' parallel. For super long sequences with lots of gRNAs, set it to TRUE.
+#' @param n.cores.max Defaults to 6. Specifies the maximum number of cores to 
+#' use in multicore mode. Set it to 1 to disable multicore processing for 
+#' small dataset.
+#' @param max.gap Defaults to 20. Specifies the maximum distance between two 
+#' oppositely oriented gRNAs to be considered as valid paired gRNAs.
+#' @param gRNA.name.prefix Defaults to "gRNA". Specifies the prefix used when 
+#' assigning names to detected gRNAs.
+#' @param gRNA.size Defaults to 20. The size of the gRNA.
+#' @param PAM Defaults to "NGG". Defines the protospacer adjacent motif sequence.
+#' @param PAM.size Defaults to `width(PAM)`. Specifies the PAM length.
+#' @param PAM.location Defaults to "3prime" (for spCas9). Specifies the PAM 
+#' location relative to the protospacer sequence. Set to "5prime" for cpf1
+#' because its PAM is located at the 5 prime end of the protospacer.
+#' @param PAM.pattern Defaults to "NNG$|NGN$" (for spCas9). Specifies the 
+#' regular expression of PAM. For cpf1, set to "^TTTN" since its PAM is at the 5
+#' prime end.
+#' @param allowed.mismatch.PAM Defaults to 1. Maximum number of mismatches 
+#' allowed in the PAM sequence for off-target search. The default value 1 allows
+#' "NGN" and "NNG" PAM patterns for off-target identification.
+#' @param BSgenomeName A `BSgenome` object containing the target genome 
+#' sequence, used for off-target search. Please refer to available genomes in 
+#' the "BSgenome" package. For example,
 #' \itemize{
 #' \item{BSgenome.Hsapiens.UCSC.hg19} - for hg19,
 #' \item{BSgenome.Mmusculus.UCSC.mm10} - for mm10
@@ -62,99 +75,103 @@
 #' \item{BSgenome.Drerio.UCSC.danRer7} - for Zv9
 #' \item{BSgenome.Dmelanogaster.UCSC.dm3} - for dm3
 #' }
-#' @param chromToSearch Specify the chromosome to search, default to all,
-#' meaning search all chromosomes. For example, chrX indicates searching for
-#' matching in chromosome X only
-#' @param chromToExclude Specify the chromosome not to search. If specified as
-#' "", meaning to search chromosomes specified by chromToSearch. By default, to
-#' exclude haplotype blocks from offtarget search in hg19, i.e., chromToExclude
-#' = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1", "chr6_cox_hap2",
-#' "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
-#' "chr6_ssto_hap7")
-#' @param max.mismatch Maximum mismatch allowed in off target search, default
-#' 3. Warning: will be considerably slower if set > 3
-#' @param PAM.pattern Regular expression of protospacer-adjacent motif (PAM),
-#' default NNG$|NGN$ for spCas9. For cpf1, ^TTTN since it is a 5 prime PAM
-#' sequence
-#' @param allowed.mismatch.PAM Maximum number of mismatches allowed in the PAM
-#' sequence for offtarget search, default to 1 to allow NGN and NNG PAM pattern
-#' for offtarget identification.
-#' @param gRNA.pattern Regular expression or IUPAC Extended Genetic Alphabet to
-#' represent gRNA pattern, default is no restriction. To specify that the gRNA
-#' must start with GG for example, then set it to ^GG. Please see
-#' help(translatePattern) for a list of IUPAC Extended Genetic Alphabet.
-#' @param baseEditing Indicate whether to design gRNAs for base editing.
-#' Default to FALSE If TRUE, please set baseEditing = TRUE, targetBase and
-#' editingWidow accordingly.
-#' @param targetBase Applicable only when baseEditing is set to TRUE. It is
-#' used to indicate the target base for base editing systems, default to C for
-#' converting C to T in the CBE system. Please change it to A if you intend to
-#' use the ABE system.
-#' @param editingWindow Applicable only when baseEditing is set to TRUE. It is
-#' used to indicate the effective editing window, default to 4 to 8 which is
-#' for the original CBE system. Please change it accordingly if the system you
-#' use have a different editing window.
-#' @param editingWindow.offtargets Applicable only when baseEditing is set to
-#' TRUE. It is used to indicate the effective editing window to consider for
-#' the offtargets search only, default to 4 to 8 (1 means the most distal site
-#' from the 3' PAM, the most proximla site from the 5' PAM), which is for the
-#' original CBE system.  Please change it accordingly if the system you use
-#' have a different editing window, or you would like to include offtargets
-#' with the target base in a larger editing window.
-#' @param primeEditing Indicate whether to design gRNAs for prime editing.
-#' Default to FALSE.  If true, please set PBS.length, RT.template.length,
-#' RT.template.pattern, targeted.seq.length.change, bp.after.target.end,
-#' target.start, and target.end accordingly
-#' @param PBS.length Applicable only when primeEditing is set to TRUE. It is
-#' used to specify the number of bases to ouput for primer binding site.
-#' @param RT.template.length Applicable only when primeEditing is set to TRUE.
-#' It is used to specify the number of bases required for RT template, default
-#' to 8 to 18. Please increase the length if the edit is large insertion.  Only
-#' gRNAs with calculated RT.template.length falling into the specified range
-#' will be in the output. It is calculated as the following. RT.template.length
-#' = target.start – cut.start + (target.end - target.start) +
-#' targeted.seq.length.change + bp.after.target.end
-#' @param RT.template.pattern Applicable only when primeEditing is set to TRUE.
-#' It is used to specify the RT template sequence pattern, default to not
-#' ending with C according to https://doi.org/10.1038/s41586-019-1711-4
-#' @param corrected.seq Applicable only when primeEditing is set to TRUE. It is
-#' used to specify the mutated or inserted sequences after successful editing.
-#' @param targeted.seq.length.change Applicable only when primeEditing is set
-#' to TRUE. It is used to specify the number of targeted sequence length
-#' change. Please set it to 0 for base changes, positive numbers for insersion,
-#' and negative number for deletion. For example, 10 means that the corrected
-#' sequence will have 10bp insertion, -10 means that the corrected sequence
-#' will have 10bp deletion, and 0 means only bases have been changed and the
-#' sequence length remains the same
-#' @param bp.after.target.end Applicable only when primeEditing is set to TRUE.
-#' It is used to specify the number of bases to add after the target change end
-#' site as part of RT template. Please refer to RT.template.length for how this
-#' parameter influences the RT.template.length calculation which is used as a
-#' filtering criteria in pregRNA selection.
-#' @param target.start Applicable only when primeEditing is set to TRUE. It is
-#' used to specify the start location in the input sequence to make changes,
-#' which will be used to obtain the RT template sequence. Please also refer to
-#' RT.template.length for how this parameter influences the RT.template.length
-#' calculation which is used as a filtering criteria in pregRNA selection.
-#' @param target.end Applicable only when primeEditing is set to TRUE. It is
-#' used to specify the end location in the input sequnence to make changes,
-#' which will be used to obtain the RT template sequence. Please also refer to
-#' RT.template.length for how this parameter influences the RT.template.length
-#' calculation which is used as a filtering criteria in pregRNA selection.
-#' @param primeEditingPaired.output Applicable only when primeEditing is set to
-#' TRUE. It is used to specify the file path to save pegRNA and the second gRNA
-#' with PBS, RT.template, gRNA sequences, default pairedgRNAsForPE.xls
-#' @param min.score minimum score of an off target to included in the final
-#' output, default 0
-#' @param topN top N off targets to be included in the final output, default
-#' 1000
-#' @param topN.OfftargetTotalScore top N off target used to calculate the total
-#' off target score, default 10
-#' @param annotateExon Choose whether or not to indicate whether the off target
-#' is inside an exon or not, default TRUE
-#' @param txdb TxDb object, for creating and using TxDb object, please refer to
-#' GenomicFeatures package. For a list of existing TxDb object, please search
-#' for annotation package starting with Txdb at
+#' @param genomeSeqFile Alternative to `BSgenomeName`. Specifies the path to a 
+#' custom target genome file in FASTA format, used for off-target search. It is 
+#' applicable when `BSgenomeName` is NOT set. When `genomeSeqFile` is set, the 
+#' `annotateExon`, `txdb`, and `orgAnn` parameters will be ignored.
+#' @param chromToSearch Defaults to "all", meaning all chromosomes in the target 
+#' genome are searched for off-targets. Set to a specific chromosome 
+#' (e.g., "chrX") to restrict the search to that chromsome only.
+#' @param chromToExclude If set to "", means to search off-targets in 
+#' chromosomes specified in `chromToSearch`. By default, to exclude haplotype 
+#' blocks from off-target search assuming using `hg19` genome, i.e., 
+#' `chromToExclude = c("chr17_ctg5_hap1", "chr4_ctg9_hap1", "chr6_apd_hap1", 
+#' "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5",
+#' "chr6_qbl_hap6", "chr6_ssto_hap7")`.
+#' @param max.mismatch Defaults to 3. Maximum number of mismatches allowed in 
+#' off-target search. Warning: search will be considerably slower if set to a 
+#' value greater than 3.
+#' @param findOffTargetsWithBulge Defaults to FALSE. Specifies whether to search
+#' for off-targets with bulges.
+#' @param method.findOffTargetsWithBulge Only applicable if 
+#' `findOffTargetsWithBulge = TRUE`. Choose from `c("CasOFFinder_v3.0.0b3")`.
+#' @param DNA_bulge Defaults to 2. Maximum number of DNA bulges allowed in 
+#' off-target search.
+#' @param RNA_bulge Defaults to 2. Maximum number of RNA bulges allowed in 
+#' off-target search.
+#' @param gRNA.pattern Defaults to NULL (meaning no restriction). Specifies 
+#' regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 
+#' pattern. E.g. to specify that the gRNA must start with "GG", set it to "^GG".
+#' Type `?translatePattern` for a list of IUPAC Extended Genetic Alphabet.
+#' @param baseEditing Defaults to FALSE. Specifies whether to design gRNAs for 
+#' base editing. If set to TRUE, please set `targetBase` and `editingWidow`.
+#' @param targetBase Defaults to "C" (for converting C to T in the CBE system). 
+#' Applicable only when `baseEditing = TRUE`. Specifies the target base for base
+#' editing systems. Please change it to "A" if you intend to use the ABE system.
+#' @param editingWindow Defaults to `4:8` (for the CBE system). Applicable only 
+#' when `baseEditing = TRUE`, and specifies the effective editing window. Please 
+#' change it accordingly if the system you use have a different editing window.
+#' @param editingWindow.offtargets Defaults to `4:8` (for the original CBE
+#' system, 1 means the most distal site from the 3' PAM, the most proximal site 
+#' from the 5' PAM). Applicable only when `baseEditing = TRUE`. Indicates the 
+#' effective editing window to consider for the off-targets search only. Please 
+#' change it accordingly if the system you use have a different editing window, 
+#' or if you would like to include off-targets with the target base in a larger 
+#' editing window.
+#' @param primeEditing Defaults to FALSE. Specifies whether to design gRNAs for 
+#' prime editing. If set to TRUE, please set `PBS.length`, `RT.template.length`,
+#' `RT.template.pattern`, `targeted.seq.length.change`, `bp.after.target.end`,
+#' `target.start`, `target.end`, and `corrected.seq` accordingly.
+#' @param PBS.length Applicable only when `primeEditing = TRUE`. Specifies the 
+#' number of bases to output for primer binding site.
+#' @param RT.template.length Defaults to `8:18`. Applicable only when 
+#' `primeEditing = TRUE`. Specifies the number of bases required for RT 
+#' template. Increase the length if the edit involves a large insertion. Only 
+#' gRNAs with a calculated `RT.template.length` within the specified range will 
+#' be included in the output. It is calculated as the following:
+#' `RT.template.length = target.start – cut.start + (target.end - target.start) +
+#' targeted.seq.length.change + bp.after.target.end`.
+#' @param RT.template.pattern Defaults to not end with C (per 
+#' https://doi.org/10.1038/s41586-019-1711-4). Applicable only when
+#' `primeEditing = TRUE`. Specifies the RT template sequence pattern.
+#' @param corrected.seq Applicable only when `primeEditing = TRUE`. Specifies 
+#' the mutated or inserted sequences after successful editing.
+#' @param targeted.seq.length.change Applicable only when `primeEditing = TRUE`.
+#' Specifies the change in the targeted sequence length. Set it to 0 for base 
+#' changes, positive numbers for insertions, and negative number for deletions. 
+#' For example, 10 indicates that the corrected sequence will have a 10-bp 
+#' insertion, -10 means that the corrected sequence will have a 10-bp deletion, 
+#' and 0 means that only base changes with no change in sequence length.
+#' @param bp.after.target.end Defaults to 15. Applicable only when 
+#' `primeEditing = TRUE`. Specifies the number of bases to add after the target 
+#' change end site as part of the RT template. Refer to `RT.template.length` for
+#' how this parameter affects the calculation of `RT.template.length`, which is 
+#' used as a filtering criterion during pregRNA selection.
+#' @param target.start Defaults to 20. Applicable only when 
+#' `primeEditing = TRUE`. Specifies the start location in the input sequence to 
+#' make changes, which will be used to obtain the RT template sequence. Refer to
+#' `RT.template.length` for how this parameter affects the `RT.template.length`
+#' calculation, which is used as a filtering criteria in pregRNA selection.
+#' @param target.end Defaults to 20. Applicable only when `primeEditing = TRUE`.
+#' Specifies the end location in the input sequence to make changes, which will 
+#' be used to obtain the RT template sequence. Refer to `RT.template.length` for
+#' how this parameter affects the `RT.template.length` calculation, which is
+#' used as a filtering criteria in pregRNA selection.
+#' @param primeEditingPaired.output Defaults to "pairedgRNAsForPE.xls". 
+#' Applicable only when `primeEditing = TRUE`. Specifies the file path where the
+#' pegRNA, second gRNA wit PBS, RT.template, and gRNA sequences will be saved.
+#' @param min.score Defaults to 0. Specifies the minimum score of an off-target 
+#' to be included in the final output.
+#' @param topN Defaults to 1000. Specifies the top N off-targets to be included 
+#' in the final output
+#' @param topN.OfftargetTotalScore Defaults to 10. Specifies the top N 
+#' off-targets used to calculate the total off-target score.
+#' @param annotateExon Defaults to TRUE. Specifies whether to indicate if the 
+#' off-target is located within an exon.
+#' @param txdb A `TxDb` object containing organism-specific annotation data, 
+#' required for `annotateExon`. For creating and using a `TxDb` object, refer to
+#' the `GenomicFeatures` package. For a list of existing `TxDb` objects, search
+#' for annotation packages starting with "Txdb" at
 #' http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData,
 #' such as
 #' \itemize{
@@ -164,104 +181,112 @@
 #' \item{TxDb.Dmelanogaster.UCSC.dm3.ensGene} - for Drosophila
 #' \item{TxDb.Celegans.UCSC.ce6.ensGene} - for C.elegans
 #' }
-#' @param orgAnn organism annotation mapping such as org.Hs.egSYMBOL in
-#' org.Hs.eg.db package for human
-#' @param ignore.strand default to TRUE when annotating to gene
-#' @param outputDir the directory where the off target analysis and reports
-#' will be written to
-#' @param fetchSequence Fetch flank sequence of off target or not, default TRUE
-#' @param upstream upstream offset from the off target start, default 200
-#' @param downstream downstream offset from the off target end, default 200
-#' @param upstream.search upstream offset from the bed input starts to search
-#' for gRNAs, default 0
-#' @param downstream.search downstream offset from the bed input ends to search
-#' for gRNAs, default 0
-#' @param weights Applicable only when scoring.method is set to Hsu-Zhang a
-#' numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395,
-#' 0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615,
-#' 0.804, 0.685, 0.583) which is used in Hsu et al., 2013 cited in the
-#' reference section
-#' @param baseBeforegRNA Number of bases before gRNA used for calculating gRNA
-#' efficiency, default 4 Please note, for PAM located on the 5 prime, need to
-#' specify the number of bases before the PAM sequence plus PAM size.
-#' @param baseAfterPAM Number of bases after PAM used for calculating gRNA
-#' efficiency, default 3 for spCas9 Please note, for PAM located on the 5
-#' prime, need to include the length of the gRNA plus the extended sequence on
-#' the 3 prime
-#' @param featureWeightMatrixFile Feature weight matrix file used for
-#' calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used.
-#' To use alternative weight matrix file, please input a csv file with first
-#' column containing significant features and the second column containing the
-#' corresponding weights for the features. Please see Doench et al., 2014 for
-#' details.
-#' @param useScore Default TRUE, display in gray scale with the darkness
-#' indicating the gRNA efficacy.  The taller bar shows the Cas9 cutting site.
-#' If set to False, efficacy will not show.  Instead, gRNAs in plus strand will
-#' be colored red and gRNAs in negative strand will be colored green.
-#' @param useEfficacyFromInputSeq Default FALSE. If set to TRUE, summary file
-#' will contain gRNA efficacy calculated from input sequences instead of from
-#' off-target analysis. Set it to TRUE if the input sequence is from a
-#' different species than the one used for off-target analysis.
-#' @param outputUniqueREs Default TRUE. If set to TRUE, summary file will
+#' @param orgAnn An `OrgDb` object containing organism-specific annotation 
+#' mapping information, required for `annotateExon`.
+#' @param ignore.strand Defaults to TRUE. Specifies if strandness should be 
+#' ignored when annotating off-targets to genes.
+#' @param outputDir Defaults to the current working directory. Specifies the 
+#' path to the directory where the analysis results will be saved.
+#' @param fetchSequence Defaults to TRUE. Specifies whether to fetch flanking
+#' sequences for off-targets.
+#' @param upstream Defaults to 200. Specifies the upstream offset from the 
+#' off-target start.
+#' @param downstream Defaults to 200. Specifies the downstream offset from the 
+#' off-target end.
+#' @param weights Defaults to `c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 
+#' 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 
+#' 0.583)` (used in Hsu et al., 2013 cited in the reference section). Applicable
+#' only when `scoring.method = Hus-Zhang`. Specifies a numeric vector with a 
+#' length equal to the size of the gRNA, containing the corresponding weight 
+#' values.
+#' @param baseBeforegRNA Defaults to 4. Specifies the number of bases preceding 
+#' the gRNA. It is used to calculate gRNA efficiency. Note that for PAMs located 
+#' at the 5 prime end, the number of bases should include both the bases before 
+#' the PAM sequence and the PAM size.
+#' @param baseAfterPAM Defaults to 3 (for spCas9). Specifies the number of bases
+#' after PAM. It is used to calculate gRNA efficiency. Note that for PAMs 
+#' located on the 5 prime end, the number should include the length of the gRNA
+#' plus the extended sequence on the 3 prime end.
+#' @param featureWeightMatrixFile By default, the DoenchNBT2014 weight matrix is 
+#' used. Specifies the feature weight matrix file used for calculating gRNA 
+#' efficiency. To use an alternative matrix, provide a CSV where the first 
+#' column contains the significant features and the second column contains the
+#' corresponding weights. For details, refer to Doench et al., 2014.
+#' @param useScore Defaults to TRUE. Displays in grayscale, with darkness
+#' indicating gRNA efficacy. The taller bar represents the Cas9 cutting site.
+#' If set to False, efficacy will not be shown. Instead, gRNAs on the plus 
+#' strand will be colored red, and gRNAs on the minus strand will be colored 
+#' green.
+#' @param useEfficacyFromInputSeq Defaults to FALSE. If TRUE, the summary file
+#' will contain gRNA efficacy calculated from the input sequences instead of 
+#' from off-target analysis. Set it to TRUE if the input sequence is from a 
+#' species different from the one used for off-target analysis.
+#' @param outputUniqueREs Defaults to TRUE. If set to TRUE, summary file will
 #' contain REs unique to the cleavage site within 100 or 200 bases surrounding
 #' the gRNA sequence.
-#' @param foldgRNAs Default FALSE. If set to TRUE, summary file will contain
+#' @param foldgRNAs Defaults to FALSE. If set to TRUE, summary file will contain
 #' minimum free energy of the secondary structure of gRNA with gRNA backbone
-#' from GeneRfold package provided that GeneRfold package has been installed.
-#' @param gRNA.backbone gRNA backbone constant region sequence. Default to the
-#' sequence in Sp gRNA backbone.
-#' @param temperature temperature in celsius. Default to 37 celsius.
-#' @param overwrite overwrite the existing files in the output directory or
-#' not, default FALSE
-#' @param scoring.method Indicates which method to use for offtarget cleavage
-#' rate estimation, currently two methods are supported, Hsu-Zhang and CFDscore
-#' @param subPAM.activity Applicable only when scoring.method is set to
-#' CFDscore A hash to represent the cleavage rate for each alternative sub PAM
-#' sequence relative to preferred PAM sequence
-#' @param subPAM.position Applicable only when scoring.method is set to
-#' CFDscore The start and end positions of the sub PAM. Default to 22 and 23
-#' for spCas9 with 20bp gRNA and NGG as preferred PAM. For Cpf1, it could be
-#' c(1,2).
-#' @param PAM.location PAM location relative to gRNA. For example, default to
-#' 3prime for spCas9 PAM.  Please set to 5prime for cpf1 PAM since it's PAM is
-#' located on the 5 prime end
-#' @param rule.set Specify a rule set scoring system for calculating gRNA
-#' efficacy. Please note that Root_RuleSet2_2016 requires the following python
-#' packages with specified verion and python 2.7.  1. scikit-learn 0.16.1 2.
-#' pickle 3. pandas 4. numpy 5. scipy
-#' @param chrom_acc Optional binary variable indicating chromatin accessibility
-#' information with 1 indicating accessible and 0 not accessible.
-#' @param calculategRNAefficacyForOfftargets Default to TRUE to output gRNA
-#' efficacy for offtargets as well as ontargets. Set it to FALSE if only need
-#' gRNA efficacy calculated for ontargets only to speed up the analysis. Please
-#' refer to https://support.bioconductor.org/p/133538/#133661 for potential use
-#' cases of offtarget efficacies.
-#' @param mismatch.activity.file Applicable only when scoring.method is set to
-#' CFDscore A comma separated (csv) file containing the cleavage rates for all
-#' possible types of single nucleotide mismatche at each position of the gRNA.
-#' By default, using the supplemental Table 19 from Doench et al., Nature
-#' Biotechnology 2016
-#' @param predIndelFreq Default to FALSE. Set it to TRUE to output the
-#' predicted indels and their frequencies.
-#' @param predictIndelFreq.onTargetOnly Default to TRUE, indicating that indels
-#' and their frequencies will be predicted for ontargets only. Usually,
-#' researchers are only interested in predicting the editing outcome for the
-#' ontargets since any editing in the offtargets are unwanted. Set it to FALSE
-#' if you are interested in predicting indels and their frequencies for
-#' offtargets. It will take longer time to run if you set it to FALSE.
-#' @param method.indelFreq Currently only Lindel method has been implemented.
-#' Please let us know if you think additional methods should be made available.
-#' Lindel is compatible with both Python2.7 and Python3.5 or higher. Please
-#' type help(predictRelativeFreqIndels) to get more details.
-#' @param baseBeforegRNA.indelFreq Default to 13 for Lindel method.
-#' @param baseAfterPAM.indelFreq Default to 24 for Lindel method.
-#' @return Four tab delimited files are generated in the output directory:
-#' \item{OfftargetAnalysis.xls}{ - detailed information of off targets}
-#' \item{Summary.xls}{ - summary of the gRNAs}
-#' \item{REcutDetails.xls}{ - restriction enzyme cut sites of each gRNA}
-#' \item{pairedgRNAs.xls}{ - potential paired gRNAs}
+#' from `GeneRfold` package given that `GeneRfold` package has been installed.
+#' @param gRNA.backbone Defaults to the sequence in Sp gRNA backbone. Applicable
+#' only when `foldgRNAs = TRUE`. Specifies the gRNA backbone constant region 
+#' sequence.
+#' @param temperature Defaults to 30. Applicable only when `foldgRNAs = TRUE`.
+#' Specifies the temperature in Celsius.
+#' @param overwrite Defaults to FALSE. Specifies whether to overwrite the 
+#' existing files in the output directory.
+#' @param scoring.method Defaults to "Hsu-Zhang". Specifies the method to use 
+#' for off-target cleavage rate estimation. Choose from "Hsu-Zhang" and 
+#' "CFDscore"
+#' @param subPAM.activity Defaults to "hash(AA = 0, AC = 0, AG = 0.259259259, 
+#' AT = 0, CA = 0, CC = 0, CG = 0.107142857, CT = 0, GA = 0.069444444, 
+#' GC = 0.022222222, GG = 1, GT = 0.016129032, TA = 0, TC = 0, TG = 0.038961039,
+#' TT = 0)". Applicable only when `scoring.method = CFDscore`. Specifies a hash 
+#' that represents the cleavage rate for each alternative sub PAM sequence 
+#' relative to preferred PAM sequence.
+#' @param subPAM.position Defaults to `c(22, 23)` (For spCas9 with 20-bp gRNA and 
+#' NGG as preferred PAM). Applicable only when `scoring.method = CFDscore`. 
+#' Specifies the start and end positions of the sub PAM. For Cpf1, it should be
+#' `c(1,2)`.
+#' @param rule.set Defaults to "Root_RuleSet1_2014". Specifies a rule set 
+#' scoring system for calculating gRNA efficacy. Note that "Root_RuleSet2_2016"
+#' requires the following packages with specified version: python 2.7,
+#' scikit-learn 0.16.1, pickle, pandas, numpy, and scipy.
+#' @param chrom_acc Specifies an optional binary variable indicating chromatin 
+#' accessibility information with 1 representing accessible and 0 representing 
+#' inaccessible.
+#' @param calculategRNAefficacyForOfftargets Defaults to TRUE. Specifies whether
+#' to output gRNA efficacy for both off-targets and on-targets. Set to FALSE if
+#' only on-target gRNA efficacy is needed to speed up the analysis. For 
+#' potential use cases of off-target efficacies, refer to 
+#' https://support.bioconductor.org/p/133538/#133661.
+#' @param mismatch.activity.file Defaults to use the supplementary Table 19 from
+#' Doench et al., Nature Biotechnology 2016. Applicable only when 
+#' `scoring.method = CFDscore`. Specifies a CSV file containing the cleavage 
+#' rates for all possible types of single nucleotide mismatches at each position
+#' of the gRNA.
+#' @param predIndelFreq Defaults to FALSE. Specifies whether to output the 
+#' predicted INDELs and their frequencies.
+#' @param predictIndelFreq.onTargetOnly Defaults to TRUE. Specifies whether to
+#' predict INDELs and their frequencies for on-targets only. Typically,
+#' researchers are only interested in predicting editing outcome for on-targets,
+#' as editing in off-targets is undesirable. Set to FALSE if you want to predict 
+#' INDELs and their frequencies for off-targets as well. Note that this will 
+#' increase the run time.
+#' @param method.indelFreq Defaults to "Lindel". Applicable only when 
+#' `predIndelFreq = TRUE`. Specifies the method to be used for predicting 
+#' INDELs. Currently, only "Lindel" is supported, though additional methods can 
+#' be added upon request. Type `?predictRelativeFreqIndels` to learn more.
+#' @param baseBeforegRNA.indelFreq Defaults to 13. Applicable only when
+#' `predIndelFreq = TRUE`.
+#' @param baseAfterPAM.indelFreq Defaults to 24. Applicable only when
+#' `predIndelFreq = TRUE`.
+#' @return Four Excel files are generated in the output directory:
+#' \item{Summary.xlsx}{ - Summary of the gRNAs}
+#' \item{OfftargetAnalysis.xlsx}{ - Detailed information on off-targets}
+#' \item{REcutDetails.xlsx}{ - Restriction enzyme cut sites for each gRNA}
+#' \item{pairedgRNAs.xlsx}{ - Potential paired gRNAs}
 #' @note %% ~~further notes~~
-#' @author Lihua Julie Zhu
+#' @author Lihua Julie Zhu, Kai Hu
 #' @seealso CRISPRseek
 #' @references Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran,
 #' Silvana Konermann, Vineeta Agarwala, Yinqing Li, Eli J Fine, Xuebing Wu,
@@ -301,916 +326,601 @@
 #' @keywords misc
 #' @examples
 #'
-#' 	library(CRISPRseek)
-#' 	library("BSgenome.Hsapiens.UCSC.hg19")
-#' 	library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-#' 	library(org.Hs.eg.db)
-#' 	outputDir <- getwd()
-#' 	inputFilePath <- system.file("extdata", "inputseq.fa",
-#'             package = "CRISPRseek")
-#' 	REpatternFile <- system.file("extdata", "NEBenzymes.fa",
-#'             package = "CRISPRseek")
-#' 	results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
-#'             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-#'             annotatePaired = FALSE,
-#'             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#' 	           orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-#'             outputDir = outputDir, overwrite = TRUE)
+#' # Load required libraries
+#' library(CRISPRseek)
+#' library(BSgenome.Hsapiens.UCSC.hg19)
+#' library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#' library(org.Hs.eg.db)
+#' 
+#' # Example 1: given FASTA input, search gRNAs and off-targets
+#' outputDir <- tempdir()
+#' inputFilePath <- system.file("extdata/inputseq.fa", package = "CRISPRseek")
+#' REpatternFile <- system.file("extdata/NEBenzymes.fa", package = "CRISPRseek")
+#' 
+#' results <- offTargetAnalysis(inputFilePath, 
+#'                              findPairedgRNAOnly = FALSE,
+#'                              findgRNAsWithREcutOnly = TRUE,
+#'                              REpatternFile = REpatternFile, 
+#'                              annotatePaired = FALSE,
+#'                              BSgenomeName = Hsapiens, 
+#'                              chromToSearch = "chrX",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, 
+#'                              max.mismatch = 1,
+#'                              outputDir = outputDir, 
+#'                              overwrite = TRUE)
+#' 
+#' # Example 2: also predict indels and frequecies at target sites
+#' results <- offTargetAnalysis(inputFilePath,
+#'                              predIndelFreq = TRUE, 
+#'                              predictIndelFreq.onTargetOnly = TRUE,
+#'                              findgRNAsWithREcutOnly = TRUE,
+#'                              findPairedgRNAOnly = FALSE,
+#'                              annotatePaired = FALSE,
+#'                              BSgenomeName = Hsapiens, 
+#'                              chromToSearch = "chrX",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, 
+#'                              max.mismatch = 1,
+#'                              outputDir = outputDir, 
+#'                              overwrite = TRUE)
+#' names(results$indelFreq)
+#' head(results$indelFreq[[1]])
+#'   # Save the indel frequences to tab delimited files, 
+#'   # one file for each target or offtarget site.
+#' mapply(openxlsx::write.xlsx, results$indelFreq, 
+#'        file = paste0(names(results$indelFreq), '.xlsx'))
+#' 
+#' # Example 3: predict gRNA efficacy using CRISPRscan
+#' featureWeightMatrixFile <- system.file("extdata/Morenos-Mateo.csv", 
+#'                                        package = "CRISPRseek")
+#' 
+#' results <- offTargetAnalysis(inputFilePath, 
+#'                              rule.set = "CRISPRscan",
+#'                              findgRNAsWithREcutOnly = TRUE,
+#'                              REpatternFile = REpatternFile, 
+#'                              findPairedgRNAOnly = FALSE,
+#'                              annotatePaired = FALSE,
+#'                              BSgenomeName = Hsapiens, 
+#'                              chromToSearch = "chrX",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, 
+#'                              max.mismatch = 1,
+#'                              baseBeforegRNA = 6, 
+#'                              baseAfterPAM = 6,
+#'                              featureWeightMatrixFile = featureWeightMatrixFile,
+#'                              outputDir = outputDir, 
+#'                              overwrite = TRUE)
+#' 
+#' # Example 4: when PAM is on the 5 prime side, e.g., Cpf1
+#' results <- offTargetAnalysis(inputFilePath = 
+#'                                system.file("extdata/cpf1-2.fa", 
+#'                                            package = "CRISPRseek"), 
+#'                              PAM.location = "5prime",
+#'                              rule.set = "DeepCpf1",
+#'                              PAM.size = 4,
+#'                              PAM = "TTTN", 
+#'                              PAM.pattern = "^TNNN", 
+#'                              findgRNAsWithREcutOnly =  FALSE,
+#'                              findPairedgRNAOnly = FALSE,
+#'                              annotatePaired = FALSE,
+#'                              BSgenomeName = Hsapiens,
+#'                              chromToSearch = "chr8",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
+#'                              baseBeforegRNA = 8, baseAfterPAM = 26,
+#'                              overlap.gRNA.positions = c(19, 23),
+#'                              useEfficacyFromInputSeq = FALSE,
+#'                              outputDir = outputDir,
+#'                              overwrite = TRUE, 
+#'                              allowed.mismatch.PAM = 2,
+#'                              subPAM.position = c(1, 2))
+#' 
+#' # Example 5: when PAM is on the 5 prime side, and using Root_RuleSet1_2014
+#' results <- offTargetAnalysis(inputFilePath, 
+#'                              PAM.location = "5prime",
+#'                              PAM = "TGT", 
+#'                              PAM.pattern = "^T[A|G]N", 
+#'                              findgRNAsWithREcutOnly =  FALSE,
+#'                              REpatternFile = REpatternFile, 
+#'                              findPairedgRNAOnly = FALSE,
+#'                              annotatePaired = FALSE,
+#'                              BSgenomeName = Hsapiens, 
+#'                              chromToSearch = "chrX",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, 
+#'                              max.mismatch = 4,
+#'                              outputDir = outputDir, 
+#'                              overwrite = TRUE, 
+#'                              allowed.mismatch.PAM = 2, 
+#'                              subPAM.position = c(1, 2), 
+#'                              baseEditing = TRUE, 
+#'                              editingWindow = 20, 
+#'                              targetBase = "G")
+#' 
+#' # Example 6: base editor
+#' results <- offTargetAnalysis(inputFilePath, 
+#'                              baseEditing = TRUE,
+#'                              editingWindow = 10:20, 
+#'                              targetBase = "A",
+#'                              findgRNAsWithREcutOnly = FALSE,
+#'                              REpatternFile = REpatternFile, 
+#'                              findPairedgRNAOnly = FALSE,
+#'                              annotatePaired = FALSE,
+#'                              BSgenomeName = Hsapiens, 
+#'                              chromToSearch = "chrX",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, 
+#'                              max.mismatch = 4,
+#'                              PAM.location = "5prime",
+#'                              PAM = "TGT", 
+#'                              PAM.pattern = "^T[A|G]N", 
+#'                              allowed.mismatch.PAM = 2,
+#'                              subPAM.position = c(1, 2),
+#'                              outputDir = outputDir, 
+#'                              overwrite = TRUE)
+#' 
+#' # Example 7: prime editor
+#' inputFilePath <- DNAStringSet(paste0("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACC",
+#'                                      "AGAATCAGGGATCGAAAACTCATCAGTCGATGCGAG", 
+#'                                      "TCATCTAAATTCCGATCAATTTCACACTTTAAACG"))
+#' results <- offTargetAnalysis(inputFilePath,
+#'                              primeEditing = TRUE, 
+#'                              overlap.gRNA.positions = c(17, 18),
+#'                              PBS.length = 15,
+#'                              corrected.seq = "T",
+#'                              RT.template.pattern = "D$",
+#'                              RT.template.length = 8:30,
+#'                              targeted.seq.length.change = 0,
+#'                              bp.after.target.end = 15,
+#'                              target.start = 20,
+#'                              target.end = 20,
+#'                              paired.orientation = "PAMin",
+#'                              findPairedgRNAOnly = TRUE,
+#'                              BSgenomeName = Hsapiens, 
+#'                              chromToSearch = "chrX",
+#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                              orgAnn = org.Hs.egSYMBOL, 
+#'                              max.mismatch = 1,
+#'                              outputDir = outputDir, 
+#'                              overwrite = TRUE,
+#'                              PAM.size = 3,
+#'                              gRNA.size = 20,
+#'                              min.gap = 20, 
+#'                              max.gap = 90)
 #'
-#'        #### predict indels and their frequecies for target sites
-#'
-#'        if (interactive())
-#'        {
-#'           results <- offTargetAnalysis(inputFilePath,findgRNAsWithREcutOnly = TRUE,
-#'             findPairedgRNAOnly = FALSE,
-#'             annotatePaired = FALSE,
-#'             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-#' 	           orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-#'             outputDir = outputDir, overwrite = TRUE,
-#'             predIndelFreq=TRUE, predictIndelFreq.onTargetOnly= TRUE)
-#'
-#'           names(results$indelFreq)
-#'           head(results$indelFreq[[1]])
-#'           ### save the indel frequences to tab delimited files, one file for each target/offtarget site.
-#'           mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), sep = "\t", row.names = FALSE)
-#'
-#'        #### predict gRNA efficacy using CRISPRscan
-#'        featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
-#'             package = "CRISPRseek")
-#'
-#'        results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
-#'             REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-#'             annotatePaired = FALSE,
-#'             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#'             orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-#'             rule.set = "CRISPRscan",
-#'             baseBeforegRNA = 6, baseAfterPAM = 6,
-#'             featureWeightMatrixFile = featureWeightMatrixFile,
-#'             outputDir = outputDir, overwrite = TRUE)
-#'
-#'        ######## PAM is on the 5 prime side, e.g., Cpf1
-#'        results <- offTargetAnalysis(inputFilePath = system.file("extdata",
-#'               "cpf1-2.fa", package = "CRISPRseek"), findgRNAsWithREcutOnly =  FALSE,
-#'           findPairedgRNAOnly = FALSE,
-#'           annotatePaired = FALSE,
-#'           BSgenomeName = Hsapiens,
-#'           chromToSearch = "chr8",
-#'           txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#'           orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-#'           baseBeforegRNA = 8, baseAfterPAM = 26,
-#'           rule.set = "DeepCpf1",
-#'           overlap.gRNA.positions = c(19, 23),
-#'           useEfficacyFromInputSeq = FALSE,
-#'           outputDir = getwd(),
-#'           overwrite = TRUE, PAM.location = "5prime",PAM.size = 4,
-#'           PAM = "TTTN", PAM.pattern = "^TNNN", allowed.mismatch.PAM = 2,
-#'           subPAM.position = c(1,2))
-#'
-#'         results1 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
-#'                  REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-#'                  annotatePaired = FALSE,
-#'                  BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'                  txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#'                  orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-#'                  outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
-#'                  PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
-#'                  subPAM.position = c(1,2), baseEditing = TRUE, editingWindow =20, targetBase = "G")
-#'
-#'         results.testBE <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
-#'                  REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-#'                  annotatePaired = FALSE,
-#'                  BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'                  txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#'                  orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-#'                  outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
-#'                  PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
-#'                  subPAM.position = c(1,2), baseEditing = TRUE,
-#'                  editingWindow = 10:20, targetBase = "A")
-#'
-#'         inputFilePath <- DNAStringSet(paste(
-#' "CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAA",
-#' "CTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
-#'         names(inputFilePath) <- "testPE"
-#'         results3 <- offTargetAnalysis(inputFilePath,
-#'             gRNAoutputName = "testPEgRNAs",
-#'             BSgenomeName = Hsapiens, chromToSearch = "chrX",
-#'             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#'             orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-#'             outputDir = outputDir, overwrite = TRUE,
-#'             PAM.size = 3L,
-#'             gRNA.size = 20L,
-#'             overlap.gRNA.positions = c(17L,18L),
-#'             PBS.length = 15,
-#'             corrected.seq = "T",
-#'             RT.template.pattern = "D$",
-#'             RT.template.length = 8:30,
-#'             targeted.seq.length.change = 0,
-#'             bp.after.target.end = 15,
-#'             target.start = 20,
-#'             target.end = 20,
-#'             paired.orientation = "PAMin", min.gap = 20, max.gap = 90,
-#'             primeEditing = TRUE, findPairedgRNAOnly = TRUE)
-#'        }
 #' @importFrom hash hash
 #' @importFrom utils read.csv write.table read.table
 #' @importFrom GenomicRanges intersect setdiff
 #' @importFrom Biostrings writeXStringSet readDNAStringSet
 #' @importFrom BiocGenerics rbind as.data.frame cbind unlist lapply
+#' @importFrom rlang abort inform arg_match call_match warn
 #' @export
-offTargetAnalysis <-
-    function(inputFilePath, format = "fasta", header=FALSE,
-        gRNAoutputName, findgRNAs = TRUE,
-        exportAllgRNAs = c("all", "fasta", "genbank", "no"),
-        findgRNAsWithREcutOnly = FALSE,
-	      REpatternFile = system.file("extdata", "NEBenzymes.fa",
-            package = "CRISPRseek"),
-	     minREpatternSize = 4,
-	     overlap.gRNA.positions = c(17, 18), findPairedgRNAOnly = FALSE,
-       annotatePaired = TRUE, paired.orientation = c("PAMout","PAMin"),
-       enable.multicore = FALSE, n.cores.max = 6,
-       min.gap = 0, max.gap = 20, gRNA.name.prefix = "",
-	     PAM.size = 3, gRNA.size = 20, PAM = "NGG", BSgenomeName,
-       chromToSearch = "all",
-       chromToExclude = c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1",
-"chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
-"chr6_ssto_hap7"),
-	      max.mismatch = 3,
-        PAM.pattern = "NNG$|NGN$", allowed.mismatch.PAM = 1,
-        gRNA.pattern = "",
-        baseEditing = FALSE, targetBase = "C", editingWindow = 4:8,
-        editingWindow.offtargets = 4:8,
-        primeEditing = FALSE,
-        PBS.length = 13L,
-	      RT.template.length = 8:28,
-        RT.template.pattern = "D$",
-        corrected.seq,
-        targeted.seq.length.change,
-        bp.after.target.end = 15L,
-        target.start,
-        target.end,
-        primeEditingPaired.output = "pairedgRNAsForPE.xls",
-        min.score = 0, topN = 1000,
-        topN.OfftargetTotalScore = 10,
-        annotateExon = TRUE, txdb, orgAnn, ignore.strand = TRUE, outputDir,
-        fetchSequence = TRUE, upstream = 200, downstream = 200,
-	      upstream.search = 0, downstream.search = 0,
-        weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445,
-        0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
-	      baseBeforegRNA = 4, baseAfterPAM = 3,
-	      featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv",
-		       package = "CRISPRseek"),
-	      useScore = TRUE, useEfficacyFromInputSeq = FALSE,
-	      outputUniqueREs = TRUE, foldgRNAs = FALSE,
-        gRNA.backbone="GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
-        temperature = 37,
-        overwrite = FALSE,
-        scoring.method = c("Hsu-Zhang", "CFDscore"),
-        subPAM.activity = hash( AA =0,
-          AC =   0,
-          AG = 0.259259259,
-          AT = 0,
-          CA = 0,
-          CC = 0,
-          CG = 0.107142857,
-          CT = 0,
-          GA = 0.069444444,
-          GC = 0.022222222,
-          GG = 1,
-          GT = 0.016129032,
-          TA = 0,
-          TC = 0,
-          TG = 0.038961039,
-          TT = 0),
-     subPAM.position = c(22, 23),
-     PAM.location = "3prime",
-     rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
-     chrom_acc,
-     calculategRNAefficacyForOfftargets = TRUE,
-     mismatch.activity.file = system.file("extdata",
-         "NatureBiot2016SuppTable19DoenchRoot.csv",
-         package = "CRISPRseek"),
-     predIndelFreq = FALSE,
-     predictIndelFreq.onTargetOnly = TRUE,
-     method.indelFreq = "Lindel",
-     baseBeforegRNA.indelFreq = 13,
-     baseAfterPAM.indelFreq = 24
-)
-{
-    cat("Validating input ...\n")
-    scoring.method <- match.arg(scoring.method)
-    exportAllgRNAs <- match.arg(exportAllgRNAs)
-    rule.set <- match.arg(rule.set)
-    exportAllgRNAs <- match.arg(exportAllgRNAs)
-    paired.orientation <- match.arg(paired.orientation)
-    PAM.p.letters <- strsplit(PAM.pattern, split="")[[1]]
-    if (PAM.location == "3prime" && PAM.p.letters[length(PAM.p.letters)] != "$")
-        PAM.pattern <- paste0(PAM.pattern, "$")
-    if (PAM.location == "5prime" && PAM.p.letters[1] != "^")
-        PAM.pattern <- paste0("^", PAM.pattern)
-    if (rule.set == "DeepCpf1")
-    {
-        baseBeforegRNA <- 8
-        baseAfterPAM <- 26
-        if (scoring.method == "CFDscore" && subPAM.activity$TT < 1)
-          subPAM.activity = hash( AA =0,
-              AC = 0,
-              AG = 0,
-          AT = 0.1,
-          CA = 0,
-          CC = 0,
-          CG = 0,
-          CT = 0.05,
-          GA = 0,
-          GC = 0,
-          GG = 0,
-          GT = 0.05,
-          TA = 0.2,
-          TC = 0.1,
-          TG = 0.1,
-          TT = 1)
+offTargetAnalysis <- function(inputFilePath = NULL, 
+                              format = c("fasta", "fastq", "bed"), 
+                              header = FALSE,
+                              gRNAoutputName = "test", 
+                              findgRNAs = TRUE,
+                              exportAllgRNAs = c("all", "fasta", "genbank", "no"),
+                              findgRNAsWithREcutOnly = FALSE,
+                              REpatternFile = REpatternFile_default(),
+                              minREpatternSize = 4,
+                              overlap.gRNA.positions = c(17, 18), 
+                              findPairedgRNAOnly = FALSE,
+                              annotatePaired = TRUE, 
+                              paired.orientation = c("PAMout", "PAMin"),
+                              enable.multicore = FALSE, 
+                              n.cores.max = 6,
+                              min.gap = 0, 
+                              max.gap = 20, 
+                              gRNA.name.prefix = NULL,
+                              gRNA.size = 20, 
+                              PAM = "NGG", 
+                              PAM.size = width(PAM),
+                              PAM.pattern = "NNG$|NGN$",
+                              BSgenomeName = NULL,
+                              genomeSeqFile = NULL,
+                              chromToSearch = "all",
+                              chromToExclude = chromToExclude_default,
+                              max.mismatch = 3,
+                              allowed.mismatch.PAM = 1,
+                              gRNA.pattern = NULL,
+                              baseEditing = FALSE, 
+                              targetBase = "C", 
+                              editingWindow = 4:8,
+                              editingWindow.offtargets = 4:8,
+                              primeEditing = FALSE,
+                              PBS.length = 13L,
+                              RT.template.length = 8:28,
+                              RT.template.pattern = "D$",
+                              corrected.seq = NULL,
+                              targeted.seq.length.change = NULL,
+                              bp.after.target.end = 15L,
+                              target.start = NULL,
+                              target.end = NULL,
+                              primeEditingPaired.output = "pairedgRNAsForPE.xls",
+                              min.score = 0, 
+                              topN = 1000,
+                              topN.OfftargetTotalScore = 10,
+                              annotateExon = TRUE, 
+                              txdb = NULL, 
+                              orgAnn = NULL, 
+                              ignore.strand = TRUE, 
+                              outputDir = getwd(),
+                              fetchSequence = TRUE, 
+                              upstream = 200, 
+                              downstream = 200,
+                              weights = weights_default,
+                              baseBeforegRNA = 4, 
+                              baseAfterPAM = 3,
+                              featureWeightMatrixFile = featureWeightMatrixFile_default(),
+                              useScore = TRUE, 
+                              useEfficacyFromInputSeq = FALSE,
+                              outputUniqueREs = TRUE, 
+                              foldgRNAs = FALSE,
+                              gRNA.backbone = gRNA.backbone_default,
+                              temperature = 37,
+                              overwrite = FALSE,
+                              scoring.method = c("Hsu-Zhang", "CFDscore"),
+                              subPAM.activity = subPAM.activity_default,
+                              subPAM.position = c(22, 23),
+                              PAM.location = "3prime",
+                              rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
+                              chrom_acc = NULL,
+                              calculategRNAefficacyForOfftargets = TRUE,
+                              mismatch.activity.file = mismatch.activity.file_default(),
+                              predIndelFreq = FALSE,
+                              predictIndelFreq.onTargetOnly = TRUE,
+                              method.indelFreq = "Lindel",
+                              baseBeforegRNA.indelFreq = 13,
+                              baseAfterPAM.indelFreq = 24,
+                              findOffTargetsWithBulge = FALSE,
+                              method.findOffTargetsWithBulge = c("CasOFFinder_v3.0.0b3"),
+                              DNA_bulge = 2,
+                              RNA_bulge = 2) {
+  
+  ### Step0: params validation: start ###
+  inform("Validating arguments ...")
+  # Check if BSgenomeName or genomeSeqFile is specified:
+  if (is.null(BSgenomeName) && is.null(genomeSeqFile)) {
+    if (!chromToSearch == "") {
+      abort("Please specify either BSgenomeName (BSgenome format) or genomeSeqFile (FASTA format) to search for off-targets.")
     }
-    else if (rule.set %in% c("Root_RuleSet1_2014",
-        "Root_RuleSet2_2016", "CRISPRscan"))
-    {
-        if (PAM.location == "3prime")
-        {
-            baseBeforegRNA <- 4
-            baseAfterPAM <- 3
-        }
-        else
-        {
-            baseBeforegRNA <- 4 + PAM.size
-            baseAfterPAM <- 3 + gRNA.size
-        }
+  } else if (!is.null(BSgenomeName) && !is.null(genomeSeqFile)) {
+    abort("Both BSgenomeName and genomeSeqFile are provided, only one is allowed!")
+  } else if (!is.null(genomeSeqFile)) {
+    if (!file.exists(genomeSeqFile)) {
+      abort(paste0("File ", genomeSeqFile, " does not exist!"))
     }
-    if (scoring.method ==  "CFDscore")
-    {
-        mismatch.activity <- read.csv(mismatch.activity.file)
-        required.col <- c("Mismatch.Type", "Position", "Percent.Active")
-        if (length(intersect(colnames(mismatch.activity), required.col)) !=
-            length(required.col))
-           stop("Please rename the mismatch activity file column to contain at least
-              these 3 column names: Mismatch.Type, Position, Percent.Active\n")
+    if (annotateExon || !is.null(txdb) || !is.null(BSgenomeName) || fetchSequence) {
+      warn("Since genomeSeqFile is supplied, annotateExon, BSgenomeName, txdb, and featchSequence will be ignored!")
+      annotateExon <- FALSE
+      txdb <- NULL
+      BSgenomeName <- NULL
+      fetchSequence <- FALSE
     }
-    else if (scoring.method == "Hsu-Zhang")
-    {
-         if (length(weights) !=  gRNA.size)
-             stop("Please make sure the size of weights vector
-                 equals to the gRNA.size!\n")
-    }
-    if(findgRNAsWithREcutOnly && findgRNAs && !file.exists(REpatternFile))
-    {
-        stop("Please specify an REpattern file as fasta file with
-            restriction enzyme recognition sequences!")
-    }
-    if (missing(inputFilePath)) {
-        stop("inputFilePath containing the searching sequence, coordinate or a DNAStringSet
-             object is required!")
-    }
-    if (substr(outputDir, nchar(outputDir), nchar(outputDir)) != .Platform$file.sep)
-    {
-        outputDir <- paste(outputDir, "", sep = .Platform$file.sep)
-    }
-    if (file.exists(outputDir) && ! overwrite)
-    {
-        cat(outputDir, "exists already. Please type 1 if you want to
-            overwrite the outputDir and 2 if you want to exit.", fill = TRUE)
-        input <- readline()
-	      if(input != 1) { stop("Please change the outputDir!") }
-    }
-    if (!file.exists(outputDir))
-    {
-        dir.create(outputDir)
-    }
-    if (annotatePaired || findPairedgRNAOnly)
-        pairOutputFile <- paste(outputDir, "pairedgRNAs.xls", sep = "")
-    REcutDetailFile <- paste(outputDir, "REcutDetails.xls", sep = "")
-    bedFile<- paste(outputDir, "gRNAsCRISPRseek.bed", sep = "")
-    if (missing(gRNAoutputName) && class(inputFilePath) == "DNAStringSet")
-	      stop("Please enter a name for the gRNA ouput file name when DNAStringSet instead of file path provided!")
-    if (class(inputFilePath) != "DNAStringSet" && missing(gRNAoutputName))
-	      gRNAoutputName = strsplit(basename(inputFilePath), split=".",
-		       fixed=TRUE)[[1]][1]
-    if (format =="bed")
-    {
-        if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
-            stop("BSgenomeName is required as BSgenome object when input file is in bed format!")
-        }
-        inputFilePath <- getSeqFromBed(inputFilePath, header = header, BSgenomeName = BSgenomeName)
-        #### format for filtergRNAs
-        format <- "fasta"
-    }
-    if (findgRNAs)
-    {
-        cat("Searching for gRNAs ...\n")
-	      efficacyFile <- paste(outputDir, "gRNAefficacy.xls", sep = "")
-	      if ((length(chromToSearch) == 1 && chromToSearch == "") || useEfficacyFromInputSeq)
-            potential.gRNAs <- findgRNAs(inputFilePath,
-               overlap.gRNA.positions = overlap.gRNA.positions,
-               baseEditing = baseEditing, targetBase = targetBase, editingWindow = editingWindow,
-               primeEditing = primeEditing,
-               findPairedgRNAOnly = findPairedgRNAOnly,
-               annotatePaired = annotatePaired,
-               paired.orientation = paired.orientation,
-               pairOutputFile = pairOutputFile, PAM = PAM,
-               PAM.location = PAM.location,
-               gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
-               gRNA.size = gRNA.size, min.gap = min.gap,
-               max.gap = max.gap, name.prefix = gRNA.name.prefix,
-               format = format, featureWeightMatrixFile = featureWeightMatrixFile,
-               baseBeforegRNA = baseBeforegRNA,
-	             baseAfterPAM = baseAfterPAM ,
-    	         calculategRNAEfficacy = TRUE, efficacyFile = efficacyFile,
-               rule.set = rule.set, chrom_acc = chrom_acc)
-        else
-	          potential.gRNAs <- findgRNAs(inputFilePath,
-               overlap.gRNA.positions = overlap.gRNA.positions,
-               baseEditing = baseEditing, targetBase = targetBase, 
-               editingWindow = editingWindow,
-               primeEditing = primeEditing,
-               PBS.length = PBS.length,
-               RT.template.length = RT.template.length,
-               RT.template.pattern = RT.template.pattern,
-               corrected.seq = corrected.seq,
-               targeted.seq.length.change = targeted.seq.length.change,
-               bp.after.target.end = bp.after.target.end,
-               target.start = target.start,
-               target.end = target.end,
-               primeEditingPaired.output =  primeEditingPaired.output,
-               findPairedgRNAOnly = findPairedgRNAOnly,
-               annotatePaired = annotatePaired,
-               paired.orientation = paired.orientation,
-               enable.multicore = enable.multicore,
-               n.cores.max = n.cores.max,
-               pairOutputFile = pairOutputFile, PAM = PAM,
-	             gRNA.pattern = gRNA.pattern, PAM.size = PAM.size,
-               PAM.location = PAM.location,
-               gRNA.size = gRNA.size, min.gap = min.gap,
-               max.gap = max.gap, name.prefix = gRNA.name.prefix,
-               format = format,  rule.set = rule.set, chrom_acc = chrom_acc)
-	if (length(potential.gRNAs) == 0)
-  {
-		  return(cat("no gRNAs found!"))
+  } else if (!inherits(BSgenomeName, "BSgenome")) {
+    abort("BSgenomeName must be a BSgenome object!")
   }
 
-	if (length(potential.gRNAs) > 0 && 
-	    (exportAllgRNAs == "fasta" || exportAllgRNAs == "all"))
-	{
-		    writeXStringSet(potential.gRNAs, filepath= file.path(outputDir,
-                     paste(gRNAoutputName,"allgRNAs.fa", sep="")))
-	}
-	if (length(potential.gRNAs) > 0 && 
-	    (exportAllgRNAs == "genbank" || exportAllgRNAs == "all"))
-	{
-		 if (class(inputFilePath) == "DNAStringSet")
-			   subjects <- inputFilePath
-		 else
-			  subjects <- readDNAStringSet(inputFilePath, format=format,
-				     use.names = TRUE)
-     names(subjects) <- gsub( "\t", "", names(subjects))
-     names(subjects) <- gsub( "\n", "", names(subjects))
-     names(subjects) <- gsub( " ", "", names(subjects))
-   	 locuses <- names(subjects)
-
-	   names.gRNA <- names(potential.gRNAs)
-		 for (i in 1:length(locuses))
-		 {
-			    thisLocus <- gsub("'", "", locuses[i])
-        	thisLocus <- gsub(" ", "", thisLocus)
-			    thisSeq <- tolower(as.character(subjects[[i]]))
-			    n.bp <- nchar(thisSeq)
-			    temp <- strsplit(names.gRNA, split=paste(
-	         		thisLocus,"_gR",sep=""))
-			    locus <- paste("LOCUS       ", thisLocus,
-                      "                     ", n.bp,
-					            " bp    dna     linear   UNK", sep="")
-			    definition <- paste("DEFINITION  CRISPRseek output for ",
-				      gRNAoutputName, " sequence", sep = "")
-			    accession <- "ACCESSION   unknown"
-			    features <- "FEATURES             Location/Qualifiers"
-			    header = rbind(locus, definition, accession, features)
-			    found.gRNA <- 0
-			    for (j in 1:length(temp))
-			    {
-				      if (length(temp[[j]]) >1){
-					         found.gRNA <- found.gRNA + 1
-					         if (found.gRNA == 1)
-					         {
-					             thisFile <- file.path(outputDir,
-					                   paste(thisLocus, "gbk", sep="."))
-                       write(header, thisFile)
-					          }
-					         if  (length(grep("f", temp[[j]])) >0)
-					         {
-					          	 temp1 <-strsplit(temp[[j]], "f")
-					   	         isForward <- TRUE
-					          }
-					        else
-					        {
-						           temp1 <-strsplit(temp[[j]], "r")
-						            isForward <- FALSE
-					        }
-					        feature <- temp1[[2]][2]
-					        feature[is.na(feature)] <- ""
-					        location <- temp1[[2]][1]
-					        if (isForward)
-					        {
-				       	      Start <- location
-					            End <- as.numeric(Start) + max(overlap.gRNA.positions) -
-						              min(overlap.gRNA.positions)
-					            write(paste("     misc_bind       ", Start, "..",
-                                     End, sep = ""), append = TRUE, sep="\n",
-                                    file = thisFile)
-					            write(paste("                     /note=\"gRNAf",
-						                      as.character(feature),
-                                  "\"", sep = ""), 
-					                  append = TRUE, sep="\n", 
-					                  file = thisFile)
-					         }
-					         else
-					        {
-                      End <- location
-                      Start <- as.numeric(End) - max(overlap.gRNA.positions) +
-					                    min(overlap.gRNA.positions)
-					            write(paste("     misc_bind       complement(",
-						                    Start, "..", End, ")", sep = ""), 
-					                  append = TRUE, sep="\n", file = thisFile)
-					            write(paste("                     /note=\"gRNAr",
-						                    feature,	"\"", sep = ""), 
-					                  append = TRUE, sep="\n", file = thisFile)
-					         }
-				      }
-			    }
-			    if (found.gRNA > 0) {
-			        write("ORIGIN", append = TRUE, sep="\n", file = thisFile)
-                    	    seq.lines <- floor(nchar(thisSeq) / 60) + 1
-                            for (k in 1:seq.lines) {
-                                line.start <- (k - 1) * 60 + 1
-                        	line.end <- min(line.start + 59, nchar(thisSeq))
-                        	n.leading.spaces <- 9 - nchar(line.start)
-                        	leading.spaces <- paste(rep(" ", n.leading.spaces),
-                            		collapse = "")
-                        	seq.thisLine <- substr(thisSeq, line.start, line.end)
-                        	len.thisLine <- nchar(seq.thisLine)
-                        	n.seg <- floor(len.thisLine /10) + 1
-                        	for (l in 1:n.seg) {
-                            		seg.start <- (l -1) * 10 + 1
-                            		seg.end <- min(seg.start + 9, len.thisLine)
-                            		if (l == 1)
-                                		seq.thisLine.formatted <- substr(seq.thisLine,
-                                    			seg.start, seg.end)
-                            		else
-                                	seq.thisLine.formatted <- paste(
-                                    		seq.thisLine.formatted,
-                                    		substr(seq.thisLine, seg.start, seg.end),
-                                    		sep = " ")
-                             	}
-                        	write(paste(leading.spaces, line.start, " ",
-                            		seq.thisLine.formatted, sep = ""),
-                            		append = TRUE, sep="\n", file = thisFile)
-                    	}
-				     write("//", append = TRUE, sep="\n", file = thisFile)
-			  }
-		  }
-	}
-	if (findPairedgRNAOnly && length(potential.gRNAs) >0)
-	{
-	    gRNAs.RE <- filtergRNAs(potential.gRNAs,
-          pairOutputFile = pairOutputFile,
-          findgRNAsWithREcutOnly = findgRNAsWithREcutOnly,
-	        REpatternFile = REpatternFile,
-          format = format,  minREpatternSize = minREpatternSize,
-          overlap.gRNA.positions = overlap.gRNA.positions)
-          REcutDetails  <- gRNAs.RE$gRNAREcutDetails
-	    write.table(REcutDetails[order(as.character(
-          REcutDetails$ForwardgRNAName)), ], file = REcutDetailFile,
-          sep = "\t", row.names = FALSE)
+  # Check if inputFilePath is is.null:
+  if (is.null(inputFilePath)) {
+    abort("inputFilePath containing the searching sequence, coordinate or a DNAStringSet object is required!")
   }
-  else if (length(potential.gRNAs) >0)
-	{
-      gRNAs.RE <- filtergRNAs(potential.gRNAs,
-	        findgRNAsWithREcutOnly = findgRNAsWithREcutOnly,
-          REpatternFile = REpatternFile, format = format,
-          minREpatternSize = minREpatternSize,
-          overlap.gRNA.positions = overlap.gRNA.positions)
-	    REcutDetails  <- gRNAs.RE$gRNAREcutDetails
-	    write.table(REcutDetails[order(as.character(
-          REcutDetails$REcutgRNAName)), ], file = REcutDetailFile,
-          sep = "\t", row.names = FALSE)
-	}
-	if (findgRNAsWithREcutOnly)
-	{
-	    gRNAs  <- gRNAs.RE$gRNAs
-  }
-	else
-	{
-	    gRNAs <- potential.gRNAs
-	}
-  if ( annotatePaired || findPairedgRNAOnly)
-	    pairedInformation <- read.table(pairOutputFile, sep = "\t",
-          header = TRUE, stringsAsFactors = FALSE)
-  }
-  else
-  {
-      if (class(inputFilePath) != "DNAStringSet")
-      {
-            if (! file.exists(inputFilePath)) {
-                stop("inputfile specified as ", 
-                     inputFilePath, " does not exists!")
-            }
-            if (format == "fasta" || format == "fastq")
-            {
-                potential.gRNAs <- readDNAStringSet(inputFilePath, format,
-                      use.names = TRUE)
-            }
-            else
-            {
-                stop("format needs to be either fasta,fastq or bed!")
-            }
-      }
-      else
-      {
-            potential.gRNAs <- inputFilePath
-            if (length(names(potential.gRNAs)) == 0)
-                names(potential.gRNAs) <- paste("gRNAs", 
-                                            1:length(potential.gRNAs), sep="")
-      }
-	    gRNAs.RE <- filtergRNAs(potential.gRNAs,
-            REpatternFile = REpatternFile, format = format,
-            minREpatternSize = minREpatternSize,
-            overlap.gRNA.positions = overlap.gRNA.positions)
-	    REcutDetails  <- gRNAs.RE$gRNAREcutDetails
-	    write.table(
-            REcutDetails[order(as.character(REcutDetails$REcutgRNAName)), ],
-            file = REcutDetailFile, sep = "\t", row.names = FALSE)
-	    if (findgRNAsWithREcutOnly)
-	    {
-	       gRNAs  <- gRNAs.RE$gRNAs
-	    }
-	    else
-	    {
-	       gRNAs <- potential.gRNAs
-	    }
-	    pairedInformation <- ""
-  }
-  if (length(chromToSearch) == 1 && chromToSearch == "")
-  {
-	      cat("Done. Please check output files in directory ", outputDir, "\n")
-        return(gRNAs)
-  }
-  if (missing(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
-        stop("BSgenomeName is required as BSgenome object!")
-  }
-  if (annotateExon && (missing(txdb) || (class(txdb) != "TxDb" &&
-        class(txdb) != "TranscriptDb")))
-  {
-        stop("To indicate whether an offtarget is inside an exon, txdb is
-            required as TxDb object!")
-  }
-    names(gRNAs) <- gsub( "\t", "", names(gRNAs))
-    names(gRNAs) <- gsub( "\n", "", names(gRNAs))
-    names(gRNAs) <- gsub( " ", "", names(gRNAs))
-
-    hits <- searchHits2(gRNAs = gRNAs, PAM = PAM, PAM.pattern = PAM.pattern,
-        BSgenomeName = BSgenomeName, chromToSearch = chromToSearch,
-	      chromToExclude = chromToExclude,
-        max.mismatch = max.mismatch, PAM.size = PAM.size,
-        gRNA.size = gRNA.size, allowed.mismatch.PAM = allowed.mismatch.PAM,
-        PAM.location = PAM.location,
-        baseEditing = baseEditing, targetBase = targetBase,
-        editingWindow = editingWindow.offtargets)
-if (dim(hits)[1] > 0)
-{
-    cat("Building feature vectors for scoring ...\n")
-    #save(hits, file = "hits.RData")
-    featureVectors <- buildFeatureVectorForScoring(hits = hits,
-        canonical.PAM = PAM, gRNA.size = gRNA.size,
-        subPAM.position = subPAM.position,
-        PAM.location = PAM.location, PAM.size = PAM.size)
-    cat("Calculating scores ...\n")
-    #save(featureVectors, file="featureVectors.RData")
-    if ( scoring.method ==  "CFDscore")
-        scores <- getOfftargetScore2(featureVectors,
-            subPAM.activity = subPAM.activity,
-            mismatch.activity.file = mismatch.activity.file)
-    else
-        scores <- getOfftargetScore(featureVectors, weights = weights)
-    #write.table(scores, file="testScore2.xls", sep="\t", row.names=FALSE)
-    cat("Annotating, filtering and generating reports ...\n")
-    #saveRDS(scores, file="scores.RDS")
-    offTargets <- filterOffTarget(scores = scores, outputDir = outputDir,
-            BSgenomeName = BSgenomeName, fetchSequence = fetchSequence,
-            txdb = txdb,
-            orgAnn = orgAnn, ignore.strand = ignore.strand,
-	          min.score = min.score, topN = topN,
-            topN.OfftargetTotalScore = topN.OfftargetTotalScore,
-            upstream = upstream, downstream = downstream,
-            annotateExon = annotateExon, baseBeforegRNA = baseBeforegRNA,
-	          baseAfterPAM = baseAfterPAM, gRNA.size = gRNA.size,
-            PAM.location = PAM.location, PAM.size = PAM.size,
-            featureWeightMatrixFile = featureWeightMatrixFile,
-            rule.set = rule.set, chrom_acc = chrom_acc,
-            calculategRNAefficacyForOfftargets = calculategRNAefficacyForOfftargets)
-  #saveRDS(offTargets, file = "offTargets.RDS")
-    cat("Done annotating\n")
-    summary <- read.table(paste(outputDir, "Summary.xls", sep = ""), sep = "\t",
-        header = TRUE, stringsAsFactors = FALSE)
-    if (dim(summary)[2] == 1)
-    	summary <- as.data.frame(t(data.matrix(offTargets$summary)))
-    for (i in grep("topOfftarget", names(summary)))
-    {
-        y <- as.character(summary[,i])
-        y[is.na(y)] <- ""
-	     summary[, i] = y
+  
+  # Match arguments:
+  format <- arg_match(format)
+  if (format == "bed") {
+    if (is.null(BSgenomeName) || class(BSgenomeName) != "BSgenome") {
+      abort("BSgenomeName is required as BSgenome object when input file is in bed format!")
     }
-    if (findgRNAs && (annotatePaired || findPairedgRNAOnly))
-    {
-        cat("Add paired information...\n")
-        PairedgRNAName <- unlist(lapply(1:dim(summary)[1], function(i) {
-            as.character(gsub("^\\s+|\\s+$", "",
-                paste(unique(pairedInformation[as.character(
-                pairedInformation$ForwardgRNAName) == as.character(
-                summary$names[i]),]$ReversegRNAName),
-                unique(pairedInformation[as.character(
-                pairedInformation$ReversegRNAName) == as.character(
-                summary$names[i]),]$ForwardgRNAName),
-                collapse = " ")))
-        }))
-    }
-    cat("Add RE information...\n")
-    if (findPairedgRNAOnly && findgRNAs)
-    {
-        REname <- unlist(lapply(1:dim(summary)[1], function(i) {
-            gsub("^\\s+|\\s+$", "", gsub("NA", "",
-                paste(unique(REcutDetails[as.character(
-                REcutDetails$ForwardREcutgRNAName) == as.character(
-                summary$names[i]),]$ForwardREname),
-                unique(REcutDetails[as.character(
-                REcutDetails$ReverseREcutgRNAName) ==
-                as.character(summary$names[i]), ]$ReverseREname),
-                collapse = " ")))
-       }))
-       summary <- cbind(summary, PairedgRNAName, REname)
-    }
-    else
-    {
-        REname <- unlist(lapply(1:dim(summary)[1], function(i) {
-            gsub("^\\s+|\\s+$", "", gsub("NA", "", paste(unique(
-                REcutDetails[as.character(REcutDetails$REcutgRNAName) ==
-                as.character(summary$names[i]), ]$REname), collapse = " ")))
-        }))
-        summary <- cbind(summary, REname)
-    }
-	seq <- as.character(summary$gRNAsPlusPAM)
-	cat("write gRNAs to bed file...\n")
-	on.target <- offTargets$offtargets
-	on.target <- unique(subset(on.target,
-            on.target$n.mismatch == 0 & on.target$isCanonicalPAM ==1))
-	#   as.character(on.target$gRNAPlusPAM) == as.character(on.target$OffTargetSequence)))
-	if (dim(on.target)[1] >0)
-  {
-	   gRNA.bed <- unique(cbind(as.character(on.target$chrom),
-	                            as.character(on.target$chromStart),
-	                            as.character(on.target$chromEnd), 
-	                            as.character(on.target$name),	
-	                            as.numeric(as.character(on.target$gRNAefficacy)) * 1000,
-	                            as.character(on.target$strand),
-		                          as.character(on.target$chromStart),
-		                          as.character(on.target$chromEnd)))
-	   if (!useScore)
-	   {
-		      gRNA.bed <- cbind(gRNA.bed, rep("255,0,0",dim(gRNA.bed)[1]))
-		      gRNA.bed[gRNA.bed[,6] == "-",9] = "0,255,0"
-	   }
-	#### UCSC genome browser is 0-based instead of 1 based index
-	   gRNA.bed[, 2] = as.numeric(gRNA.bed[, 2]) -1
-	   gRNA.bed[, 3] = as.numeric(gRNA.bed[, 3])
-	   gRNA.bed[gRNA.bed[,6] == "+" ,7] <- 
-	       as.numeric(gRNA.bed[gRNA.bed[,6] == "+" ,2]) +
-		        min(overlap.gRNA.positions) - 1
-     gRNA.bed[gRNA.bed[,6] == "-" ,7] <- 
-         as.numeric(gRNA.bed[gRNA.bed[,6] == "-" ,3]) -
-		        max(overlap.gRNA.positions)
-     gRNA.bed[gRNA.bed[,6] == "+", 8] <-
-         as.numeric(gRNA.bed[gRNA.bed[,6] == "+", 2]) +
-		         max(overlap.gRNA.positions)
-	   gRNA.bed[gRNA.bed[,6] == "-", 8] <- 
-	       as.numeric(gRNA.bed[gRNA.bed[,6] == "-", 3]) -
-		         min(overlap.gRNA.positions) + 1
-	   write.table("track name=\"gRNA sites\" 
-	               description=\"CRISPRseek\" visibility=2 useScore=1 itemRgb=\"On\"", 
-	               file=bedFile, col.names=FALSE, row.names=FALSE, quote = FALSE)
-	   write.table(gRNA.bed, file=bedFile, sep=" ", row.names=FALSE, 
-	               col.names=FALSE, append=TRUE, quote = FALSE)
-	   on.target <- unique(cbind(as.character(on.target$name),
-			  as.character(on.target$forViewInUCSC),
-			  as.character(on.target$extendedSequence),
-			  as.character(on.target$gRNAefficacy)
-                        ))
-	  colnames(on.target) = c("names", "forViewInUCSC", 
-	                          "extendedSequence", "gRNAefficacy")
-	  if (useEfficacyFromInputSeq)
-	  {
-		    on.target <- as.data.frame(on.target[,1:2])
-		    inputEfficacy <- read.table(efficacyFile, sep="\t", header = TRUE,
-			      stringsAsFactors=FALSE)
-		     inputEfficacy <- as.data.frame(cbind(name = inputEfficacy$name,
-		        extendedSequence = inputEfficacy$extendedSequence,
-			      gRNAefficacy = inputEfficacy$gRNAefficacy))
-		      on.target <- merge(on.target, inputEfficacy, by.x="names", 
-		                         by.y ="name")
-	  }
-    if(dim(on.target)[1] >0)
-	     summary <- unique(merge(on.target, summary, by="names", all=TRUE))
-	  write.table(summary[order(as.character(summary$names)), ],
-             file = paste(outputDir, "Summary.xls", sep = ""),
-             sep = "\t", row.names = FALSE)
-	  cat("Scan for REsites in flanking region...\n")
-	  if (outputUniqueREs && !missing(BSgenomeName) &&
-               class(BSgenomeName) == "BSgenome")
-	  {
-	     REs.isUnique100 <- uniqueREs(REcutDetails = REcutDetails,
-		       summary = summary, offTargets$offtargets, scanUpstream = 100,
-		       scanDownstream =100, BSgenomeName = BSgenomeName)
-	     REs.isUnique50 <- uniqueREs(REcutDetails = REcutDetails,
-		        summary = summary, offTargets$offtargets, scanUpstream = 50,
-		        scanDownstream = 50, BSgenomeName = BSgenomeName)
-	     summary <- cbind(summary, uniqREin200 = REs.isUnique100,
-                uniqREin100 = REs.isUnique50)
-       summary$uniqREin200 <- as.character(summary$uniqREin200)
-       summary$uniqREin100 <- as.character(summary$uniqREin100)
-	  }
-	 else
-	  {
-	      REs.isUnique100 = ""
-        REs.isUnique50 = ""
-	  }
+    inputFilePath <- getSeqFromBed(inputFilePath, header = header, BSgenomeName = BSgenomeName)
+    #### format for filtergRNAs
+    format <- "fasta"
   }
-  else
-  {
-       warnings("No on-target found for the input gRNAs with your search criteria!")
-       gRNA.bed = ""
-       REs.isUnique100 = ""
-       REs.isUnique50 = ""
-  }
-  if (foldgRNAs)
-  {
-      source(system.file("extdata/foldgRNAs.R",package = "CRISPRseek"))
-	    gRNAs.withoutPAM <- substr(as.character(summary$gRNAsPlusPAM), 1, gRNA.size)
-      folded.gRNAs <- foldgRNAs(gRNAs.withoutPAM, gRNA.backbone = gRNA.backbone,
-           temperature = temperature)
-	   if (length(dim(folded.gRNAs)) > 0)
-	   {
-	      if (dim(folded.gRNAs)[1] >1)
-	          summary <- cbind(summary, folded.gRNAs[,-1])
-	      else
-	         summary <- data.frame(c(summary, folded.gRNAs[,-1]))
-	   }
-  }
-    #write.table(summary[order(as.character(summary$forViewInUCSC)), ],
-    ### even there is no perfect target for a gRNA, it will be kept in the summary file
-    ### need to calculate the topN offtarget score and distance correctly yet if include those gRNAs without target
-
-     gRNAs.notInGenome <- setdiff(names(gRNAs), summary$names)
-     if (length(gRNAs.notInGenome) > 0)
-     {
-         dat2 <- data.frame(matrix(nrow = length(gRNAs.notInGenome),
-                                   ncol = dim(summary)[2]))
-         colnames(dat2) <- colnames(summary)
-         dat2$names <- gRNAs.notInGenome
-         if (PAM.location == "3prime")
-            dat2$gRNAsPlusPAM <-  
-                  paste0(substr(as.character(gRNAs[names(gRNAs) %in% 
-                                                    gRNAs.notInGenome]),
-                               1, gRNA.size),PAM)
-         else
-            dat2$gRNAsPlusPAM <-  
-                  paste0(PAM, substr(as.character(gRNAs[names(gRNAs) %in% 
-                                             gRNAs.notInGenome]),
-                                     PAM.size + 1, + PAM.size + gRNA.size))
-         dat2$top1Hit.onTarget.MMdistance2PAM <- 
-             rep("perfect match not found", length(gRNAs))
-         summary <- rbind(summary, dat2)
-     }
-     if (dim(on.target)[1] == 0)
-        write.table(summary[order(as.character(summary$names)), ],
-           file = paste(outputDir, "Summary.xls", sep = ""),
-           sep = "\t", row.names = FALSE)
-     else
-        write.table(summary[order(as.character(summary$forViewInUCSC)), ],
-           file = paste(outputDir, "Summary.xls", sep = ""),
-           sep = "\t", row.names = FALSE)
-    if (predIndelFreq) {
-        if (predictIndelFreq.onTargetOnly)
-		           targets <- unique(subset(offTargets$offtargets,
-                     offTargets$offtargets$n.mismatch == 0 & 
-                       offTargets$offtargets$isCanonicalPAM ==1))
-        else
-		         targets <- subset(offTargets$offtargets, 
-		                           offTargets$offtargets$isCanonicalPAM == 1)
-
-        extendedSequence <- getExtendedSequence(targets,
-                 BSgenomeName = BSgenomeName,
-                 baseBeforegRNA =  baseBeforegRNA.indelFreq,
-                 baseAfterPAM = baseAfterPAM.indelFreq, forMethod = method.indelFreq)
-        tryCatch((
-	             indelFreqFS <- 
-	               predictRelativeFreqIndels(extendedSequence, 
-	                                         method = method.indelFreq)), 
-	             error = function(e) {print(e); })
-        if (exists("indelFreqFS"))
-        {
-            fs <- unlist(lapply(indelFreqFS, function(x) { x$fs }))
-            indelFreq <- lapply(indelFreqFS, function(x) {x$indel})
-
-            entropy <- unlist(lapply(indelFreq, function(x) {
-               if (length(x) > 1)
-                   sum(-as.numeric(x[,2])/100 *  log(as.numeric(x[,2])/100, 
-                                                     base = 450), na.rm = TRUE)
-               else
-	                  NA
-            }))
-            fs2 <- data.frame(cbind(names = as.character(targets[,1]), 
-                                    frameshift = fs,
-                                    entropy = entropy, 
-                                    n.mismatch = as.character(targets$n.mismatch)))
-            fs2[,1] <- as.character(fs2[,1])
-            summary <- data.frame(summary)
-            summary[,1] <- as.character(summary[,1])
-
-            summary <- merge(subset(fs2, fs2[,4] == 0)[,-4], 
-                             summary, all.y = TRUE)
-
-            write.table(summary[order(as.character(summary$forViewInUCSC)), ],
-               file = paste(outputDir, "Summary.xls", sep = ""),
-               sep = "\t", row.names = FALSE)
-
-            names(indelFreq) <- paste(targets[,1], targets[,2], 
-                                      targets[,3], sep= ",")
-
-            if (!predictIndelFreq.onTargetOnly)
-            {
-                offTargets$offtargets[,3] <- as.character(offTargets$offtargets[,3])
-                fs3 <- cbind(OffTargetSequence =  as.character(targets[,3]), 
-                             frameshift = fs, entropy = entropy)
-                targets <- merge(offTargets$offtargets, fs3, all.x = TRUE)
-                offTargets$offtargets <- targets
-                write.table(targets,  
-                            file = paste0(outputDir, "OfftargetAnalysis.xls"),
-                            sep = "\t", row.names = FALSE)
-             }
-            cat("Done. Please check output files in directory \n", outputDir, "\n")
-            list(on.target=on.target, summary=summary, 
-                 offtarget = offTargets$offtargets,
-                 gRNAs.bedFormat=gRNA.bed, 
-                 REcutDetails = REcutDetails,
-                 REs.isUnique100 = REs.isUnique100, 
-                 REs.isUnique50 = REs.isUnique50,
-                 indelFreq = indelFreq, fs2=fs2)
-        }
-        else
-        {
-            cat("Done. Please check output files in directory \n", 
-                outputDir, "\n")
-            list(on.target=on.target, summary=summary, 
-                 offtarget = offTargets$offtargets,
-                 gRNAs.bedFormat=gRNA.bed, 
-                 REcutDetails = REcutDetails,
-                 REs.isUnique100 = REs.isUnique100, 
-                 REs.isUnique50 = REs.isUnique50)
-       }
+  scoring.method <- arg_match(scoring.method)
+  exportAllgRNAs <- arg_match(exportAllgRNAs)
+  rule.set <- arg_match(rule.set)
+  paired.orientation <- arg_match(paired.orientation)
+  if (findOffTargetsWithBulge) {
+    method.findOffTargetsWithBulge <- arg_match(method.findOffTargetsWithBulge)
+    if (method.findOffTargetsWithBulge == "CasOFFinder_v3.0.0b3") {
+      method.findOffTargetsWithBulge = "3.0.0b3"
     }
-    else {
-        cat("Done. Please check output files in directory \n", 
-            outputDir, "\n")
-        list(on.target=on.target, summary=summary, 
-             offtarget = offTargets$offtargets,
-		         gRNAs.bedFormat=gRNA.bed, 
-		         REcutDetails = REcutDetails,
-		         REs.isUnique100 = REs.isUnique100, 
-		         REs.isUnique50 = REs.isUnique50)
+  }
+  
+  # Convert empty arguments to NULL:
+  if (length(chromToSearch) == 1 && chromToSearch == "") {
+    chromToSearch <- NULL
+  }
+  if (length(chromToExclude) == 1 && chromToExclude == "") {
+    chromToSearch <- NULL
+  }
+  
+  # Fix PAM.pattern:
+  PAM.pattern <- fixPAMpattern(PAM.pattern, PAM.location)
+  
+  # Ensure at least DNA.bulge or RNA.bulge > 0 if find offtarget with bulge:
+  if (findOffTargetsWithBulge) {
+    if (DNA_bulge <= 0 && RNA_bulge <= 0) {
+      abort("Either DNA_bulge or RNA_bulge must be greater than 0!")
     }
+  }
+  
+  # Ensure the length of PAM, PAM.pattern, and PAM.size are consistent:
+  checkPAMsize(PAM, PAM.size)
+  
+  # Fix parameters per rule.set:
+  tem <- fixRuleSet(rule.set, scoring.method, subPAM.activity, PAM.location, PAM.size, gRNA.size)
+  baseBeforegRNA <- tem[[1]]
+  baseAfterPAM <- tem[[2]]
+  subPAM.activity <- tem[[3]]
+
+  # Validate parameters per scoring.method:
+  validateScoringMethod(scoring.method, mismatch.activity.file, weights, gRNA.size)
+  
+  # Check REpattern file:
+  checkREpatternFile(findgRNAsWithREcutOnly, findgRNAs, REpatternFile)
+  
+  # Check required libraries:
+  checkDependency(foldgRNAs = foldgRNAs)
+  
+  # Prepare outputDir:
+  prepOutputDir(outputDir, overwrite)   
+  
+  # Prepare other files:
+  tem <- prepOtherFiles(annotatePaired, findPairedgRNAOnly, inputFilePath, outputDir, gRNAoutputName)
+  pairOutputFile <- tem[[1]]
+  REcutDetailFile <- tem[[2]]
+  bedFile <- tem[[3]]
+  gRNAoutputName <- tem[[4]]
+  inform("Validating arguments: done!")
+  ### Step0: params validation: finish ###
+  
+  ### Step0b: prepare lists of grouped arguments: start ###
+  # efficacyFile <- tempfile()
+  efficacyFile <- file.path(outputDir, "gRNAefficacy.xlsx") # must be hard-coded since other functions rely on it
+  arg_groups <- getArgGroups(inputFilePath = inputFilePath,
+                             overlap.gRNA.positions = overlap.gRNA.positions,
+                             baseEditing = baseEditing, 
+                             targetBase = targetBase, 
+                             editingWindow = editingWindow,
+                             editingWindow.offtargets = editingWindow.offtargets,
+                             primeEditing = primeEditing,
+                             findPairedgRNAOnly = findPairedgRNAOnly,
+                             annotatePaired = annotatePaired,
+                             paired.orientation = paired.orientation,
+                             pairOutputFile = pairOutputFile,
+                             PAM = PAM,
+                             PAM.location = PAM.location,
+                             PAM.size = PAM.size,
+                             gRNA.pattern = gRNA.pattern,
+                             gRNA.size = gRNA.size,
+                             min.gap = min.gap,
+                             max.gap = max.gap,
+                             name.prefix = gRNA.name.prefix,
+                             format = format,
+                             rule.set = rule.set,
+                             chrom_acc = chrom_acc,
+                             PBS.length = PBS.length,
+                             RT.template.length = RT.template.length,
+                             RT.template.pattern = RT.template.pattern,
+                             targeted.seq.length.change = targeted.seq.length.change,
+                             bp.after.target.end = bp.after.target.end,
+                             target.start = target.start,
+                             target.end = target.end,
+                             primeEditingPaired.output = primeEditingPaired.output,
+                             corrected.seq = corrected.seq,
+                             featureWeightMatrixFile = featureWeightMatrixFile,
+                             baseBeforegRNA = baseBeforegRNA,
+                             baseAfterPAM = baseAfterPAM,  
+                             efficacyFile = efficacyFile,
+                             enable.multicore = enable.multicore,
+                             n.cores.max = n.cores.max,
+                             BSgenomeName = BSgenomeName, # searchHit2
+                             genomeSeqFile = genomeSeqFile, # searchHit
+                             txdb = txdb,
+                             chromToSearch = chromToSearch, #
+                             chromToExclude = chromToExclude, #
+                             max.mismatch = max.mismatch, #
+                             PAM.pattern = PAM.pattern, #
+                             allowed.mismatch.PAM = allowed.mismatch.PAM, #
+                             outputDir = outputDir, ## outputPotentialgRNAs
+                             exportAllgRNAs = exportAllgRNAs, ##
+                             gRNAoutputName = gRNAoutputName, ##
+                             findgRNAs = findgRNAs, # add paired and RE info to summary, getPotentialgRNA and filtergRNA can't use it
+                             findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, ### filtergRNAs
+                             REpatternFile = REpatternFile, ###
+                             minREpatternSize = minREpatternSize, ###
+                             subPAM.position = subPAM.position, #### getOfftargetScoreWrap 
+                             subPAM.activity = subPAM.activity, ####
+                             scoring.method = scoring.method, ####
+                             mismatch.activity.file = mismatch.activity.file, ####
+                             weights = weights, ####
+                             fetchSequence = fetchSequence, ##### getOfftargetSummary
+                             orgAnn = orgAnn, #####
+                             ignore.strand = ignore.strand, #####
+                             min.score = min.score, #####
+                             topN = topN, #####
+                             topN.OfftargetTotalScore = topN.OfftargetTotalScore, #####
+                             upstream = upstream, #####
+                             downstream = downstream, #####
+                             annotateExon = annotateExon, #####
+                             calculategRNAEfficacy = TRUE,
+                             calculategRNAefficacyForOfftargets = calculategRNAefficacyForOfftargets, #####
+                             DNA_bulge = DNA_bulge, ###### getOfftargetWithBulge
+                             RNA_bulge = RNA_bulge, ######
+                             method.findOffTargetsWithBulge = method.findOffTargetsWithBulge ######
+                             )
+  findgRNAs_args_core <- arg_groups[[1]]
+  findgRNAs_args_prime <- arg_groups[[2]]
+  findgRNAs_args_efficacy <- arg_groups[[3]]
+  searchHits_args <- arg_groups[[4]]
+  outputPotentialgRNAs_args <- arg_groups[[5]]
+  filtergRNAs_args <- arg_groups[[6]]
+  getgRNASummary_args <- arg_groups[[7]]
+  getOfftargetScoreWrap_args <- arg_groups[[8]] 
+  getOfftargetSummary_args <- arg_groups[[9]]
+  getOfftargetWithBulge_args <- arg_groups[[10]]
+  filterCasOffinder_args <- arg_groups[[11]]
+  ### Step0b: prepare lists of grouped arguments: finish ###
+  
+  ### Step1: find and output potential gRNAs: start ###
+  potential.gRNAs <- getPotentialgRNAs(findgRNAs = findgRNAs,
+                                       chromToSearch = chromToSearch, 
+                                       inputFilePath = inputFilePath,
+                                       format = format,
+                                       useEfficacyFromInputSeq = useEfficacyFromInputSeq, 
+                                       findgRNAs_args_core = findgRNAs_args_core, 
+                                       findgRNAs_args_prime = findgRNAs_args_prime, 
+                                       findgRNAs_args_efficacy = findgRNAs_args_efficacy,
+                                       outputPotentialgRNAs_args = outputPotentialgRNAs_args)
+  if (length(potential.gRNAs) == 0) {
+    return(message("no gRNAs found!"))
+  }
+  ### Step1: find and output potential gRNAs: finish ###
+
+  ### Step2: filter and output potential gRNAs: start ###
+  tem_res <- getFiltergRNAs(potential.gRNAs = potential.gRNAs,
+                            findgRNAs = findgRNAs,
+                            filtergRNAs = filtergRNAs, 
+                            filtergRNAs_args = filtergRNAs_args, 
+                            findgRNAsWithREcutOnly = findgRNAsWithREcutOnly, 
+                            annotatePaired = annotatePaired,
+                            findPairedgRNAOnly = findPairedgRNAOnly, 
+                            pairOutputFile = pairOutputFile,
+                            REcutDetailFile = REcutDetailFile)
+  gRNAs <- tem_res[[1]]
+  pairedInformation <- tem_res[[2]]
+  REcutDetails <- tem_res[[3]]
+  ### Step2: filter and output potential gRNAs: finish ###
+  
+  ### Step3: search for off targets: start ###
+  if (is.null(chromToSearch)) {
+    inform(paste0("All done! Please check output files in the directory: ", outputDir))
+    return(gRNAs)
+  } else if (annotateExon && (is.null(txdb) || !inherits(txdb, c("TxDb", "TranscriptDb")))) {
+    stop("To indicate whether an off-target is inside an exon, txdb is required as a TxDb object!")
+  }
+  inform("Searching for off-targets ...")
+    ## 3-1: Without bulge:
+  if (is.null(genomeSeqFile)) {
+    hits <- do.call(searchHits2, c(list(gRNAs = gRNAs, BSgenomeName = BSgenomeName), searchHits_args))
+  } else {
+    hits <- do.call(searchHitsFa, c(list(gRNAs = gRNAs, genomeSeqFile = genomeSeqFile), searchHits_args))
+  }
+    ## 3-2: With bulge:
+  hits_bulge <- data.frame()
+  if (findOffTargetsWithBulge) {
+    ### Step3-1: search for off targets with bulge: start ###
+    inform("Searching for off-targets with bulges ...")
+    df_bulge <- do.call(getOfftargetWithBulge, c(list(gRNA_PAM = gRNAs), getOfftargetWithBulge_args))
+    inform("Searching for off-targets with bulges: done!")
+    
+    ### Step3-2: filter off targets with bulge: start ###
+    inform("Filtering off-targets with bulges ...")
+    df_bulge <- do.call(filterCasOffinder, c(list(df_bulge = df_bulge), filterCasOffinder_args))
+    inform("Filtering off-targets with bulges: done!")
+    
+    ### Step3-3: convert into hits-like object
+    # strand, chrom, chromStart, chromEnd, name, gRNAplusPAM, gRNAPlusPAM_bulge, OffTargetSequence_bulge, n.mismatch, n.DNABulge, n.RNABulge, forViewInUCSC, score
+    inform("Formatting off-targets with bulges: ...")
+    hits_bulge <- formatCasOffinder(df_bulge, gRNAs = gRNAs)
+    inform("Formatting off-targets with bulges: done!")
+  }
+  inform("Searching for off-targets: done!")
+  ### Step3: search for off targets: finish ###
+  
+  ### Step4: filter offtargets: start ###
+  if (dim(hits)[1] == 0 && dim(hits_bulge)[1] == 0) {
+    summary <- do.call(getgRNASummary, c(list(gRNAs = gRNAs), getgRNASummary_args))
+    return(summary)
+  } else {
+    ## 4-1a: get offtarget scores
+    scores <- do.call(getOfftargetScoreWrap, c(list(hits = hits), getOfftargetScoreWrap_args))
+    ## 4-1b: get offtarget scores for offtargets with bulge
+    scores_bulge <- do.call(getOfftargetScoreBulgeWrap, c(list(hits = hits_bulge), getOfftargetScoreWrap_args))
+    
+    ## 4-2: annotate offtargets 
+    scores <- combineScoresBulge(scores = scores, scores_bulge = scores_bulge)
+    tem_res <- do.call(getOfftargetSummary, c(list(scores = scores), getOfftargetSummary_args))
+    offTargets <- tem_res[[1]] # OfftargetAnalysis.xlsx
+    summary <- tem_res[[2]] # Summary.xlsx
+    on.target <- getOntarget(offTargets)
+
+    ## 4-3: add paired and RE info to summary
+    summary <- addInfoSummary(findgRNAs = findgRNAs,
+                              findPairedgRNAOnly = findPairedgRNAOnly,
+                              annotatePaired = annotatePaired,
+                              summary = summary,
+                              pairedInformation = pairedInformation,
+                              REcutDetails = REcutDetails)
+    
+    ## 4-4: write gRNAs to bed file 
+    gRNA.bed <- writegRNAsToBed(summary = summary,
+                                offTargets = offTargets,
+                                bedFile = bedFile,
+                                useScore = useScore,
+                                overlap.gRNA.positions = overlap.gRNA.positions)
+    
+    ## 4-5: update summary: add on.target, REs.isUnique100/50
+    summary <- updateSummary(summary = summary, 
+                             outputDir = outputDir,
+                             offTargets = offTargets,
+                             useEfficacyFromInputSeq = useEfficacyFromInputSeq,
+                             efficacyFile = efficacyFile)
+    
+    ## 4-6: update summary: scan for REsites in flanking seq
+    summary <- scanREsites(summary = summary, 
+                           REcutDetails = REcutDetails, 
+                           offTargets = offTargets, 
+                           BSgenomeName = BSgenomeName, 
+                           outputUniqueREs = outputUniqueREs)
+    
+    ## 4-7: update summary by adding free energy calculation
+    summary <- updateSummaryFoldgRNAs(foldgRNAs = foldgRNAs, 
+                                      summary = summary, 
+                                      gRNA.size = gRNA.size, 
+                                      gRNA.backbone = gRNA.backbone, 
+                                      temperature = temperature)
+    
+    ## 4-8: update summary by adding gRNAs with no target in genome
+    summary <- updateSummaryNoTargetgRNAs(summary = summary,
+                                          gRNAs = gRNAs, 
+                                          gRNA.size = gRNA.size,
+                                          PAM = PAM,
+                                          PAM.size = PAM.size,
+                                          PAM.location = PAM.location,
+                                          on.target = on.target,
+                                          outputDir = outputDir)
+    ## 4-9: add Lindel results 
+    tem_res <- addLindelRes(predIndelFreq = predIndelFreq,
+                            predictIndelFreq.onTargetOnly = predictIndelFreq.onTargetOnly,
+                            offTargets = offTargets,
+                            on.target = on.target,
+                            BSgenomeName = BSgenomeName,
+                            baseBeforegRNA.indelFreq = baseBeforegRNA.indelFreq,
+                            baseAfterPAM.indelFreq = baseAfterPAM.indelFreq,
+                            method.indelFreq = method.indelFreq,
+                            summary = summary,
+                            outputDir = outputDir)
+    summary <- tem_res[[1]]
+    indelFreq <- tem_res[[2]]
+    fs2 <- tem_res[[3]]
+  } 
+  ### Step4: filter offtargets: finish ###
+  
+  ### Step5: return a list of results: start ###
+  inform(paste0("All done! Please check output files in the directory: ", outputDir))
+  list(on.target = on.target, 
+       summary = summary, 
+       offtarget = offTargets$offtargets,
+       gRNAs.bedFormat = gRNA.bed, 
+       REcutDetails = REcutDetails,
+       REs.isUnique100 = summary$REs.isUnique100, 
+       REs.isUnique50 = summary$REs.isUnique50,
+       indelFreq = indelFreq, 
+       fs2 = fs2)
+  ### Step5: return a list of results: finish ###
 }
-else
-{
-   if (PAM.location == "3prime")
-      x <- paste(substr(as.character(gRNAs), 1, gRNA.size), 
-                 PAM, sep ="")
-  else
-      x <- paste(PAM, substr(as.character(gRNAs), PAM.size + 1, 
-                             gRNA.size + PAM.size), sep ="")
-  summary <- cbind(names = names(gRNAs), 
-                   gRNAsPlusPAM = x,
-                   top5OfftargetTotalScore = rep("NA", length(gRNAs)),
-                   top10OfftargetTotalScore =  rep("NA", length(gRNAs)),
-                   top1Hit.onTarget.MMdistance2PAM =  
-                     rep("perfect match not found", length(gRNAs))
-                  )
-  write.table(summary,  file = paste(outputDir, "Summary.xls", sep = ""),
-        sep = "\t", row.names = FALSE)
-  summary
-}
-}
+

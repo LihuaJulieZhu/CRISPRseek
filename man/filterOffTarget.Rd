@@ -2,32 +2,32 @@
 % Please edit documentation in R/filterOffTarget.R
 \name{filterOffTarget}
 \alias{filterOffTarget}
-\title{filter off targets and generate reports.}
+\title{filter off-targets and generate reports.}
 \usage{
 filterOffTarget(
-  scores,
+  scores = NULL,
   min.score = 0.01,
   topN = 200,
-  topN.OfftargetTotalScore = 20,
+  topN.OfftargetTotalScore = 10,
   annotateExon = TRUE,
-  txdb,
-  orgAnn,
+  txdb = NULL,
+  orgAnn = NULL,
   ignore.strand = TRUE,
-  outputDir,
+  outputDir = NULL,
   oneFilePergRNA = FALSE,
   fetchSequence = TRUE,
   upstream = 200,
   downstream = 200,
-  BSgenomeName,
+  BSgenomeName = NULL,
+  genomeSeqFile = NULL,
   baseBeforegRNA = 4,
   baseAfterPAM = 3,
   gRNA.size = 20,
   PAM.location = "3prime",
   PAM.size = 3,
-  featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", package =
-    "CRISPRseek"),
+  featureWeightMatrixFile = featureWeightMatrixFile_default(),
   rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
-  chrom_acc,
+  chrom_acc = NULL,
   calculategRNAefficacyForOfftargets = TRUE
 )
 }
@@ -105,6 +105,9 @@ BSgenome package. For example,
 \item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
 }}
 
+\item{genomeSeqFile}{Other than BSgenomeName, a custome FASTA file can be 
+supplied, if set, overwrites BSgenomeName.}
+
 \item{baseBeforegRNA}{Number of bases before gRNA used for calculating gRNA
 efficiency, default 4}
 
@@ -143,8 +146,8 @@ cases of offtarget efficacies.}
 results}
 }
 \description{
-filter off targets that meet the criteria set by users such as minimum
-score, topN. In addition, off target was annotated with flank sequence, gRNA
+filter off-targets that meet the criteria set by users such as minimum score, 
+topN. In addition, off target was annotated with flank sequence, gRNA 
 cleavage efficiency and whether it is inside an exon or not if fetchSequence
 is set to TRUE and annotateExon is set to TRUE
 }
@@ -156,22 +159,30 @@ is set to TRUE and annotateExon is set to TRUE
 }
 \examples{
 
-    library(CRISPRseek)
-    library("BSgenome.Hsapiens.UCSC.hg19")
-    library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-    library(org.Hs.eg.db)
-    hitsFile <-  system.file("extdata", "hits.txt", package="CRISPRseek")
-    hits <- read.table(hitsFile, sep = "\t", header = TRUE,
-        stringsAsFactors = FALSE)
-    featureVectors <- buildFeatureVectorForScoring(hits)
-    scores <- getOfftargetScore(featureVectors)
-    outputDir <- getwd()
-    results <- filterOffTarget(scores, BSgenomeName = Hsapiens,
-        txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-         orgAnn = org.Hs.egSYMBOL, outputDir = outputDir,
-        min.score = 0.1, topN = 10, topN.OfftargetTotalScore = 5)
-    results$offtargets
-    results$summary
+library(CRISPRseek)
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(org.Hs.eg.db)
+
+hitsFile <-  system.file("extdata", "hits.txt", package = "CRISPRseek")
+hits <- read.table(hitsFile, sep = "\t", 
+                   header = TRUE, 
+                   stringsAsFactors = FALSE)
+featureVectors <- buildFeatureVectorForScoring(hits)
+scores <- getOfftargetScore(featureVectors)
+
+outputDir <- tempdir()
+results <- filterOffTarget(scores, 
+                           BSgenomeName = Hsapiens, 
+                           txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                           orgAnn = org.Hs.egSYMBOL, 
+                           outputDir = outputDir,
+                           min.score = 0.1, 
+                           topN = 10, 
+                           topN.OfftargetTotalScore = 5)
+results$offtargets
+results$summary
+
 }
 \references{
 Doench JG, Hartenian E, Graham DB, Tothova Z, Hegde M, Smith I,

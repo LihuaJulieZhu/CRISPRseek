@@ -53,10 +53,10 @@
 #' }
 
 
-deepCpf1 <- function(extendedSequence, chrom_acc){
+deepCpf1 <- function(extendedSequence = NULL, chrom_acc = NULL){
   # use tensorflow implementation
   use_implementation('tensorflow')
-  if (missing(extendedSequence))
+  if (is.null(extendedSequence))
      stop("extendedSequence is required for predicting efficacy using DeepCpf1 algorithm!")
   len <- unlist(lapply(extendedSequence, nchar))
   if (sum(len == 34, na.rm = TRUE) == 0)
@@ -67,7 +67,7 @@ deepCpf1 <- function(extendedSequence, chrom_acc){
   ##### PREPROCESSING #####
   sequence <- toupper(extendedSequence)
 
-  if (!missing(chrom_acc))
+  if (!is.null(chrom_acc))
   {
       in_df <- as.data.frame(cbind(sequence = sequence, chrom_acc = chrom_acc, len = len))
       in_df <- subset(in_df, in_df[, 3] == 34)
@@ -95,7 +95,7 @@ deepCpf1 <- function(extendedSequence, chrom_acc){
 
   #### MAKE MODELS
   # Define Input Tensor
-  if (missing(chrom_acc))
+  if (is.null(chrom_acc))
   {
      seq_input <- layer_input(shape = c(34,4))
 
@@ -177,7 +177,7 @@ deepCpf1 <- function(extendedSequence, chrom_acc){
 
 
   }
-   if (missing(chrom_acc))
+   if (is.null(chrom_acc))
    {
      temp <- cbind(extendedSequence = in_df[,1], effi = effi)
      as.numeric(temp[match(sequence, temp[,1]),2]) /100

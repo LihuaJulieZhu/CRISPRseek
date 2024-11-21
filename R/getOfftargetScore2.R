@@ -5,8 +5,9 @@
 
 getOfftargetScore2 <-
     function(featureVectors,
-        subPAM.activity = hash( AA =0,
-          AC =   0,
+        subPAM.activity = hash(
+          AA = 0,
+          AC = 0,
           AG = 0.259259259,
           AT = 0,
           CA = 0,

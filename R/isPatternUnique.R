@@ -12,7 +12,6 @@
 #' pattern/RE site
 #' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
-#' @seealso
 #' @references %% ~put references to the literature/web site here ~
 #' @keywords misc
 #' @examples
@@ -20,13 +19,11 @@
 #'     seq <- "TGGATTGTATAATCAGCATGGATTTGGAAC"
 #'     patterns <- DNAStringSet(c("TGG", "TGGA", "TGGATA", "TTGGAAC", ""))
 #'     isPatternUnique(seq, patterns)
-#'     isPatternUnique(seq)
-#'     isPatternUnique(patterns)
 #' @importFrom Biostrings reverseComplement
 #' @export
 isPatternUnique <- function(seq, patterns)
 {
-   if (missing(seq) || missing(patterns) || length(seq) == 0 || length(patterns) ==0)
+   if (is.null(seq) || is.null(patterns) || length(seq) == 0 || length(patterns) ==0)
 		IsUnique = "NA"
    else
    {

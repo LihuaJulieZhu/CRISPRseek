@@ -5,14 +5,14 @@
 \title{Design target-specific guide RNAs for CRISPR-Cas9 system in one function}
 \usage{
 offTargetAnalysis(
-  inputFilePath,
-  format = "fasta",
+  inputFilePath = NULL,
+  format = c("fasta", "fastq", "bed"),
   header = FALSE,
-  gRNAoutputName,
+  gRNAoutputName = "test",
   findgRNAs = TRUE,
   exportAllgRNAs = c("all", "fasta", "genbank", "no"),
   findgRNAsWithREcutOnly = FALSE,
-  REpatternFile = system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
+  REpatternFile = REpatternFile_default(),
   minREpatternSize = 4,
   overlap.gRNA.positions = c(17, 18),
   findPairedgRNAOnly = FALSE,
@@ -22,19 +22,18 @@ offTargetAnalysis(
   n.cores.max = 6,
   min.gap = 0,
   max.gap = 20,
-  gRNA.name.prefix = "",
-  PAM.size = 3,
+  gRNA.name.prefix = NULL,
   gRNA.size = 20,
   PAM = "NGG",
-  BSgenomeName,
-  chromToSearch = "all",
-  chromToExclude = c("chr17_ctg5_hap1", "chr4_ctg9_hap1", "chr6_apd_hap1",
-    "chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5", "chr6_qbl_hap6",
-    "chr6_ssto_hap7"),
-  max.mismatch = 3,
+  PAM.size = width(PAM),
   PAM.pattern = "NNG$|NGN$",
+  BSgenomeName = NULL,
+  genomeSeqFile = NULL,
+  chromToSearch = "all",
+  chromToExclude = chromToExclude_default,
+  max.mismatch = 3,
   allowed.mismatch.PAM = 1,
-  gRNA.pattern = "",
+  gRNA.pattern = NULL,
   baseEditing = FALSE,
   targetBase = "C",
   editingWindow = 4:8,
@@ -43,125 +42,129 @@ offTargetAnalysis(
   PBS.length = 13L,
   RT.template.length = 8:28,
   RT.template.pattern = "D$",
-  corrected.seq,
-  targeted.seq.length.change,
+  corrected.seq = NULL,
+  targeted.seq.length.change = NULL,
   bp.after.target.end = 15L,
-  target.start,
-  target.end,
+  target.start = NULL,
+  target.end = NULL,
   primeEditingPaired.output = "pairedgRNAsForPE.xls",
   min.score = 0,
   topN = 1000,
   topN.OfftargetTotalScore = 10,
   annotateExon = TRUE,
-  txdb,
-  orgAnn,
+  txdb = NULL,
+  orgAnn = NULL,
   ignore.strand = TRUE,
-  outputDir,
+  outputDir = getwd(),
   fetchSequence = TRUE,
   upstream = 200,
   downstream = 200,
-  upstream.search = 0,
-  downstream.search = 0,
-  weights = c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613,
-    0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 0.583),
+  weights = weights_default,
   baseBeforegRNA = 4,
   baseAfterPAM = 3,
-  featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", package =
-    "CRISPRseek"),
+  featureWeightMatrixFile = featureWeightMatrixFile_default(),
   useScore = TRUE,
   useEfficacyFromInputSeq = FALSE,
   outputUniqueREs = TRUE,
   foldgRNAs = FALSE,
- 
-    gRNA.backbone = "GUUUUAGAGCUAGAAAUAGCAAGUUAAAAUAAGGCUAGUCCGUUAUCAACUUGAAAAAGUGGCACCGAGUCGGUGCUUUUUU",
+  gRNA.backbone = gRNA.backbone_default,
   temperature = 37,
   overwrite = FALSE,
   scoring.method = c("Hsu-Zhang", "CFDscore"),
-  subPAM.activity = hash(AA = 0, AC = 0, AG = 0.259259259, AT = 0, CA = 0, CC = 0, CG =
-    0.107142857, CT = 0, GA = 0.069444444, GC = 0.022222222, GG = 1, GT = 0.016129032, TA
-    = 0, TC = 0, TG = 0.038961039, TT = 0),
+  subPAM.activity = subPAM.activity_default,
   subPAM.position = c(22, 23),
   PAM.location = "3prime",
   rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
-  chrom_acc,
+  chrom_acc = NULL,
   calculategRNAefficacyForOfftargets = TRUE,
-  mismatch.activity.file = system.file("extdata",
-    "NatureBiot2016SuppTable19DoenchRoot.csv", package = "CRISPRseek"),
+  mismatch.activity.file = mismatch.activity.file_default(),
   predIndelFreq = FALSE,
   predictIndelFreq.onTargetOnly = TRUE,
   method.indelFreq = "Lindel",
   baseBeforegRNA.indelFreq = 13,
-  baseAfterPAM.indelFreq = 24
+  baseAfterPAM.indelFreq = 24,
+  findOffTargetsWithBulge = FALSE,
+  method.findOffTargetsWithBulge = c("CasOFFinder_v3.0.0b3"),
+  DNA_bulge = 2,
+  RNA_bulge = 2
 )
 }
 \arguments{
-\item{inputFilePath}{Sequence input file path or a DNAStringSet object that
-contains sequences to be searched for potential gRNAs}
+\item{inputFilePath}{Path to an input sequence file or a `DNAStringSet` 
+object containing sequences to be searched for potential gRNAs.}
 
-\item{format}{Format of the input file, fasta, fastq and bed are supported,
-default fasta}
+\item{format}{Defaults to "fasta". Format of the input file, "fasta", 
+"fastq", and "bed" are supported.}
 
-\item{header}{Indicate whether the input file contains header, default
-FALSE, only applies to bed format}
+\item{header}{Defaults to FALSE. Indicates whether the input file contains 
+header. Only relevant when `format` is set to "bed".}
 
-\item{gRNAoutputName}{Specify the name of the gRNA outupt file when
-inputFilePath is DNAStringSet object instead of file path}
+\item{gRNAoutputName}{Defaults to "test". Specifies the name of the gRNA 
+output file when `inputFilePath` is a `DNAStringSet` object instead of 
+a file path.}
 
-\item{findgRNAs}{Indicate whether to find gRNAs from the sequences in the
-input file or skip the step of finding gRNAs, default TRUE. Set it to FALSE
-if the input file contains user selected gRNAs plus PAM already.}
+\item{findgRNAs}{Defaults to TRUE. Specifies whether to find gRNAs from the 
+sequences in `inputFilePath`. Set to FALSE if the input file already contains 
+user-selected gRNAs plus PAM.}
 
-\item{exportAllgRNAs}{Indicate whether to output all potential gRNAs to a
-file in fasta format, genbank format or both. Default to both.}
+\item{exportAllgRNAs}{Defaults to "both". Indicates whether to output all 
+potential gRNAs to a file in fasta format, genbank format, or both.}
 
-\item{findgRNAsWithREcutOnly}{Indicate whether to find gRNAs overlap with
-restriction enzyme recognition pattern}
+\item{findgRNAsWithREcutOnly}{Defaults to TRUE. Specifies whether to search 
+for gRNAs that overlap with restriction enzyme recognition sites only.}
 
-\item{REpatternFile}{File path containing restriction enzyme cut patterns}
+\item{REpatternFile}{Path to a file containing restriction enzyme cut 
+patterns.}
 
-\item{minREpatternSize}{Minimum restriction enzyme recognition pattern
-length required for the enzyme pattern to be searched for, default 4}
+\item{minREpatternSize}{Defaults to 4. Minimum restriction enzyme recognition
+pattern length required for the enzyme pattern to be searched for.}
 
-\item{overlap.gRNA.positions}{The required overlap positions of gRNA and
-restriction enzyme cut site, default 17 and 18. For Cpf1, you can set it to 19 and 23.}
+\item{overlap.gRNA.positions}{Defaults to `c(17, 18)`. Specifies the required 
+overlapping positions of the gRNA and restriction enzyme cut site. For Cpf1, 
+you can set it to `c(19, 23)`.}
 
-\item{findPairedgRNAOnly}{Choose whether to only search for paired gRNAs in
-such an orientation that the first one is on minus strand called reverse
-gRNA and the second one is on plus strand called forward gRNA. TRUE or
-FALSE, default FALSE}
+\item{findPairedgRNAOnly}{Defaults to FALSE. Specifies whether to search only
+for paired gRNAs in such an orientation that the first one is on the minus 
+strand (reverse gRNA) and the second one is on plus strand (forward gRNA).}
 
-\item{annotatePaired}{Indicate whether to output paired information, default
-TRUE}
+\item{annotatePaired}{Defaults to TRUE. Specifies whether to output paired 
+gRNA information.}
 
-\item{paired.orientation}{PAMin orientation means the two adjacent PAMs on
-the sense and antisense strands face inwards towards each other like N21GG
-and CCN21 whereas PAMout orientation means they face away from each other
-like CCN21 and N21GG}
+\item{paired.orientation}{The "PAMin" orientation refers to the scenario 
+where the two adjacent PAMs on the sense and antisense strands face inward 
+toward each other, such as in "N21GG" and "CCN21". In contrast, the "PAMout" 
+orientation occurs when the PAMs face away from each other, as seen in 
+"CCN21" and "N21GG".}
 
-\item{enable.multicore}{Indicate whether enable parallel processing, default
-FALSE. For super long sequences with lots of gRNAs, suggest set it to TRUE}
+\item{enable.multicore}{Defaults to FALSE. Indicates whether to enable 
+parallel. For super long sequences with lots of gRNAs, set it to TRUE.}
 
-\item{n.cores.max}{Indicating maximum number of cores to use in multi core
-mode, i.e., parallel processing, default 6. Please set it to 1 to disable
-multicore processing for small dataset.}
+\item{n.cores.max}{Defaults to 6. Specifies the maximum number of cores to 
+use in multicore mode. Set it to 1 to disable multicore processing for 
+small dataset.}
 
-\item{min.gap}{Minimum distance between two oppositely oriented gRNAs to be
-valid paired gRNAs. Default 0}
+\item{min.gap}{Defaults to 0. Minimum distance between two oppositely 
+oriented gRNAs to be considered as valid paired gRNAs.}
 
-\item{max.gap}{Maximum distance between two oppositely oriented gRNAs to be
-valid paired gRNAs. Default 20}
+\item{max.gap}{Defaults to 20. Specifies the maximum distance between two 
+oppositely oriented gRNAs to be considered as valid paired gRNAs.}
 
-\item{gRNA.name.prefix}{The prefix used when assign name to found gRNAs,
-default gRNA, short for guided RNA.}
+\item{gRNA.name.prefix}{Defaults to "gRNA". Specifies the prefix used when 
+assigning names to detected gRNAs.}
 
-\item{PAM.size}{PAM length, default 3}
+\item{gRNA.size}{Defaults to 20. The size of the gRNA.}
 
-\item{gRNA.size}{The size of the gRNA, default 20}
+\item{PAM}{Defaults to "NGG". Defines the protospacer adjacent motif sequence.}
 
-\item{PAM}{PAM sequence after the gRNA, default NGG}
+\item{PAM.size}{Defaults to `width(PAM)`. Specifies the PAM length.}
 
-\item{BSgenomeName}{BSgenome object. Please refer to available.genomes in
-BSgenome package. For example,
+\item{PAM.pattern}{Defaults to "NNG$|NGN$" (for spCas9). Specifies the 
+regular expression of PAM. For cpf1, set to "^TTTN" since its PAM is at the 5
+prime end.}
+
+\item{BSgenomeName}{A `BSgenome` object containing the target genome 
+sequence, used for off-target search. Please refer to available genomes in 
+the "BSgenome" package. For example,
 \itemize{
 \item{BSgenome.Hsapiens.UCSC.hg19} - for hg19,
 \item{BSgenome.Mmusculus.UCSC.mm10} - for mm10
@@ -171,123 +174,122 @@ BSgenome package. For example,
 \item{BSgenome.Dmelanogaster.UCSC.dm3} - for dm3
 }}
 
-\item{chromToSearch}{Specify the chromosome to search, default to all,
-meaning search all chromosomes. For example, chrX indicates searching for
-matching in chromosome X only}
+\item{genomeSeqFile}{Alternative to `BSgenomeName`. Specifies the path to a 
+custom target genome file in FASTA format, used for off-target search. It is 
+applicable when `BSgenomeName` is NOT set. When `genomeSeqFile` is set, the 
+`annotateExon`, `txdb`, and `orgAnn` parameters will be ignored.}
 
-\item{chromToExclude}{Specify the chromosome not to search. If specified as
-"", meaning to search chromosomes specified by chromToSearch. By default, to
-exclude haplotype blocks from offtarget search in hg19, i.e., chromToExclude
-= c("chr17_ctg5_hap1","chr4_ctg9_hap1", "chr6_apd_hap1", "chr6_cox_hap2",
-"chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5","chr6_qbl_hap6",
-"chr6_ssto_hap7")}
+\item{chromToSearch}{Defaults to "all", meaning all chromosomes in the target 
+genome are searched for off-targets. Set to a specific chromosome 
+(e.g., "chrX") to restrict the search to that chromsome only.}
 
-\item{max.mismatch}{Maximum mismatch allowed in off target search, default
-3. Warning: will be considerably slower if set > 3}
+\item{chromToExclude}{If set to "", means to search off-targets in 
+chromosomes specified in `chromToSearch`. By default, to exclude haplotype 
+blocks from off-target search assuming using `hg19` genome, i.e., 
+`chromToExclude = c("chr17_ctg5_hap1", "chr4_ctg9_hap1", "chr6_apd_hap1", 
+"chr6_cox_hap2", "chr6_dbb_hap3", "chr6_mann_hap4", "chr6_mcf_hap5",
+"chr6_qbl_hap6", "chr6_ssto_hap7")`.}
 
-\item{PAM.pattern}{Regular expression of protospacer-adjacent motif (PAM),
-default NNG$|NGN$ for spCas9. For cpf1, ^TTTN since it is a 5 prime PAM
-sequence}
+\item{max.mismatch}{Defaults to 3. Maximum number of mismatches allowed in 
+off-target search. Warning: search will be considerably slower if set to a 
+value greater than 3.}
 
-\item{allowed.mismatch.PAM}{Maximum number of mismatches allowed in the PAM
-sequence for offtarget search, default to 1 to allow NGN and NNG PAM pattern
-for offtarget identification.}
+\item{allowed.mismatch.PAM}{Defaults to 1. Maximum number of mismatches 
+allowed in the PAM sequence for off-target search. The default value 1 allows
+"NGN" and "NNG" PAM patterns for off-target identification.}
 
-\item{gRNA.pattern}{Regular expression or IUPAC Extended Genetic Alphabet to
-represent gRNA pattern, default is no restriction. To specify that the gRNA
-must start with GG for example, then set it to ^GG. Please see
-help(translatePattern) for a list of IUPAC Extended Genetic Alphabet.}
+\item{gRNA.pattern}{Defaults to NULL (meaning no restriction). Specifies 
+regular expression or IUPAC Extended Genetic Alphabet to represent gRNA 
+pattern. E.g. to specify that the gRNA must start with "GG", set it to "^GG".
+Type `?translatePattern` for a list of IUPAC Extended Genetic Alphabet.}
 
-\item{baseEditing}{Indicate whether to design gRNAs for base editing.
-Default to FALSE If TRUE, please set baseEditing = TRUE, targetBase and
-editingWidow accordingly.}
+\item{baseEditing}{Defaults to FALSE. Specifies whether to design gRNAs for 
+base editing. If set to TRUE, please set `targetBase` and `editingWidow`.}
 
-\item{targetBase}{Applicable only when baseEditing is set to TRUE. It is
-used to indicate the target base for base editing systems, default to C for
-converting C to T in the CBE system. Please change it to A if you intend to
-use the ABE system.}
+\item{targetBase}{Defaults to "C" (for converting C to T in the CBE system). 
+Applicable only when `baseEditing = TRUE`. Specifies the target base for base
+editing systems. Please change it to "A" if you intend to use the ABE system.}
 
-\item{editingWindow}{Applicable only when baseEditing is set to TRUE. It is
-used to indicate the effective editing window, default to 4 to 8 which is
-for the original CBE system. Please change it accordingly if the system you
-use have a different editing window.}
+\item{editingWindow}{Defaults to `4:8` (for the CBE system). Applicable only 
+when `baseEditing = TRUE`, and specifies the effective editing window. Please 
+change it accordingly if the system you use have a different editing window.}
 
-\item{editingWindow.offtargets}{Applicable only when baseEditing is set to
-TRUE. It is used to indicate the effective editing window to consider for
-the offtargets search only, default to 4 to 8 (1 means the most distal site
-from the 3' PAM, the most proximla site from the 5' PAM), which is for the
-original CBE system.  Please change it accordingly if the system you use
-have a different editing window, or you would like to include offtargets
-with the target base in a larger editing window.}
+\item{editingWindow.offtargets}{Defaults to `4:8` (for the original CBE
+system, 1 means the most distal site from the 3' PAM, the most proximal site 
+from the 5' PAM). Applicable only when `baseEditing = TRUE`. Indicates the 
+effective editing window to consider for the off-targets search only. Please 
+change it accordingly if the system you use have a different editing window, 
+or if you would like to include off-targets with the target base in a larger 
+editing window.}
 
-\item{primeEditing}{Indicate whether to design gRNAs for prime editing.
-Default to FALSE.  If true, please set PBS.length, RT.template.length,
-RT.template.pattern, targeted.seq.length.change, bp.after.target.end,
-target.start, and target.end accordingly}
+\item{primeEditing}{Defaults to FALSE. Specifies whether to design gRNAs for 
+prime editing. If set to TRUE, please set `PBS.length`, `RT.template.length`,
+`RT.template.pattern`, `targeted.seq.length.change`, `bp.after.target.end`,
+`target.start`, `target.end`, and `corrected.seq` accordingly.}
 
-\item{PBS.length}{Applicable only when primeEditing is set to TRUE. It is
-used to specify the number of bases to ouput for primer binding site.}
+\item{PBS.length}{Applicable only when `primeEditing = TRUE`. Specifies the 
+number of bases to output for primer binding site.}
 
-\item{RT.template.length}{Applicable only when primeEditing is set to TRUE.
-It is used to specify the number of bases required for RT template, default
-to 8 to 18. Please increase the length if the edit is large insertion.  Only
-gRNAs with calculated RT.template.length falling into the specified range
-will be in the output. It is calculated as the following. RT.template.length
-= target.start – cut.start + (target.end - target.start) +
-targeted.seq.length.change + bp.after.target.end}
+\item{RT.template.length}{Defaults to `8:18`. Applicable only when 
+`primeEditing = TRUE`. Specifies the number of bases required for RT 
+template. Increase the length if the edit involves a large insertion. Only 
+gRNAs with a calculated `RT.template.length` within the specified range will 
+be included in the output. It is calculated as the following:
+`RT.template.length = target.start – cut.start + (target.end - target.start) +
+targeted.seq.length.change + bp.after.target.end`.}
 
-\item{RT.template.pattern}{Applicable only when primeEditing is set to TRUE.
-It is used to specify the RT template sequence pattern, default to not
-ending with C according to https://doi.org/10.1038/s41586-019-1711-4}
+\item{RT.template.pattern}{Defaults to not end with C (per 
+https://doi.org/10.1038/s41586-019-1711-4). Applicable only when
+`primeEditing = TRUE`. Specifies the RT template sequence pattern.}
 
-\item{corrected.seq}{Applicable only when primeEditing is set to TRUE. It is
-used to specify the mutated or inserted sequences after successful editing.}
+\item{corrected.seq}{Applicable only when `primeEditing = TRUE`. Specifies 
+the mutated or inserted sequences after successful editing.}
 
-\item{targeted.seq.length.change}{Applicable only when primeEditing is set
-to TRUE. It is used to specify the number of targeted sequence length
-change. Please set it to 0 for base changes, positive numbers for insersion,
-and negative number for deletion. For example, 10 means that the corrected
-sequence will have 10bp insertion, -10 means that the corrected sequence
-will have 10bp deletion, and 0 means only bases have been changed and the
-sequence length remains the same}
+\item{targeted.seq.length.change}{Applicable only when `primeEditing = TRUE`.
+Specifies the change in the targeted sequence length. Set it to 0 for base 
+changes, positive numbers for insertions, and negative number for deletions. 
+For example, 10 indicates that the corrected sequence will have a 10-bp 
+insertion, -10 means that the corrected sequence will have a 10-bp deletion, 
+and 0 means that only base changes with no change in sequence length.}
 
-\item{bp.after.target.end}{Applicable only when primeEditing is set to TRUE.
-It is used to specify the number of bases to add after the target change end
-site as part of RT template. Please refer to RT.template.length for how this
-parameter influences the RT.template.length calculation which is used as a
-filtering criteria in pregRNA selection.}
+\item{bp.after.target.end}{Defaults to 15. Applicable only when 
+`primeEditing = TRUE`. Specifies the number of bases to add after the target 
+change end site as part of the RT template. Refer to `RT.template.length` for
+how this parameter affects the calculation of `RT.template.length`, which is 
+used as a filtering criterion during pregRNA selection.}
 
-\item{target.start}{Applicable only when primeEditing is set to TRUE. It is
-used to specify the start location in the input sequence to make changes,
-which will be used to obtain the RT template sequence. Please also refer to
-RT.template.length for how this parameter influences the RT.template.length
-calculation which is used as a filtering criteria in pregRNA selection.}
+\item{target.start}{Defaults to 20. Applicable only when 
+`primeEditing = TRUE`. Specifies the start location in the input sequence to 
+make changes, which will be used to obtain the RT template sequence. Refer to
+`RT.template.length` for how this parameter affects the `RT.template.length`
+calculation, which is used as a filtering criteria in pregRNA selection.}
 
-\item{target.end}{Applicable only when primeEditing is set to TRUE. It is
-used to specify the end location in the input sequnence to make changes,
-which will be used to obtain the RT template sequence. Please also refer to
-RT.template.length for how this parameter influences the RT.template.length
-calculation which is used as a filtering criteria in pregRNA selection.}
+\item{target.end}{Defaults to 20. Applicable only when `primeEditing = TRUE`.
+Specifies the end location in the input sequence to make changes, which will 
+be used to obtain the RT template sequence. Refer to `RT.template.length` for
+how this parameter affects the `RT.template.length` calculation, which is
+used as a filtering criteria in pregRNA selection.}
 
-\item{primeEditingPaired.output}{Applicable only when primeEditing is set to
-TRUE. It is used to specify the file path to save pegRNA and the second gRNA
-with PBS, RT.template, gRNA sequences, default pairedgRNAsForPE.xls}
+\item{primeEditingPaired.output}{Defaults to "pairedgRNAsForPE.xls". 
+Applicable only when `primeEditing = TRUE`. Specifies the file path where the
+pegRNA, second gRNA wit PBS, RT.template, and gRNA sequences will be saved.}
 
-\item{min.score}{minimum score of an off target to included in the final
-output, default 0}
+\item{min.score}{Defaults to 0. Specifies the minimum score of an off-target 
+to be included in the final output.}
 
-\item{topN}{top N off targets to be included in the final output, default
-1000}
+\item{topN}{Defaults to 1000. Specifies the top N off-targets to be included 
+in the final output}
 
-\item{topN.OfftargetTotalScore}{top N off target used to calculate the total
-off target score, default 10}
+\item{topN.OfftargetTotalScore}{Defaults to 10. Specifies the top N 
+off-targets used to calculate the total off-target score.}
 
-\item{annotateExon}{Choose whether or not to indicate whether the off target
-is inside an exon or not, default TRUE}
+\item{annotateExon}{Defaults to TRUE. Specifies whether to indicate if the 
+off-target is located within an exon.}
 
-\item{txdb}{TxDb object, for creating and using TxDb object, please refer to
-GenomicFeatures package. For a list of existing TxDb object, please search
-for annotation package starting with Txdb at
+\item{txdb}{A `TxDb` object containing organism-specific annotation data, 
+required for `annotateExon`. For creating and using a `TxDb` object, refer to
+the `GenomicFeatures` package. For a list of existing `TxDb` objects, search
+for annotation packages starting with "Txdb" at
 http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData,
 such as
 \itemize{
@@ -298,135 +300,156 @@ such as
 \item{TxDb.Celegans.UCSC.ce6.ensGene} - for C.elegans
 }}
 
-\item{orgAnn}{organism annotation mapping such as org.Hs.egSYMBOL in
-org.Hs.eg.db package for human}
+\item{orgAnn}{An `OrgDb` object containing organism-specific annotation 
+mapping information, required for `annotateExon`.}
 
-\item{ignore.strand}{default to TRUE when annotating to gene}
+\item{ignore.strand}{Defaults to TRUE. Specifies if strandness should be 
+ignored when annotating off-targets to genes.}
 
-\item{outputDir}{the directory where the off target analysis and reports
-will be written to}
+\item{outputDir}{Defaults to the current working directory. Specifies the 
+path to the directory where the analysis results will be saved.}
 
-\item{fetchSequence}{Fetch flank sequence of off target or not, default TRUE}
+\item{fetchSequence}{Defaults to TRUE. Specifies whether to fetch flanking
+sequences for off-targets.}
 
-\item{upstream}{upstream offset from the off target start, default 200}
+\item{upstream}{Defaults to 200. Specifies the upstream offset from the 
+off-target start.}
 
-\item{downstream}{downstream offset from the off target end, default 200}
+\item{downstream}{Defaults to 200. Specifies the downstream offset from the 
+off-target end.}
 
-\item{upstream.search}{upstream offset from the bed input starts to search
-for gRNAs, default 0}
+\item{weights}{Defaults to `c(0, 0, 0.014, 0, 0, 0.395, 0.317, 0, 0.389, 
+0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615, 0.804, 0.685, 
+0.583)` (used in Hsu et al., 2013 cited in the reference section). Applicable
+only when `scoring.method = Hus-Zhang`. Specifies a numeric vector with a 
+length equal to the size of the gRNA, containing the corresponding weight 
+values.}
 
-\item{downstream.search}{downstream offset from the bed input ends to search
-for gRNAs, default 0}
+\item{baseBeforegRNA}{Defaults to 4. Specifies the number of bases preceding 
+the gRNA. It is used to calculate gRNA efficiency. Note that for PAMs located 
+at the 5 prime end, the number of bases should include both the bases before 
+the PAM sequence and the PAM size.}
 
-\item{weights}{Applicable only when scoring.method is set to Hsu-Zhang a
-numeric vector size of gRNA length, default c(0, 0, 0.014, 0, 0, 0.395,
-0.317, 0, 0.389, 0.079, 0.445, 0.508, 0.613, 0.851, 0.732, 0.828, 0.615,
-0.804, 0.685, 0.583) which is used in Hsu et al., 2013 cited in the
-reference section}
+\item{baseAfterPAM}{Defaults to 3 (for spCas9). Specifies the number of bases
+after PAM. It is used to calculate gRNA efficiency. Note that for PAMs 
+located on the 5 prime end, the number should include the length of the gRNA
+plus the extended sequence on the 3 prime end.}
 
-\item{baseBeforegRNA}{Number of bases before gRNA used for calculating gRNA
-efficiency, default 4 Please note, for PAM located on the 5 prime, need to
-specify the number of bases before the PAM sequence plus PAM size.}
+\item{featureWeightMatrixFile}{By default, the DoenchNBT2014 weight matrix is 
+used. Specifies the feature weight matrix file used for calculating gRNA 
+efficiency. To use an alternative matrix, provide a CSV where the first 
+column contains the significant features and the second column contains the
+corresponding weights. For details, refer to Doench et al., 2014.}
 
-\item{baseAfterPAM}{Number of bases after PAM used for calculating gRNA
-efficiency, default 3 for spCas9 Please note, for PAM located on the 5
-prime, need to include the length of the gRNA plus the extended sequence on
-the 3 prime}
+\item{useScore}{Defaults to TRUE. Displays in grayscale, with darkness
+indicating gRNA efficacy. The taller bar represents the Cas9 cutting site.
+If set to False, efficacy will not be shown. Instead, gRNAs on the plus 
+strand will be colored red, and gRNAs on the minus strand will be colored 
+green.}
 
-\item{featureWeightMatrixFile}{Feature weight matrix file used for
-calculating gRNA efficiency. By default DoenchNBT2014 weight matrix is used.
-To use alternative weight matrix file, please input a csv file with first
-column containing significant features and the second column containing the
-corresponding weights for the features. Please see Doench et al., 2014 for
-details.}
+\item{useEfficacyFromInputSeq}{Defaults to FALSE. If TRUE, the summary file
+will contain gRNA efficacy calculated from the input sequences instead of 
+from off-target analysis. Set it to TRUE if the input sequence is from a 
+species different from the one used for off-target analysis.}
 
-\item{useScore}{Default TRUE, display in gray scale with the darkness
-indicating the gRNA efficacy.  The taller bar shows the Cas9 cutting site.
-If set to False, efficacy will not show.  Instead, gRNAs in plus strand will
-be colored red and gRNAs in negative strand will be colored green.}
-
-\item{useEfficacyFromInputSeq}{Default FALSE. If set to TRUE, summary file
-will contain gRNA efficacy calculated from input sequences instead of from
-off-target analysis. Set it to TRUE if the input sequence is from a
-different species than the one used for off-target analysis.}
-
-\item{outputUniqueREs}{Default TRUE. If set to TRUE, summary file will
+\item{outputUniqueREs}{Defaults to TRUE. If set to TRUE, summary file will
 contain REs unique to the cleavage site within 100 or 200 bases surrounding
 the gRNA sequence.}
 
-\item{foldgRNAs}{Default FALSE. If set to TRUE, summary file will contain
+\item{foldgRNAs}{Defaults to FALSE. If set to TRUE, summary file will contain
 minimum free energy of the secondary structure of gRNA with gRNA backbone
-from GeneRfold package provided that GeneRfold package has been installed.}
+from `GeneRfold` package given that `GeneRfold` package has been installed.}
 
-\item{gRNA.backbone}{gRNA backbone constant region sequence. Default to the
-sequence in Sp gRNA backbone.}
+\item{gRNA.backbone}{Defaults to the sequence in Sp gRNA backbone. Applicable
+only when `foldgRNAs = TRUE`. Specifies the gRNA backbone constant region 
+sequence.}
 
-\item{temperature}{temperature in celsius. Default to 37 celsius.}
+\item{temperature}{Defaults to 30. Applicable only when `foldgRNAs = TRUE`.
+Specifies the temperature in Celsius.}
 
-\item{overwrite}{overwrite the existing files in the output directory or
-not, default FALSE}
+\item{overwrite}{Defaults to FALSE. Specifies whether to overwrite the 
+existing files in the output directory.}
 
-\item{scoring.method}{Indicates which method to use for offtarget cleavage
-rate estimation, currently two methods are supported, Hsu-Zhang and CFDscore}
+\item{scoring.method}{Defaults to "Hsu-Zhang". Specifies the method to use 
+for off-target cleavage rate estimation. Choose from "Hsu-Zhang" and 
+"CFDscore"}
 
-\item{subPAM.activity}{Applicable only when scoring.method is set to
-CFDscore A hash to represent the cleavage rate for each alternative sub PAM
-sequence relative to preferred PAM sequence}
+\item{subPAM.activity}{Defaults to "hash(AA = 0, AC = 0, AG = 0.259259259, 
+AT = 0, CA = 0, CC = 0, CG = 0.107142857, CT = 0, GA = 0.069444444, 
+GC = 0.022222222, GG = 1, GT = 0.016129032, TA = 0, TC = 0, TG = 0.038961039,
+TT = 0)". Applicable only when `scoring.method = CFDscore`. Specifies a hash 
+that represents the cleavage rate for each alternative sub PAM sequence 
+relative to preferred PAM sequence.}
 
-\item{subPAM.position}{Applicable only when scoring.method is set to
-CFDscore The start and end positions of the sub PAM. Default to 22 and 23
-for spCas9 with 20bp gRNA and NGG as preferred PAM. For Cpf1, it could be
-c(1,2).}
+\item{subPAM.position}{Defaults to `c(22, 23)` (For spCas9 with 20-bp gRNA and 
+NGG as preferred PAM). Applicable only when `scoring.method = CFDscore`. 
+Specifies the start and end positions of the sub PAM. For Cpf1, it should be
+`c(1,2)`.}
 
-\item{PAM.location}{PAM location relative to gRNA. For example, default to
-3prime for spCas9 PAM.  Please set to 5prime for cpf1 PAM since it's PAM is
-located on the 5 prime end}
+\item{PAM.location}{Defaults to "3prime" (for spCas9). Specifies the PAM 
+location relative to the protospacer sequence. Set to "5prime" for cpf1
+because its PAM is located at the 5 prime end of the protospacer.}
 
-\item{rule.set}{Specify a rule set scoring system for calculating gRNA
-efficacy. Please note that Root_RuleSet2_2016 requires the following python
-packages with specified verion and python 2.7.  1. scikit-learn 0.16.1 2.
-pickle 3. pandas 4. numpy 5. scipy}
+\item{rule.set}{Defaults to "Root_RuleSet1_2014". Specifies a rule set 
+scoring system for calculating gRNA efficacy. Note that "Root_RuleSet2_2016"
+requires the following packages with specified version: python 2.7,
+scikit-learn 0.16.1, pickle, pandas, numpy, and scipy.}
 
-\item{chrom_acc}{Optional binary variable indicating chromatin accessibility
-information with 1 indicating accessible and 0 not accessible.}
+\item{chrom_acc}{Specifies an optional binary variable indicating chromatin 
+accessibility information with 1 representing accessible and 0 representing 
+inaccessible.}
 
-\item{calculategRNAefficacyForOfftargets}{Default to TRUE to output gRNA
-efficacy for offtargets as well as ontargets. Set it to FALSE if only need
-gRNA efficacy calculated for ontargets only to speed up the analysis. Please
-refer to https://support.bioconductor.org/p/133538/#133661 for potential use
-cases of offtarget efficacies.}
+\item{calculategRNAefficacyForOfftargets}{Defaults to TRUE. Specifies whether
+to output gRNA efficacy for both off-targets and on-targets. Set to FALSE if
+only on-target gRNA efficacy is needed to speed up the analysis. For 
+potential use cases of off-target efficacies, refer to 
+https://support.bioconductor.org/p/133538/#133661.}
 
-\item{mismatch.activity.file}{Applicable only when scoring.method is set to
-CFDscore A comma separated (csv) file containing the cleavage rates for all
-possible types of single nucleotide mismatche at each position of the gRNA.
-By default, using the supplemental Table 19 from Doench et al., Nature
-Biotechnology 2016}
+\item{mismatch.activity.file}{Defaults to use the supplementary Table 19 from
+Doench et al., Nature Biotechnology 2016. Applicable only when 
+`scoring.method = CFDscore`. Specifies a CSV file containing the cleavage 
+rates for all possible types of single nucleotide mismatches at each position
+of the gRNA.}
 
-\item{predIndelFreq}{Default to FALSE. Set it to TRUE to output the
-predicted indels and their frequencies.}
+\item{predIndelFreq}{Defaults to FALSE. Specifies whether to output the 
+predicted INDELs and their frequencies.}
 
-\item{predictIndelFreq.onTargetOnly}{Default to TRUE, indicating that indels
-and their frequencies will be predicted for ontargets only. Usually,
-researchers are only interested in predicting the editing outcome for the
-ontargets since any editing in the offtargets are unwanted. Set it to FALSE
-if you are interested in predicting indels and their frequencies for
-offtargets. It will take longer time to run if you set it to FALSE.}
+\item{predictIndelFreq.onTargetOnly}{Defaults to TRUE. Specifies whether to
+predict INDELs and their frequencies for on-targets only. Typically,
+researchers are only interested in predicting editing outcome for on-targets,
+as editing in off-targets is undesirable. Set to FALSE if you want to predict 
+INDELs and their frequencies for off-targets as well. Note that this will 
+increase the run time.}
 
-\item{method.indelFreq}{Currently only Lindel method has been implemented.
-Please let us know if you think additional methods should be made available.
-Lindel is compatible with both Python2.7 and Python3.5 or higher. Please
-type help(predictRelativeFreqIndels) to get more details.}
+\item{method.indelFreq}{Defaults to "Lindel". Applicable only when 
+`predIndelFreq = TRUE`. Specifies the method to be used for predicting 
+INDELs. Currently, only "Lindel" is supported, though additional methods can 
+be added upon request. Type `?predictRelativeFreqIndels` to learn more.}
 
-\item{baseBeforegRNA.indelFreq}{Default to 13 for Lindel method.}
+\item{baseBeforegRNA.indelFreq}{Defaults to 13. Applicable only when
+`predIndelFreq = TRUE`.}
 
-\item{baseAfterPAM.indelFreq}{Default to 24 for Lindel method.}
+\item{baseAfterPAM.indelFreq}{Defaults to 24. Applicable only when
+`predIndelFreq = TRUE`.}
+
+\item{findOffTargetsWithBulge}{Defaults to FALSE. Specifies whether to search
+for off-targets with bulges.}
+
+\item{method.findOffTargetsWithBulge}{Only applicable if 
+`findOffTargetsWithBulge = TRUE`. Choose from `c("CasOFFinder_v3.0.0b3")`.}
+
+\item{DNA_bulge}{Defaults to 2. Maximum number of DNA bulges allowed in 
+off-target search.}
+
+\item{RNA_bulge}{Defaults to 2. Maximum number of RNA bulges allowed in 
+off-target search.}
 }
 \value{
-Four tab delimited files are generated in the output directory:
-\item{OfftargetAnalysis.xls}{ - detailed information of off targets}
-\item{Summary.xls}{ - summary of the gRNAs}
-\item{REcutDetails.xls}{ - restriction enzyme cut sites of each gRNA}
-\item{pairedgRNAs.xls}{ - potential paired gRNAs}
+Four Excel files are generated in the output directory:
+\item{Summary.xlsx}{ - Summary of the gRNAs}
+\item{OfftargetAnalysis.xlsx}{ - Detailed information on off-targets}
+\item{REcutDetails.xlsx}{ - Restriction enzyme cut sites for each gRNA}
+\item{pairedgRNAs.xlsx}{ - Potential paired gRNAs}
 }
 \description{
 Design target-specific guide RNAs (gRNAs) and predict relative indel
@@ -443,119 +466,169 @@ efficacy, indels and their frequencies.
 }
 \examples{
 
-	library(CRISPRseek)
-	library("BSgenome.Hsapiens.UCSC.hg19")
-	library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-	library(org.Hs.eg.db)
-	outputDir <- getwd()
-	inputFilePath <- system.file("extdata", "inputseq.fa",
-            package = "CRISPRseek")
-	REpatternFile <- system.file("extdata", "NEBenzymes.fa",
-            package = "CRISPRseek")
-	results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
-            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-            annotatePaired = FALSE,
-            BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-            outputDir = outputDir, overwrite = TRUE)
+# Load required libraries
+library(CRISPRseek)
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(org.Hs.eg.db)
 
-       #### predict indels and their frequecies for target sites
+# Example 1: given FASTA input, search gRNAs and off-targets
+outputDir <- tempdir()
+inputFilePath <- system.file("extdata/inputseq.fa", package = "CRISPRseek")
+REpatternFile <- system.file("extdata/NEBenzymes.fa", package = "CRISPRseek")
 
-       if (interactive())
-       {
-          results <- offTargetAnalysis(inputFilePath,findgRNAsWithREcutOnly = TRUE,
-            findPairedgRNAOnly = FALSE,
-            annotatePaired = FALSE,
-            BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene, 
-	    orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-            outputDir = outputDir, overwrite = TRUE,
-            predIndelFreq=TRUE, predictIndelFreq.onTargetOnly= TRUE)
+results <- offTargetAnalysis(inputFilePath, 
+                             findPairedgRNAOnly = FALSE,
+                             findgRNAsWithREcutOnly = TRUE,
+                             REpatternFile = REpatternFile, 
+                             annotatePaired = FALSE,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, 
+                             max.mismatch = 1,
+                             outputDir = outputDir, 
+                             overwrite = TRUE)
 
-          names(results$indelFreq)
-          head(results$indelFreq[[1]])
-          ### save the indel frequences to tab delimited files, one file for each target/offtarget site.
-          mapply(write.table, results$indelFreq, file=paste0(names(results$indelFreq), '.xls'), sep = "\t", row.names = FALSE)
+# Example 2: also predict indels and frequecies at target sites
+results <- offTargetAnalysis(inputFilePath,
+                             predIndelFreq = TRUE, 
+                             predictIndelFreq.onTargetOnly = TRUE,
+                             findgRNAsWithREcutOnly = TRUE,
+                             findPairedgRNAOnly = FALSE,
+                             annotatePaired = FALSE,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, 
+                             max.mismatch = 1,
+                             outputDir = outputDir, 
+                             overwrite = TRUE)
+names(results$indelFreq)
+head(results$indelFreq[[1]])
+  # Save the indel frequences to tab delimited files, 
+  # one file for each target or offtarget site.
+mapply(openxlsx::write.xlsx, results$indelFreq, 
+       file = paste0(names(results$indelFreq), '.xlsx'))
 
-       #### predict gRNA efficacy using CRISPRscan
-       featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
-            package = "CRISPRseek")
+# Example 3: predict gRNA efficacy using CRISPRscan
+featureWeightMatrixFile <- system.file("extdata/Morenos-Mateo.csv", 
+                                       package = "CRISPRseek")
 
-       results <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
-            REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-            annotatePaired = FALSE,
-            BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-            orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-            rule.set = "CRISPRscan",
-            baseBeforegRNA = 6, baseAfterPAM = 6,
-            featureWeightMatrixFile = featureWeightMatrixFile,
-            outputDir = outputDir, overwrite = TRUE)
+results <- offTargetAnalysis(inputFilePath, 
+                             rule.set = "CRISPRscan",
+                             findgRNAsWithREcutOnly = TRUE,
+                             REpatternFile = REpatternFile, 
+                             findPairedgRNAOnly = FALSE,
+                             annotatePaired = FALSE,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, 
+                             max.mismatch = 1,
+                             baseBeforegRNA = 6, 
+                             baseAfterPAM = 6,
+                             featureWeightMatrixFile = featureWeightMatrixFile,
+                             outputDir = outputDir, 
+                             overwrite = TRUE)
 
-       ######## PAM is on the 5 prime side, e.g., Cpf1
-       results <- offTargetAnalysis(inputFilePath = system.file("extdata",
-              "cpf1-2.fa", package = "CRISPRseek"), findgRNAsWithREcutOnly =  FALSE,
-          findPairedgRNAOnly = FALSE,
-          annotatePaired = FALSE,
-          BSgenomeName = Hsapiens,
-          chromToSearch = "chr8",
-          txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-          orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-          baseBeforegRNA = 8, baseAfterPAM = 26,
-          rule.set = "DeepCpf1",
-          overlap.gRNA.positions = c(19, 23),
-          useEfficacyFromInputSeq = FALSE,
-          outputDir = getwd(),
-          overwrite = TRUE, PAM.location = "5prime",PAM.size = 4,
-          PAM = "TTTN", PAM.pattern = "^TNNN", allowed.mismatch.PAM = 2,
-          subPAM.position = c(1,2))
+# Example 4: when PAM is on the 5 prime side, e.g., Cpf1
+results <- offTargetAnalysis(inputFilePath = 
+                               system.file("extdata/cpf1-2.fa", 
+                                           package = "CRISPRseek"), 
+                             PAM.location = "5prime",
+                             rule.set = "DeepCpf1",
+                             PAM.size = 4,
+                             PAM = "TTTN", 
+                             PAM.pattern = "^TNNN", 
+                             findgRNAsWithREcutOnly =  FALSE,
+                             findPairedgRNAOnly = FALSE,
+                             annotatePaired = FALSE,
+                             BSgenomeName = Hsapiens,
+                             chromToSearch = "chr8",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
+                             baseBeforegRNA = 8, baseAfterPAM = 26,
+                             overlap.gRNA.positions = c(19, 23),
+                             useEfficacyFromInputSeq = FALSE,
+                             outputDir = outputDir,
+                             overwrite = TRUE, 
+                             allowed.mismatch.PAM = 2,
+                             subPAM.position = c(1, 2))
 
-        results1 <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
-                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-                 annotatePaired = FALSE,
-                 BSgenomeName = Hsapiens, chromToSearch = "chrX",
-                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-                 outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
-                 PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
-                 subPAM.position = c(1,2), baseEditing = TRUE, editingWindow =20, targetBase = "G")
+# Example 5: when PAM is on the 5 prime side, and using Root_RuleSet1_2014
+results <- offTargetAnalysis(inputFilePath, 
+                             PAM.location = "5prime",
+                             PAM = "TGT", 
+                             PAM.pattern = "^T[A|G]N", 
+                             findgRNAsWithREcutOnly =  FALSE,
+                             REpatternFile = REpatternFile, 
+                             findPairedgRNAOnly = FALSE,
+                             annotatePaired = FALSE,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, 
+                             max.mismatch = 4,
+                             outputDir = outputDir, 
+                             overwrite = TRUE, 
+                             allowed.mismatch.PAM = 2, 
+                             subPAM.position = c(1, 2), 
+                             baseEditing = TRUE, 
+                             editingWindow = 20, 
+                             targetBase = "G")
 
-        results.testBE <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly =  FALSE,
-                 REpatternFile = REpatternFile, findPairedgRNAOnly = FALSE,
-                 annotatePaired = FALSE,
-                 BSgenomeName = Hsapiens, chromToSearch = "chrX",
-                 txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-                 orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-                 outputDir = outputDir, overwrite = TRUE, PAM.location = "5prime",
-                 PAM = "TGT", PAM.pattern = "^T[A|G]N", allowed.mismatch.PAM = 2,
-                 subPAM.position = c(1,2), baseEditing = TRUE,
-                 editingWindow = 10:20, targetBase = "A")
+# Example 6: base editor
+results <- offTargetAnalysis(inputFilePath, 
+                             baseEditing = TRUE,
+                             editingWindow = 10:20, 
+                             targetBase = "A",
+                             findgRNAsWithREcutOnly = FALSE,
+                             REpatternFile = REpatternFile, 
+                             findPairedgRNAOnly = FALSE,
+                             annotatePaired = FALSE,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, 
+                             max.mismatch = 4,
+                             PAM.location = "5prime",
+                             PAM = "TGT", 
+                             PAM.pattern = "^T[A|G]N", 
+                             allowed.mismatch.PAM = 2,
+                             subPAM.position = c(1, 2),
+                             outputDir = outputDir, 
+                             overwrite = TRUE)
 
-        inputFilePath <- DNAStringSet(paste(
-"CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAA",
-"CTCATCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
-        names(inputFilePath) <- "testPE"
-        results3 <- offTargetAnalysis(inputFilePath,
-            gRNAoutputName = "testPEgRNAs",
-            BSgenomeName = Hsapiens, chromToSearch = "chrX",
-            txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-            orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-            outputDir = outputDir, overwrite = TRUE,
-            PAM.size = 3L,
-            gRNA.size = 20L,
-            overlap.gRNA.positions = c(17L,18L),
-            PBS.length = 15,
-            corrected.seq = "T",
-            RT.template.pattern = "D$",
-            RT.template.length = 8:30,
-            targeted.seq.length.change = 0,
-            bp.after.target.end = 15,
-            target.start = 20,
-            target.end = 20,
-            paired.orientation = "PAMin", min.gap = 20, max.gap = 90,
-            primeEditing = TRUE, findPairedgRNAOnly = TRUE)
-       }
+# Example 7: prime editor
+inputFilePath <- DNAStringSet(paste0("CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACC",
+                                     "AGAATCAGGGATCGAAAACTCATCAGTCGATGCGAG", 
+                                     "TCATCTAAATTCCGATCAATTTCACACTTTAAACG"))
+results <- offTargetAnalysis(inputFilePath,
+                             primeEditing = TRUE, 
+                             overlap.gRNA.positions = c(17, 18),
+                             PBS.length = 15,
+                             corrected.seq = "T",
+                             RT.template.pattern = "D$",
+                             RT.template.length = 8:30,
+                             targeted.seq.length.change = 0,
+                             bp.after.target.end = 15,
+                             target.start = 20,
+                             target.end = 20,
+                             paired.orientation = "PAMin",
+                             findPairedgRNAOnly = TRUE,
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX",
+                             txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                             orgAnn = org.Hs.egSYMBOL, 
+                             max.mismatch = 1,
+                             outputDir = outputDir, 
+                             overwrite = TRUE,
+                             PAM.size = 3,
+                             gRNA.size = 20,
+                             min.gap = 20, 
+                             max.gap = 90)
+
 }
 \references{
 Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran,
@@ -597,6 +670,6 @@ https://doi.org/10.1038/nbt.4061
 CRISPRseek
 }
 \author{
-Lihua Julie Zhu
+Lihua Julie Zhu, Kai Hu
 }
 \keyword{misc}

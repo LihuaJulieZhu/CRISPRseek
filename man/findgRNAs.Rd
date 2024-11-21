@@ -5,7 +5,7 @@
 \title{Find potential gRNAs}
 \usage{
 findgRNAs(
-  inputFilePath,
+  inputFilePath = NULL,
   baseEditing = FALSE,
   targetBase = "C",
   editingWindow = 4:8,
@@ -17,32 +17,31 @@ findgRNAs(
   paired.orientation = c("PAMout", "PAMin"),
   enable.multicore = FALSE,
   n.cores.max = 6,
-  gRNA.pattern = "",
+  gRNA.pattern = NULL,
   gRNA.size = 20,
   overlap.gRNA.positions = c(17, 18),
   primeEditing = FALSE,
   PBS.length = 13L,
   RT.template.length = 8:28,
   RT.template.pattern = "D$",
-  corrected.seq,
-  targeted.seq.length.change,
+  corrected.seq = NULL,
+  targeted.seq.length.change = NULL,
   bp.after.target.end = 15L,
-  target.start,
-  target.end,
+  target.start = NULL,
+  target.end = NULL,
   primeEditingPaired.output = "pairedgRNAsForPE.xls",
   min.gap = 0,
   max.gap = 20,
-  pairOutputFile,
-  name.prefix = "",
-  featureWeightMatrixFile = system.file("extdata", "DoenchNBT2014.csv", package =
-    "CRISPRseek"),
+  pairOutputFile = NULL,
+  name.prefix = NULL,
+  featureWeightMatrixFile = featureWeightMatrixFile_default(),
   baseBeforegRNA = 4,
   baseAfterPAM = 3,
   calculategRNAEfficacy = FALSE,
-  efficacyFile,
+  efficacyFile = NULL,
   PAM.location = "3prime",
   rule.set = c("Root_RuleSet1_2014", "Root_RuleSet2_2016", "CRISPRscan", "DeepCpf1"),
-  chrom_acc
+  chrom_acc = NULL
 )
 }
 \arguments{
@@ -66,7 +65,7 @@ use have a different editing window.}
 \item{format}{Format of the input file, fasta and fastq are supported,
 default fasta}
 
-\item{PAM}{protospacer-adjacent motif (PAM) sequence after the gRNA, default
+\item{PAM}{protospacer-adjacent motif (PAM) sequence near the gRNA, default
 NGG}
 
 \item{PAM.size}{PAM length, default 3}
@@ -99,7 +98,8 @@ help(translatePattern) for a list of IUPAC Extended Genetic Alphabet.}
 \item{gRNA.size}{The size of the gRNA, default 20}
 
 \item{overlap.gRNA.positions}{The required overlap positions of gRNA and
-restriction enzyme cut site, default 17 and 18. For Cpf1,you may set it to 19 and 23.}
+restriction enzyme cut site, default 17 and 18. For Cpf1,you may set it to 19 
+and 23.}
 
 \item{primeEditing}{Indicate whether to design gRNAs for prime editing.
 Default to FALSE.  If true, please set PBS.length, RT.template.length,
@@ -207,8 +207,7 @@ Find potential gRNAs for an input file containing sequences in fasta format
 \details{
 If users already has a fasta file that contains a set of potential gRNAs,
 then users can call filergRNAs directly although the easiest way is to call
-the one-stop-shopping function OffTargetAnalysis with findgRNAs set to
-FALSE.
+the one-stop-shopping function OffTargetAnalysis with findgRNAs set to FALSE.
 }
 \note{
 If the input sequence file contains multiple >300 bp sequences,
@@ -216,92 +215,105 @@ suggest create one input file for each sequence and run the
 OffTargetAnalysis separately.
 }
 \examples{
-    findgRNAs(inputFilePath = system.file("extdata",
-        "inputseq.fa", package = "CRISPRseek"),
-        pairOutputFile = "testpairedgRNAs.xls",
-        findPairedgRNAOnly = TRUE)
 
+# Example1: DNAStringSet as input, only output paired gRNAs
+inputSeq <-  DNAStringSet(paste0("CCAGTTTGTGGATCCTGCTCTGGTGTC",
+                                 "CTCCACACCAGAATCAGGGATCGAAAA",
+                                 "CTCATCAGTCGATGCGAGTCATCTAAA",
+                                 "TTCCGATCAATTTCACACTTTAAACG"))
+findgRNAs(inputFilePath =  inputSeq,
+          findPairedgRNAOnly = TRUE,
+          pairOutputFile = "test_findgRNAs1.xlsx",
+          PAM.size = 3L,
+          gRNA.size = 20L,
+          overlap.gRNA.positions = c(17L,18L),
+          PBS.length = 15,
+          corrected.seq = "T",
+          RT.template.pattern = "D$",
+          RT.template.length = 8:30,
+          targeted.seq.length.change = 0,
+          bp.after.target.end = 15,
+          target.start = 46,
+          target.end = 46,
+          paired.orientation = "PAMin", 
+          min.gap = 20, 
+          max.gap = 90,
+          primeEditing = TRUE)
 
-    ##### predict gRNA efficacy using CRISPRscan
-    featureWeightMatrixFile <- system.file("extdata", "Morenos-Mateo.csv",
-            package = "CRISPRseek")
+# Example2: FASTA as input, only output paired gRNAs
+findgRNAs(inputFilePath = system.file("extdata",
+                                      "inputseq.fa", 
+                                      package = "CRISPRseek"),
+          findPairedgRNAOnly = TRUE,
+          pairOutputFile = "test_findgRNAs2.xlsx")
 
-    findgRNAs(inputFilePath = system.file("extdata",
-        "inputseq.fa", package = "CRISPRseek"),
-        pairOutputFile = "testpairedgRNAs.xls",
-        findPairedgRNAOnly = FALSE,
-        calculategRNAEfficacy= TRUE,
-        rule.set = "CRISPRscan",
-        baseBeforegRNA = 6, baseAfterPAM = 6,
-        featureWeightMatrixFile = featureWeightMatrixFile,
-        efficacyFile = "testCRISPRscanEfficacy.xls"
-     )
+# Example3: predict gRNA efficacy using CRISPRscan
+featureWeightMatrixFile <- system.file("extdata", 
+                                       "Morenos-Mateo.csv",
+                                       package = "CRISPRseek")
+findgRNAs(inputFilePath = system.file("extdata",
+                                      "testCRISPRscan.fa", 
+                                      package = "CRISPRseek"),
+          pairOutputFile = "test_findgRNAs3.xlsx",
+          findPairedgRNAOnly = FALSE,
+          calculategRNAEfficacy= TRUE,
+          rule.set = "CRISPRscan",
+          baseBeforegRNA = 6, 
+          baseAfterPAM = 6,
+          featureWeightMatrixFile = featureWeightMatrixFile,
+          efficacyFile = "testCRISPRscanEfficacy.xlsx")
 
-     findgRNAs(inputFilePath = system.file("extdata",
-        "testCRISPRscan.fa", package = "CRISPRseek"),
-        pairOutputFile = "testpairedgRNAs.xls",
-        findPairedgRNAOnly = FALSE,
-        calculategRNAEfficacy= TRUE,
-        rule.set = "CRISPRscan",
-        baseBeforegRNA = 6, baseAfterPAM = 6,
-        featureWeightMatrixFile = featureWeightMatrixFile,
-        efficacyFile = "testCRISPRscanEfficacy.xls"
-     )
-   if (interactive()) {
-     findgRNAs(inputFilePath = system.file("extdata",
-        "cpf1.fa", package = "CRISPRseek"),
-        findPairedgRNAOnly=FALSE,
-        pairOutputFile = "testpairedgRNAs-cpf1.xls",
-        PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
-        overlap.gRNA.positions = c(19, 23),
-        baseBeforegRNA = 8, baseAfterPAM = 26,
-        calculategRNAEfficacy= TRUE,
-        rule.set = "DeepCpf1",
-       efficacyFile = "testcpf1Efficacy.xls")
+# Example 4: predict gRNA efficacy using DeepCpf1
+findgRNAs(inputFilePath = system.file("extdata", 
+                                      "cpf1.fa", 
+                                      package = "CRISPRseek"),
+          findPairedgRNAOnly = FALSE,
+          pairOutputFile = "test_findgRNAs_cpf1.xlsx",
+          PAM = "TTTN", 
+          PAM.location = "5prime", 
+          PAM.size = 4,
+          overlap.gRNA.positions = c(19, 23),
+          baseBeforegRNA = 8, 
+          baseAfterPAM = 26,
+          calculategRNAEfficacy = TRUE,
+          rule.set = "DeepCpf1",
+          efficacyFile = "testcpf1Efficacy.xlsx")
 
-     findgRNAs(inputFilePath = system.file("extdata",
-             "cpf1.fa", package = "CRISPRseek"),
-             findPairedgRNAOnly=FALSE,
-             pairOutputFile = "testpairedgRNAs-cpf1.xls",
-             PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
-             overlap.gRNA.positions = c(19,23),
-             baseBeforegRNA = 8, baseAfterPAM = 26,
-             calculategRNAEfficacy= TRUE,
-             rule.set = "DeepCpf1",
-             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
-             editingWindow=20, targetBase = "X")
+findgRNAs(inputFilePath = system.file("extdata", 
+                                      "cpf1.fa", 
+                                      package = "CRISPRseek"),
+          findPairedgRNAOnly = FALSE,
+          pairOutputFile = "test_findgRNAs_cpf1.xlsx",
+          PAM = "TTTN", 
+          PAM.location = "5prime", 
+          PAM.size = 4,
+          overlap.gRNA.positions = c(19, 23),
+          baseBeforegRNA = 8, 
+          baseAfterPAM = 26,
+          calculategRNAEfficacy= TRUE,
+          rule.set = "DeepCpf1",
+          efficacyFile = "testcpf1Efficacy.xlsx", 
+          baseEditing = TRUE,
+          editingWindow = 20, 
+          targetBase = "X")
 
-     findgRNAs(inputFilePath = system.file("extdata",
-             "cpf1.fa", package = "CRISPRseek"),
-             findPairedgRNAOnly=FALSE,
-             pairOutputFile = "testpairedgRNAs-cpf1.xls",
-             PAM="TTTN", PAM.location = "5prime", PAM.size = 4,
-             overlap.gRNA.positions = c(19, 23),
-             baseBeforegRNA = 8, baseAfterPAM = 26,
-             calculategRNAEfficacy= TRUE,
-             rule.set = "DeepCpf1",
-             efficacyFile = "testcpf1Efficacy.xls", baseEditing =  TRUE,
-             editingWindow=20, targetBase = "C")
-   }
-
-     inputSeq <-  DNAStringSet(paste(
-"CCAGTTTGTGGATCCTGCTCTGGTGTCCTCCACACCAGAATCAGGGATCGAAAACTCA",
-"TCAGTCGATGCGAGTCATCTAAATTCCGATCAATTTCACACTTTAAACG", sep =""))
-     gRNAs <-  findgRNAs(inputFilePath =  inputSeq,
-         pairOutputFile = "testpairedgRNAs1.xls",
-         PAM.size = 3L,
-         gRNA.size = 20L,
-         overlap.gRNA.positions = c(17L,18L),
-         PBS.length = 15,
-         corrected.seq = "T",
-         RT.template.pattern = "D$",
-         RT.template.length = 8:30,
-         targeted.seq.length.change = 0,
-         bp.after.target.end = 15,
-         target.start = 46,
-         target.end = 46,
-         paired.orientation = "PAMin", min.gap = 20, max.gap = 90,
-         primeEditing = TRUE, findPairedgRNAOnly = TRUE)
+findgRNAs(inputFilePath = system.file("extdata",
+                                      "cpf1.fa", 
+                                      package = "CRISPRseek"),
+          findPairedgRNAOnly = FALSE,
+          pairOutputFile = "test_findgRNAs_cpf1.xlsx",
+          PAM = "TTTN", 
+          PAM.location = "5prime", 
+          PAM.size = 4,
+          overlap.gRNA.positions = c(19, 23),
+          baseBeforegRNA = 8, 
+          baseAfterPAM = 26,
+          calculategRNAEfficacy = TRUE,
+          rule.set = "DeepCpf1",
+          efficacyFile = "testcpf1Efficacy.xlsx", 
+          baseEditing = TRUE,
+          editingWindow = 20, 
+          targetBase = "C")
 
 }
 \references{

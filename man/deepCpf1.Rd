@@ -4,7 +4,7 @@
 \alias{deepCpf1}
 \title{DeepCpf1 Algorithm for predicting CRISPR-Cpf1 gRNA Efficacy}
 \usage{
-deepCpf1(extendedSequence, chrom_acc)
+deepCpf1(extendedSequence = NULL, chrom_acc = NULL)
 }
 \arguments{
 \item{extendedSequence}{Sequences containing gRNA plus PAM plus flanking

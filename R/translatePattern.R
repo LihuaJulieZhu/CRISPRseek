@@ -22,6 +22,9 @@
 #' @export
 translatePattern <- function(pattern)
 {
+    if (is.null(pattern)) {
+      pattern <- ""
+    }
     pattern <- toupper(pattern)
     pattern <- gsub("Y", "[C|T]", pattern)
     pattern <- gsub("R", "[A|G]", pattern)

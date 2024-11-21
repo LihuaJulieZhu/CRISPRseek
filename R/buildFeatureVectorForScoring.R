@@ -75,10 +75,8 @@
 #' \item{mean.neighbor.distance.mismatch} - {mean distance between neighboring
 #' mismatches}
 #' }
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
 #' @seealso offTargetAnalysis
-#' @references %% ~put references to the literature/web site here ~
 #' @keywords misc
 #' @examples
 #' 

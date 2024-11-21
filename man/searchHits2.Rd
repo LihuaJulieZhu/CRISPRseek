@@ -5,10 +5,10 @@
 \title{Search for off targets}
 \usage{
 searchHits2(
-  gRNAs,
-  BSgenomeName,
+  gRNAs = NULL,
+  BSgenomeName = NULL,
   chromToSearch = "all",
-  chromToExclude = "",
+  chromToExclude = NULL,
   max.mismatch = 3,
   PAM.size = 3,
   gRNA.size = 20,
@@ -123,7 +123,7 @@ Search for off targets for given gRNAs, BSgenome and maximum mismatches
 
     all.gRNAs <- findgRNAs(inputFilePath = 
         system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
-        pairOutputFile = "pairedgRNAs.xls",
+        pairOutputFile = "pairedgRNAs.xlsx",
 	findPairedgRNAOnly = TRUE)
 
     library("BSgenome.Hsapiens.UCSC.hg19")
@@ -136,7 +136,7 @@ Search for off targets for given gRNAs, BSgenome and maximum mismatches
     ### test PAM located at 5 prime
     all.gRNAs <- findgRNAs(inputFilePath = 
              system.file("extdata", "inputseq.fa", package = "CRISPRseek"),
-             pairOutputFile = "pairedgRNAs.xls",
+             pairOutputFile = "pairedgRNAs.xlsx",
              findPairedgRNAOnly = FALSE,
              PAM = "TGT", PAM.location = "5prime")
      

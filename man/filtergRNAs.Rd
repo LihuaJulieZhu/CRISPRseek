@@ -5,10 +5,10 @@
 \title{Filter gRNAs}
 \usage{
 filtergRNAs(
-  all.gRNAs,
-  pairOutputFile = "",
+  all.gRNAs = NULL,
+  pairOutputFile = NULL,
   findgRNAsWithREcutOnly = FALSE,
-  REpatternFile = system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek"),
+  REpatternFile = REpatternFile_default(),
   format = "fasta",
   minREpatternSize = 4,
   overlap.gRNA.positions = c(17, 18),
@@ -53,19 +53,23 @@ Filter gRNAs containing restriction enzyme cut site
 }
 \examples{
 
-    all.gRNAs <- findgRNAs(
-        inputFilePath = system.file("extdata", "inputseq.fa", 
-        package = "CRISPRseek"),
-        pairOutputFile = "testpairedgRNAs.xls",
-        findPairedgRNAOnly = TRUE)
+all.gRNAs <- findgRNAs(
+  inputFilePath = system.file("extdata", "inputseq.fa",
+  package = "CRISPRseek"),
+  pairOutputFile = "testpairedgRNAs.xlsx",
+  findPairedgRNAOnly = TRUE)
 
-    gRNAs.RE <- filtergRNAs(all.gRNAs = all.gRNAs,
-        pairOutputFile = "testpairedgRNAs.xls",minREpatternSize = 6,
-        REpatternFile = system.file("extdata", "NEBenzymes.fa", 
-        package = "CRISPRseek"), overlap.allpos = TRUE)
+gRNAs.RE <- filtergRNAs(
+  all.gRNAs = all.gRNAs,
+  pairOutputFile = "testpairedgRNAs.xlsx",
+  minREpatternSize = 6,
+  REpatternFile = system.file("extdata", "NEBenzymes.fa", 
+                              package = "CRISPRseek"), 
+  overlap.allpos = TRUE)
 
-    gRNAs  <- gRNAs.RE$gRNAs.withRE
-    restriction.enzyme.cut.sites <- gRNAs.RE$gRNAREcutDetails
+gRNAs  <- gRNAs.RE$gRNAs.withRE
+restriction.enzyme.cut.sites <- gRNAs.RE$gRNAREcutDetails
+
 }
 \references{
 %% ~put references to the literature/web site here ~

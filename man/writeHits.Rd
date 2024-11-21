@@ -5,21 +5,21 @@
 \title{Write the hits of sequence search from a sequence to a file}
 \usage{
 writeHits(
-  gRNA,
-  seqname,
-  matches,
-  strand,
-  file,
+  gRNA = NULL,
+  seqname = NULL,
+  matches = NULL,
+  strand = NULL,
+  file = NULL,
   gRNA.size = 20L,
   PAM = "NGG",
   PAM.pattern = "N[A|G]G$",
   max.mismatch = 4L,
-  chrom.len,
+  chrom.len = NULL,
   append = FALSE,
   PAM.location = "3prime",
   PAM.size = 3L,
   allowed.mismatch.PAM = 1L,
-  seqs,
+  seqs = NULL,
   baseEditing = FALSE,
   targetBase = "C",
   editingWindow = 4:8
