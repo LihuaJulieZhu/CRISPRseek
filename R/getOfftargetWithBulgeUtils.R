@@ -156,7 +156,7 @@ prepCasOFFinderBulge <- function(version = c("2.4.1", "3.0.0b3")) {
     # Check and install Python if needed
     py_config()
     if (py_available()) {
-      pyv <- unlist(strsplit(py_discover_config()$version, ".", fixed = TRUE))
+      pyv <- unlist(strsplit(as.character(py_discover_config()$version), ".", fixed = TRUE))
       if (length(pyv) < 2 || !( (pyv[1] == 3 && pyv[2] >= 5) )) {
         abort("Please install Python 3.5 or higher for Cas-OFFinder!")
       }

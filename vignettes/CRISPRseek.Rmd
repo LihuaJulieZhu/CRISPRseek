@@ -70,8 +70,7 @@ The `r Biocpkg("CRISPRseek")` package is highly flexible, allowing users to cust
 Key functions implemented in the `r Biocpkg("CRISPRseek")`, along with their roles, input parameters, and outputs, are illustrated in the diagram below. For convenience, we highly recommend using the one-stop wrapper function, `offtargetAnalysis()`, which streamlines the entire gRNA identification and off-target analysis workflow.
 
 ```{r, fig.cap = "Analytical workflow and core functions in CRISPRseek", echo = FALSE, out.width = "90%", out.height = "90%"}
-png <- system.file("extdata", "core_functions.png", package = "CRISRPseek")
-png <- "~/GitHub/CRISPRseek/inst/extdata/core_functions.png"
+png <- system.file("extdata", "core_functions.png", package = "CRISPRseek")
 
 knitr::include_graphics(png)
 ```

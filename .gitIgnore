@@ -4,3 +4,7 @@ recreateTestResults.R
 bin/*
 todel/*
 tests/.R*
+.Rhistory
+.Rbuildignore
+.gitignore
+vignettes/testpairedgRNAs.xls
