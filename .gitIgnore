@@ -8,3 +8,4 @@ tests/.R*
 .Rbuildignore
 .gitignore
 vignettes/testpairedgRNAs.xls
+**/.Rhistory
