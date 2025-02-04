@@ -27,6 +27,7 @@
 #' https://doi.org/10.1038/nbt.4061
 #'
 #' @import keras
+#' @importFrom reticulate py_install py_config
 #' @importFrom mltools one_hot
 #' @importFrom dplyr select ends_with mutate_if slice
 #' @importFrom data.table as.data.table
@@ -46,16 +47,16 @@
 #'  'TGACTTTGAATGGAGTCGTGAGCGCAAGAACGCT',
 #'  'GTTATTTGAGCAATGCCACTTAATAAACATGTAA',
 #'  'TGACTTTGAATGGAGTCGTGAGCGCAAGAACGCT')
-#' chrom_acc <- c(0,1, 0, 1)
+#' chrom_acc <- c(0, 1, 0, 1)
 #'
 #' if (interactive()) {
 #'  deepCpf1(extendedSequence = extendedSequence, chrom_acc = chrom_acc)
 #' }
 
-
 deepCpf1 <- function(extendedSequence = NULL, chrom_acc = NULL){
   # use tensorflow implementation
   use_implementation('tensorflow')
+  
   if (is.null(extendedSequence))
      stop("extendedSequence is required for predicting efficacy using DeepCpf1 algorithm!")
   len <- unlist(lapply(extendedSequence, nchar))
