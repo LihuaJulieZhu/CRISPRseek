@@ -244,16 +244,19 @@ There are three parameters specific to bulge searches, with the following defaul
 + `DNA_bulge = 2`
 + `RNA_bulge = 2`
 
-Note that, currently, `method.findOffTargetsWithBulge` only supports "CasOFFinder_v3.0.0b3", which generates results that may differ from those produced by "CasOFFinder_v2", For more details, refer to this [link](https://github.com/snugel/cas-offinder).
+Note that, currently, `method.findOffTargetsWithBulge` only supports "CasOFFinder_v3.0.0b3", which generates results that may differ from those produced by "CasOFFinder_v2", For more details, refer to this [link](https://github.com/snugel/cas-offinder). To use "CasOFFinder" on Linux or Windows, you may need to install "pocl-opencl-icd" if it is not already installed.
 ```{r}
-res <- offTargetAnalysis(inputFilePath = inputFilePath,
+if (interactive()) {
+  res <- offTargetAnalysis(inputFilePath = inputFilePath,
                          findOffTargetsWithBulge = TRUE,
                          BSgenomeName = Hsapiens,
                          chromToSearch = "chrX",
                          annotateExon = FALSE,
                          outputDir = outputDir,
                          overwrite = TRUE)
-head(res$offtarget[, c("name", "gRNAPlusPAM_bulge", "OffTargetSequence_bulge", "n.RNABulge", "n.DNABulge", "alignment")])
+  head(res$offtarget[, c("name", "gRNAPlusPAM_bulge", "OffTargetSequence_bulge", "n.RNABulge", "n.DNABulge", "alignment")])
+}
+
 ```
 
 The columns relevant to the bulge search are described below. If no bulge is detected, both the "gRNAPlusPAM_bulge" and "OffTargetSequence_bulge" columns for that row will both be empty, while the "n.RNABulge" and "n.DNABulge" values will both be 0.
@@ -273,15 +276,17 @@ Alternatively, you can use the wrapper function `getOfftargetWithBulge()` to dir
 
 Note that `getOfftargetWithBulge()` currently supports two versions of Cas-OFFinder: "2.4.1" and "3.0.0b3", specified through the `cas_offinder_version` argument, with the default set to "2.4.1". Type `?getOfftargetWithBulges` for more examples.
 ```{r}
-gRNA_PAM <- findgRNAs(inputFilePath = system.file("extdata",
-                                                  "inputseq.fa",
-                                                   package = "CRISPRseek"),
-                      pairOutputFile = "testpairedgRNAs.xls",
-                      findPairedgRNAOnly = TRUE)
-res <- getOfftargetWithBulge(gRNA_PAM,
-                             BSgenomeName = Hsapiens, 
-                             chromToSearch = "chrX")
-head(res)
+if (interactive()) {
+  gRNA_PAM <- findgRNAs(inputFilePath = system.file("extdata",
+                                                    "inputseq.fa",
+                                                    package = "CRISPRseek"),
+                        pairOutputFile = "testpairedgRNAs.xls",
+                        findPairedgRNAOnly = TRUE)
+  res <- getOfftargetWithBulge(gRNA_PAM,
+                               BSgenomeName = Hsapiens, 
+                               chromToSearch = "chrX")
+  head(res)
+}
 ```
 
 ## Scoring off-targets using different methods
