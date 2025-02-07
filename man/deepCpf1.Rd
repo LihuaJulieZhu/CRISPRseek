@@ -43,7 +43,7 @@ extendedSequence <- c('GTTATTTGAGCAATGCCACTTAATAAACATGTAA',
  'TGACTTTGAATGGAGTCGTGAGCGCAAGAACGCT',
  'GTTATTTGAGCAATGCCACTTAATAAACATGTAA',
  'TGACTTTGAATGGAGTCGTGAGCGCAAGAACGCT')
-chrom_acc <- c(0,1, 0, 1)
+chrom_acc <- c(0, 1, 0, 1)
 
 if (interactive()) {
  deepCpf1(extendedSequence = extendedSequence, chrom_acc = chrom_acc)
