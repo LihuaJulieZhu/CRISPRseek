@@ -264,9 +264,9 @@ findgRNAs(inputFilePath = system.file("extdata",
           efficacyFile = "testCRISPRscanEfficacy.xlsx")
 
 # Example 4: predict gRNA efficacy using DeepCpf1
-Note: that these examples may fail during build/check on Bioconductor when 
-running on MacOS Monterey due to compatibility issues with keras. To avoid 
-errors, wrap the code in `if (interactive)`.
+# Note: that these examples may fail during build/check on Bioconductor when 
+# running on MacOS Monterey due to compatibility issues with keras. To avoid 
+# errors, wrap the code in `if (interactive)`.
 if (interactive()) {
   findgRNAs(inputFilePath = system.file("extdata", 
                                         "cpf1.fa", 
