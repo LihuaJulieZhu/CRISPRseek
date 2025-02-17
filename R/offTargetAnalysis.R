@@ -393,28 +393,30 @@
 #'                              overwrite = TRUE)
 #' 
 #' # Example 4: when PAM is on the 5 prime side, e.g., Cpf1
-#' results <- offTargetAnalysis(inputFilePath = 
+#' if (interactive()) {
+#'   results <- offTargetAnalysis(inputFilePath = 
 #'                                system.file("extdata/cpf1-2.fa", 
 #'                                            package = "CRISPRseek"), 
-#'                              PAM.location = "5prime",
-#'                              rule.set = "DeepCpf1",
-#'                              PAM.size = 4,
-#'                              PAM = "TTTN", 
-#'                              PAM.pattern = "^TNNN", 
-#'                              findgRNAsWithREcutOnly =  FALSE,
-#'                              findPairedgRNAOnly = FALSE,
-#'                              annotatePaired = FALSE,
-#'                              BSgenomeName = Hsapiens,
-#'                              chromToSearch = "chr8",
-#'                              txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-#'                              orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
-#'                              baseBeforegRNA = 8, baseAfterPAM = 26,
-#'                              overlap.gRNA.positions = c(19, 23),
-#'                              useEfficacyFromInputSeq = FALSE,
-#'                              outputDir = outputDir,
-#'                              overwrite = TRUE, 
-#'                              allowed.mismatch.PAM = 2,
-#'                              subPAM.position = c(1, 2))
+#'                                PAM.location = "5prime",
+#'                                rule.set = "DeepCpf1",
+#'                                PAM.size = 4,
+#'                                PAM = "TTTN", 
+#'                                PAM.pattern = "^TNNN", 
+#'                                findgRNAsWithREcutOnly =  FALSE,
+#'                                findPairedgRNAOnly = FALSE,
+#'                                annotatePaired = FALSE,
+#'                                BSgenomeName = Hsapiens,
+#'                                chromToSearch = "chr8",
+#'                                txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+#'                                orgAnn = org.Hs.egSYMBOL, max.mismatch = 4,
+#'                                baseBeforegRNA = 8, baseAfterPAM = 26,
+#'                                overlap.gRNA.positions = c(19, 23),
+#'                                useEfficacyFromInputSeq = FALSE,
+#'                                outputDir = outputDir,
+#'                                overwrite = TRUE, 
+#'                                allowed.mismatch.PAM = 2,
+#'                                subPAM.position = c(1, 2))
+#' }
 #' 
 #' # Example 5: when PAM is on the 5 prime side, and using Root_RuleSet1_2014
 #' results <- offTargetAnalysis(inputFilePath, 
