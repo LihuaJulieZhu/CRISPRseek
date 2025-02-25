@@ -73,35 +73,42 @@ and specificity of the gRNA to its target. The function wraps around
 }
 \examples{
 # Example with `DNAStringSet` as input
-library(CRISPRseek)
-library(BSgenome.Hsapiens.UCSC.hg19)
+if (interactive()) {
+  library(CRISPRseek)
+  library(BSgenome.Hsapiens.UCSC.hg19)
 
-gRNA_PAM <- findgRNAs(inputFilePath = system.file("extdata", 
-                                                  "inputseq.fa", 
-                                                   package = "CRISPRseek"),
-                      pairOutputFile = "testpairedgRNAs.xls",
-                      findPairedgRNAOnly = TRUE)
-df <- getOfftargetWithBulge(gRNA_PAM, PAM.pattern = "NNG$|NGN$",
-                            DNA_bulge = 2, RNA_bulge = 2,
-                            BSgenomeName = Hsapiens, chromToSearch = "chrX")
+  gRNA_PAM <- findgRNAs(inputFilePath = system.file("extdata", 
+                                                    "inputseq.fa", 
+                                                     package = "CRISPRseek"),
+                        pairOutputFile = "testpairedgRNAs.xls",
+                        findPairedgRNAOnly = TRUE)
+  df <- getOfftargetWithBulge(gRNA_PAM, PAM.pattern = "NNG$|NGN$",
+                             DNA_bulge = 2, RNA_bulge = 2,
+                             BSgenomeName = Hsapiens, chromToSearch = "chrX")
 
-# Example with `list` output from `offTargetAnalysis` as input
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-library(org.Hs.eg.db)
+ # Example with `list` output from `offTargetAnalysis` as input
+ library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+ library(org.Hs.eg.db)
 
-inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
-REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
-res <- offTargetAnalysis(inputFilePath, findgRNAsWithREcutOnly = TRUE,
-                         REpatternFile = REpatternFile, 
-                         findPairedgRNAOnly = FALSE, annotatePaired = FALSE,
-                         BSgenomeName = Hsapiens, chromToSearch = "chrX",
-                         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
-                         orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
-                         outputDir = tempdir(),
-                         overwrite = TRUE)
-df <- getOfftargetWithBulge(res, PAM.pattern = "NNG$|NGN$", DNA_bulge = 2, 
-                            RNA_bulge = 2, BSgenomeName = Hsapiens, 
-                            chromToSearch = "chrX")
+ inputFilePath <- system.file("extdata", "inputseq.fa", package = "CRISPRseek")
+ REpatternFile <- system.file("extdata", "NEBenzymes.fa", package = "CRISPRseek")
+ res <- offTargetAnalysis(inputFilePath, 
+                          findgRNAsWithREcutOnly = TRUE,
+                          REpatternFile = REpatternFile, 
+                          findPairedgRNAOnly = FALSE, 
+                          annotatePaired = FALSE,
+                          BSgenomeName = Hsapiens, 
+                          chromToSearch = "chrX",
+                          txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
+                          orgAnn = org.Hs.egSYMBOL, max.mismatch = 1,
+                          outputDir = tempdir(),
+                          overwrite = TRUE)
+ df <- getOfftargetWithBulge(res, PAM.pattern = "NNG$|NGN$",
+                             DNA_bulge = 2, 
+                             RNA_bulge = 2, 
+                             BSgenomeName = Hsapiens, 
+                             chromToSearch = "chrX") 
+ }
 }
 \references{
 1. Sangsu Bae, Jeongbin Park, Jin-Soo Kim, Cas-OFFinder: a fast and versatile algorithm that searches for potential off-target sites of Cas9 RNA-guided endonucleases, Bioinformatics, Volume 30, Issue 10, May 2014, Pages 1473–1475, https://doi.org/10.1093/bioinformatics/btu048

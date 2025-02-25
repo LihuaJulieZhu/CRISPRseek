@@ -502,8 +502,10 @@ addAlnInfoToHits <- function(hits = NULL,
 #' @importFrom hash hash
 #' @examples
 #' 
-#' getOfftargetScoreBulge(featureVectors, 
-#'                        mismatch.activity.file = mismatch.activity.file_default_xlsx())
+#' if (interactive()) {
+#'  getOfftargetScoreBulge(featureVectors, 
+#'                         mismatch.activity.file = mismatch.activity.file_default_xlsx())
+#' }
 getOfftargetScoreBulge <- function(featureVectors,
                                    subPAM.activity = subPAM.activity_default,
                                    mismatch.activity.file = mismatch.activity.file_default_xlsx()) {
