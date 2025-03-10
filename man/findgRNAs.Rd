@@ -321,9 +321,6 @@ if (interactive()) {
 }
 
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \seealso{
 offTargetAnalysis
 }

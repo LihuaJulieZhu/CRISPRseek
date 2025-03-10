@@ -19,22 +19,10 @@ expression. For example,Y->[C|T], R-> [A|G], S-> [G|C], W-> [A|T], K->
 [T|U|G], M-> [A|C], B-> [C|G|T], D-> [A|G|T], H-> [A|C|T], V-> [A|C|G] and
 N-> [A|C|T|G].
 }
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
-}
 \examples{
 
 	  pattern1 <- "AACCNWMK"
 	  translatePattern(pattern1)
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\seealso{
-%%
 }
 \author{
 Lihua Julie Zhu

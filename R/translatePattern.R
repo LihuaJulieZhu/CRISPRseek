@@ -5,15 +5,10 @@
 #' [T|U|G], M-> [A|C], B-> [C|G|T], D-> [A|G|T], H-> [A|C|T], V-> [A|C|G] and
 #' N-> [A|C|T|G].
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
-#' 
 #' @param pattern a character vector with the IUPAC nucleotide ambiguity codes
 #' @return a character vector with the pattern represented as regular
 #' expression
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
-#' @seealso %%
-#' @references %% ~put references to the literature/web site here ~
 #' @keywords misc
 #' @examples
 #' 

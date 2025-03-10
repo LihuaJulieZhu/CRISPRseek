@@ -32,29 +32,7 @@ filterOffTarget(
 )
 }
 \arguments{
-\item{scores}{a data frame output from getOfftargetScore. It contains
-\itemize{
-\item{strand} - {strand of the off target, + for plus and - for minus strand}
-\item{chrom} - {chromosome of the off target}
-\item{chromStart} - {start position of the offtarget}
-\item{chromEnd} - {end position of the offtarget}
-\item{name} - {gRNA name}
-\item{gRNAPlusPAM} - {gRNA sequence with PAM sequence concatenated}
-\item{OffTargetSequence} - {the genomic sequence of the off target}
-\item{n.mismatch} - {number of mismatches between the off target and the gRNA}
-\item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g., chr14:31665685-31665707}
-\item{score} - {score of the off target}
-\item{mismatch.distance2PAM} - {a comma separated
-distances of all mismatches to PAM, e.g., 14,11 means one mismatch is 14 bp
-away from PAM and the other mismatch is 11 bp away from PAM}
-\item{alignment} - {alignment between gRNA and off target, e.g., ......G..C.......... means
-that this off target aligns with gRNA except that G and C are
-mismatches}
-\item{NGG} - {this off target contains canonical PAM or not, 1 for yes
-and 0 for no)}
-\item{mean.neighbor.distance.mismatch} - {mean distance between
-neighboring mismatches}
-}}
+\item{scores}{a data frame output from getOfftargetScore. It contains}
 
 \item{min.score}{minimum score of an off target to included in the final
 output, default 0.5}
@@ -98,11 +76,11 @@ FALSE}
 \item{BSgenomeName}{BSgenome object. Please refer to available.genomes in
 BSgenome package. For example,
 \itemize{
-\item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
-\item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
-\item{BSgenome.Celegans.UCSC.ce6} - {for ce6}
-\item{BSgenome.Rnorvegicus.UCSC.rn5} - {for rn5}
-\item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
+ \item BSgenome.Hsapiens.UCSC.hg19 - for hg19
+ \item BSgenome.Mmusculus.UCSC.mm10 - for mm10
+ \item BSgenome.Celegans.UCSC.ce6 - for ce6
+ \item BSgenome.Rnorvegicus.UCSC.rn5 - for rn5
+ \item BSgenome.Dmelanogaster.UCSC.dm3 - for dm3
 }}
 
 \item{genomeSeqFile}{Other than BSgenomeName, a custome FASTA file can be 
@@ -141,21 +119,41 @@ refer to https://support.bioconductor.org/p/133538/#133661 for potential use
 cases of offtarget efficacies.}
 }
 \value{
-\item{offtargets }{a data frame with off target analysis results}
-\item{summary }{a data frame with summary of the off target analysis
-results}
+A data frame with details of off-targets for the given gRNA.
+\itemize{
+ \item strand - strand of the off-target, + for plus and - for minus strand
+ \item chrom - chromosome of the off-target
+ \item chromStart - start position of the off-target
+ \item chromEnd - end position of the off-target
+ \item name - gRNA name
+ \item gRNAPlusPAM - gRNA sequence with PAM sequence concatenated
+ \item OffTargetSequence - the genomic sequence of the off-target
+ \item n.mismatch - number of mismatches between the off-target and the gRNA
+ \item forViewInUCSC - string for viewing in UCSC genome browser, e.g., 
+ chr14:31665685-31665707
+ \item score - score of the off-target
+ \item mismatch.distance2PAM - comma-separated distances of all mismatches to 
+ PAM, e.g., 14,11 means one mismatch is 14 bp away from PAM and the other 
+ mismatch is 11 bp away from PAM
+ \item alignment - alignment between gRNA and off-target, 
+ e.g., ......G..C.......... means that this off-target aligns with gRNA 
+ except that G and C are mismatches
+ \item NGG - whether this off-target contains canonical PAM (1 for yes, 
+ 0 for no)
+ \item mean.neighbor.distance.mismatch - mean distance between neighboring 
+ mismatches
+}
+
+\itemize{
+ \item offtargets - a data frame with off-target analysis results
+ \item summary - a data frame with summary of the off-target analysis results
+}
 }
 \description{
 filter off-targets that meet the criteria set by users such as minimum score, 
 topN. In addition, off target was annotated with flank sequence, gRNA 
 cleavage efficiency and whether it is inside an exon or not if fetchSequence
 is set to TRUE and annotateExon is set to TRUE
-}
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
 }
 \examples{
 

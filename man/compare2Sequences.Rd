@@ -228,37 +228,39 @@ Biotechnology 2016}
 }
 \value{
 Return a data frame with all potential gRNAs from both sequences. In
-addition, a tab delimited file scoresFor2InputSequences.xlsx is also saved in
-the outputDir, sorted by scoreDiff descending. 
-\item{name}{name of the gRNA}
-\item{gRNAPlusPAM}{gRNA plus PAM sequence}
-\item{targetInSeq1}{target/off-target sequence including PAM in the 1st
-input sequence file} \item{targetInSeq2}{target/off-target sequence incuding
-PAM in the 2nd input sequence file}
-\item{guideAlignment2Offtarget}{alignment of gRNA to the other input
-sequence (off-target sequence)} \item{offTargetStrand}{strand of the other
-sequence (off-target sequence) the gRNA align to} \item{scoreForSeq1}{score
-for the target sequence in the 1st input sequence file}
-\item{scoreForSeq2}{score for the target sequence in the 1st input sequence
-file} \item{mismatch.distance2PAM}{distances of mismatch to PAM, e.g., 14
-means the mismatch is 14 bp away from PAM} \item{n.mismatch}{number of
-mismatches between the off-target and the gRNA} \item{targetSeqName}{the
-name of the input sequence where the target sequence is located}
-\item{scoreDiff}{scoreForSeq1 - scoreForSeq2} \item{bracket.notation}{folded
-gRNA in bracket notation} \item{mfe.sgRNA}{minimum free energy of sgRNA}
-\item{mfe.diff}{mfe.sgRNA-mfe.backbone} \item{mfe.backbone}{minimum free
-energy of the gRNA backbone by itself}
+addition, a tab-delimited file `scoresFor2InputSequences.xlsx` is also saved in
+the `outputDir`, sorted by `scoreDiff` descending.
+\itemize{
+ \item name - name of the gRNA
+ \item gRNAPlusPAM - gRNA plus PAM sequence
+ \item targetInSeq1 - target/off-target sequence including PAM in the 1st
+ input sequence file
+ \item targetInSeq2 - target/off-target sequence including PAM in the 2nd 
+ input sequence file
+ \item guideAlignment2Offtarget - alignment of gRNA to the other input 
+ sequence (off-target sequence)
+ \item offTargetStrand - strand of the other sequence (off-target sequence) 
+ the gRNA aligns to
+ \item scoreForSeq1 - score for the target sequence in the 1st input 
+ sequence file
+ \item scoreForSeq2 - score for the target sequence in the 2nd input 
+ sequence file
+ \item mismatch.distance2PAM - distances of mismatch to PAM, e.g., 14 
+ means the mismatch is 14 bp away from PAM
+ \item n.mismatch - number of mismatches between the off-target and the gRNA
+ \item targetSeqName - the name of the input sequence where the target 
+ sequence is located
+ \item scoreDiff - scoreForSeq1 - scoreForSeq2
+ \item bracket.notation - folded gRNA in bracket notation
+ \item mfe.sgRNA - minimum free energy of sgRNA
+ \item mfe.diff - mfe.sgRNA - mfe.backbone
+ \item mfe.backbone - minimum free energy of the gRNA backbone by itself
+}
 }
 \description{
 Generate all possible guide RNAs (gRNAs) for two input sequences, or two
 sets of sequences, and generate scores for potential off-targets in the other
 sequence.
-}
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
 }
 \examples{
 

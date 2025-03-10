@@ -20,20 +20,11 @@ Input a sequence and a list of patterns and determine if the patterns occurs
 only once in the sequence. Used for determining whether an RE site in gRNA
 also occurs in the flanking region.
 }
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
-}
 \examples{
 
     seq <- "TGGATTGTATAATCAGCATGGATTTGGAAC"
     patterns <- DNAStringSet(c("TGG", "TGGA", "TGGATA", "TTGGAAC", ""))
     isPatternUnique(seq, patterns)
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \author{
 Lihua Julie Zhu

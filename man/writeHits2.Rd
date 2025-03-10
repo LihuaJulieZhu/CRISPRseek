@@ -65,12 +65,12 @@ sequence, default to 1 for N[A|G]G PAM}
 \item{BSgenomeName}{BSgenome object. Please refer to available.genomes in
 BSgenome package. For example, 
 \itemize{
-\item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
-\item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
-\item{BSgenome.Celegans.UCSC.ce6} - {for ce6}
-\item{BSgenome.Rnorvegicus.UCSC.rn5} - {for rn5}
-\item{BSgenome.Drerio.UCSC.danRer7} - {for Zv9}
-\item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
+ \item BSgenome.Hsapiens.UCSC.hg19 - for hg19
+ \item BSgenome.Mmusculus.UCSC.mm10 - for mm10
+ \item BSgenome.Celegans.UCSC.ce6 - for ce6
+ \item BSgenome.Rnorvegicus.UCSC.rn5 - for rn5
+ \item BSgenome.Drerio.UCSC.danRer7 - for Zv9
+ \item BSgenome.Dmelanogaster.UCSC.dm3 - for dm3
 }}
 
 \item{baseEditing}{Indicate whether to design gRNAs for base editing.
@@ -95,12 +95,6 @@ results are saved in the file specified by file
 \description{
 write the hits of sequence search to a file, internal function used by
 searchHits
-}
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
 }
 \examples{
 

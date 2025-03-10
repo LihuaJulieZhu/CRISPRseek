@@ -2,8 +2,6 @@
 #' 
 #' Filter gRNAs containing restriction enzyme cut site
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
-#' 
 #' @param all.gRNAs gRNAs as DNAStringSet, such as the output from findgRNAs
 #' @param pairOutputFile File path with paired gRNAs
 #' @param findgRNAsWithREcutOnly Indicate whether to find gRNAs overlap with
@@ -20,10 +18,8 @@
 #' @return \item{gRNAs.withRE }{gRNAs as DNAStringSet that passed the filter
 #' criteria} \item{gRNAREcutDetails}{a data frame that contains a set of gRNAs
 #' annotated with restriction enzyme cut details}
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
-#' @seealso offTargetAnalysis
-#' @references %% ~put references to the literature/web site here ~
+#' @seealso offTargetAnalysis 
 #' @keywords misc
 #' @examples
 #' 

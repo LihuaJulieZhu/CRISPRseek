@@ -4,15 +4,11 @@
 #' only once in the sequence. Used for determining whether an RE site in gRNA
 #' also occurs in the flanking region.
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
-#' 
 #' @param seq flanking sequence of a gRNA
 #' @param patterns patterns as DNAStringSet, such as a list of RE sites
 #' @return returns a character vectors containing the uniqueness of each
 #' pattern/RE site
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
-#' @references %% ~put references to the literature/web site here ~
 #' @keywords misc
 #' @examples
 #' 

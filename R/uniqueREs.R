@@ -3,8 +3,6 @@
 #' For each identified gRNA, output restriction enzymes that recognize only the
 #' gRNA cleavage sites.
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
-#' 
 #' @param REcutDetails REcutDetails stored in the REcutDetails.xls
 #' @param summary summary stored in the summary.xls
 #' @param offTargets offTargets stored in the offTargets.xls
@@ -13,18 +11,16 @@
 #' @param BSgenomeName BSgenome object. Please refer to available.genomes in
 #' BSgenome package. For example, 
 #' \itemize{
-#' \item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
-#' \item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
-#' \item{BSgenome.Celegans.UCSC.ce6} - {for ce6}
-#' \item{BSgenome.Rnorvegicus.UCSC.rn5} - {for rn5}
-#' \item{BSgenome.Drerio.UCSC.danRer7} - {for Zv9}
-#' \item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
+#'  \item BSgenome.Hsapiens.UCSC.hg19 - for hg19
+#'  \item BSgenome.Mmusculus.UCSC.mm10 - for mm10
+#'  \item BSgenome.Celegans.UCSC.ce6 - for ce6
+#'  \item BSgenome.Rnorvegicus.UCSC.rn5 - for rn5
+#'  \item BSgenome.Drerio.UCSC.danRer7 - for Zv9
+#'  \item BSgenome.Dmelanogaster.UCSC.dm3 - for dm3
 #' }
 #' @return returns the RE sites that recognize only the gRNA cleavage sites for
 #' each gRNA.
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
-#' @references %% ~put references to the literature/web site here ~
 #' @keywords misc
 #' @examples
 #' 

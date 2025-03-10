@@ -458,12 +458,6 @@ filtergRNAs, searchHits, buildFeatureVectorForScoring, getOfftargetScore,
 filterOfftarget, calculating gRNA cleavage efficiency, and predict gRNA
 efficacy, indels and their frequencies.
 }
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
-}
 \examples{
 
 # Load required libraries

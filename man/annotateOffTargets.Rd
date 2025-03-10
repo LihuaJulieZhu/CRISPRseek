@@ -7,32 +7,31 @@
 annotateOffTargets(scores, txdb, orgAnn, ignore.strand = TRUE)
 }
 \arguments{
-\item{scores}{a data frame output from getOfftargetScore or filterOfftarget.
+\item{scores}{A data frame output from getOfftargetScore or filterOfftarget.
 It contains
 \itemize{
-\item{strand} - {strand of the off target ((+) for plus and (-) for minus
-strand)}
-\item{chrom} - {chromosome of the off target}
-\item{chromStart} - {start position of
-the off target}
-\item{chromEnd} - {end position of the off target}
-\item{name} - {gRNA
-name}
-\item{gRNAPlusPAM} - {gRNA sequence with PAM sequence concatenated}
-\item{OffTargetSequence} - {the genomic sequence of the off target}
-\item{n.mismatch} - {number of mismatches between the off target and the gRNA}
-\item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g., chr14:31665685-31665707}
-\item{score} - {score of the off target}
-\item{mismatch.distance2PAM} - {a comma separated
-distances of all mismatches to PAM, e.g., 14,11 means one mismatch is 14 bp
-away from PAM and the other mismatch is 11 bp away from PAM}
-\item{alignment} - {alignment between gRNA and off target, e.g., ......G..C.......... means
-that this off target aligns with gRNA except that G and C are
-mismatches}
-\item{NGG} - {this off target contains canonical PAM or not, 1 for yes
-and 0 for no}
-\item{mean.neighbor.distance.mismatch} - {mean distance between
-neighboring mismatches}
+ \item strand - strand of the off-target ((+) for plus and (-) for minus 
+ strand)
+ \item chrom - chromosome of the off-target
+ \item chromStart - start position of the off-target
+ \item chromEnd - end position of the off-target
+ \item name - gRNA name
+ \item gRNAPlusPAM - gRNA sequence with PAM sequence concatenated
+ \item OffTargetSequence - the genomic sequence of the off-target
+ \item n.mismatch - number of mismatches between the off-target and the gRNA
+ \item forViewInUCSC - string for viewing in UCSC genome browser, e.g., 
+ chr14:31665685-31665707
+ \item score - score of the off-target
+ \item mismatch.distance2PAM - a comma-separated list of all mismatch 
+ distances to PAM, e.g., 14,11 means one mismatch is 14 bp away from PAM and 
+ the other mismatch is 11 bp away from PAM
+ \item alignment - alignment between gRNA and off-target, 
+ e.g., ......G..C.......... means that this off-target aligns with gRNA 
+ except that G and C are mismatches
+ \item NGG - whether this off-target contains a canonical PAM (1 for yes, 
+ 0 for no)
+ \item mean.neighbor.distance.mismatch - mean distance between neighboring 
+ mismatches
 }}
 
 \item{txdb}{TxDb object. For creating and using TxDb object, please refer to
@@ -42,11 +41,11 @@ for annotation package starting with Txdb at
 http://www.bioconductor.org/packages/release/BiocViews.html#___AnnotationData,
 such as 
 \itemize{
-\item{TxDb.Rnorvegicus.UCSC.rn5.refGene} - {for rat}
-\item{TxDb.Mmusculus.UCSC.mm10.knownGene} - {for mouse}
-\item{TxDb.Hsapiens.UCSC.hg19.knownGene} - {for human}
-\item{TxDb.Dmelanogaster.UCSC.dm3.ensGene} - {for Drosophila}
-\item{TxDb.Celegans.UCSC.ce6.ensGene} - {for C.elegans}
+ \item TxDb.Rnorvegicus.UCSC.rn5.refGene - for rat
+ \item TxDb.Mmusculus.UCSC.mm10.knownGene - for mouse
+ \item TxDb.Hsapiens.UCSC.hg19.knownGene - for human
+ \item TxDb.Dmelanogaster.UCSC.dm3.ensGene - for Drosophila
+ \item TxDb.Celegans.UCSC.ce6.ensGene - for C.elegans
 }}
 
 \item{orgAnn}{organism annotation mapping such as org.Hs.egSYMBOL. Which lives in the
@@ -60,9 +59,6 @@ a Data Frame with Off Target annotation
 \description{
 Annotate Off targets to indicate whether each one (respectively) is inside an exon or intron, as well as
 the gene ID if inside the gene.
-}
-\details{
-%% ~~ If necessary, more details than the description above ~~
 }
 \examples{
 
@@ -80,6 +76,7 @@ the gene ID if inside the gene.
         txdb = TxDb.Hsapiens.UCSC.hg19.knownGene,
          orgAnn = org.Hs.egSYMBOL)
     results
+    
 }
 \references{
 Lihua Julie Zhu, Benjamin R. Holmes, Neil Aronin and Michael

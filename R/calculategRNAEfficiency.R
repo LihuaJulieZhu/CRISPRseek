@@ -14,15 +14,12 @@
 #' corresponding features. In the following example, DoenchNBT2014 weight
 #' matrix is used. Briefly, features include 
 #' \itemize{
-#' \item{INTERCEPT}
-#' \item{GC_LOW} - {penalty for low
-#' GC content in the gRNA sequence}
-#' \item{GC_HIGH} - {penalty for high GC content in
-#' the gRNA sequence}
-#' \item{G02} - {means G at second position of the
-#' extendedSequence}
-#' \item{GT02} - {means GT di-nucleotides starting at 2nd position of
-#' the extendedSequence}
+#'  \item INTERCEPT
+#'  \item GC_LOW - penalty for low GC content in the gRNA sequence
+#'  \item GC_HIGH - penalty for high GC content in the gRNA sequence
+#'  \item G02 - means G at the second position of the extendedSequence
+#'  \item GT02 - means GT di-nucleotides starting at the 2nd position of the 
+#'  extendedSequence
 #' }
 #' To understand how is the feature weight matrix is
 #' identified, or how to use alternative feature weight matrix file, please see

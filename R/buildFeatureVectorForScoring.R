@@ -15,31 +15,22 @@
 #' 
 #' Build feature vectors for calculating scores of off targets
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
-#' 
 #' @param hits A Data frame generated from searchHits, which contains
 #' \itemize{
-#' \item{IsMismatch.posX} - {Indicator variable indicating whether this position X is
-#' mismatch or not, (1 means yes and 0 means not). X takes on values from 1 to gRNA.size, representing 
-#' all positions in the guide RNA (gRNA).}
-#' \item{strand} - {strand of the
-#' off target, + for plus and - for minus strand}
-#' \item{chrom} - {chromosome of the off
-#' target}
-#' \item{chromStart} - {start position of the off target}
-#' \item{chromEnd} - {end
-#' position of the off target}
-#' \item{name} - {gRNA name}
-#' \item{gRNAPlusPAM} - {gRNA sequence
-#' with PAM sequence concatenated}
-#' \item{OffTargetSequence} - {the genomic sequence of
-#' the off target}
-#' \item{n.mismatch} - {number of mismatches between the off target and
-#' the gRNA}
-#' \item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g.,
-#' chr14:31665685-31665707}
-#' \item{score} - {Set to 100, and will be calculated in
-#' getOfftargetScore}
+#'  \item IsMismatch.posX - Indicator variable indicating whether this position 
+#'  X is a mismatch or not, (1 means yes and 0 means no). X takes on values 
+#'  from 1 to gRNA.size, representing all positions in the guide RNA (gRNA).
+#'  \item strand - strand of the off-target, + for plus and - for minus strand
+#'  \item chrom - chromosome of the off-target
+#'  \item chromStart - start position of the off-target
+#'  \item chromEnd - end position of the off-target
+#'  \item name - gRNA name
+#'  \item gRNAPlusPAM - gRNA sequence with PAM sequence concatenated
+#'  \item OffTargetSequence - the genomic sequence of the off-target
+#'  \item n.mismatch - number of mismatches between the off-target and the gRNA
+#'  \item forViewInUCSC - string for viewing in UCSC genome browser, e.g., 
+#'  chr14:31665685-31665707
+#'  \item score - Set to 100, and will be calculated in getOfftargetScore
 #' }
 #' @param gRNA.size gRNA size. The default is 20
 #' @param canonical.PAM Canonical PAM. The default is NGG for spCas9, TTTN for Cpf1
@@ -52,28 +43,30 @@
 #' @return A data frame with hits plus features used for calculating scores and
 #' for generating report, including 
 #' \itemize{
-#' \item{IsMismatch.posX} - {Indicator variable
-#' indicating whether this position X is mismatch or not, (1 means yes and 0
-#' means not, X = 1 - gRNA.size), representing all positions in the gRNA}
-#' \item{strand} - {strand of the off target, + for plus and - for minus strand}
-#' \item{chrom} - {chromosome of the off target}
-#' \item{chromStart} - {start position of the off
-#' target}
-#' \item{chromEnd} - {end position of the off target}
-#' \item{name} - {gRNA name}
-#' \item{gRNAPlusPAM} - {gRNA sequence with PAM sequence concatenated}
-#' \item{OffTargetSequence} - {the genomic sequence of the off target}
-#' \item{n.mismatch} - {number of mismatches between the off target and the gRNA}
-#' \item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g., chr14:31665685-31665707}
-#' \item{score} - {score of the off target}
-#' \item{mismatche.distance2PAM} - {a comma separated
-#' distances of all mismatches to PAM, e.g., 14,11 means one mismatch is 14 bp
-#' away from PAM and the other mismatch is 11 bp away from PAM}
-#' \item{alignment} - {alignment between gRNA and off target, e.g., ......G..C.......... means
-#' that this off target aligns with gRNA except that G and C are mismatches}
-#' \item{NGG} - {this off target contains canonical PAM or not, 1 for yes and 0 for no}
-#' \item{mean.neighbor.distance.mismatch} - {mean distance between neighboring
-#' mismatches}
+#'  \item IsMismatch.posX - Indicator variable indicating whether this position 
+#'  X is a mismatch or not, (1 means yes and 0 means no, X = 1 - gRNA.size), 
+#'  representing all positions in the gRNA.
+#'  \item strand - strand of the off-target, + for plus and - for minus strand
+#'  \item chrom - chromosome of the off-target
+#'  \item chromStart - start position of the off-target
+#'  \item chromEnd - end position of the off-target
+#'  \item name - gRNA name
+#'  \item gRNAPlusPAM - gRNA sequence with PAM sequence concatenated
+#'  \item OffTargetSequence - the genomic sequence of the off-target
+#'  \item n.mismatch - number of mismatches between the off-target and the gRNA
+#'  \item forViewInUCSC - string for viewing in UCSC genome browser, e.g., 
+#'  chr14:31665685-31665707
+#'  \item score - score of the off-target
+#'  \item mismatch.distance2PAM - a comma-separated list of all mismatches' 
+#'  distances to PAM, e.g., 14,11 means one mismatch is 14 bp away from PAM and 
+#'  the other mismatch is 11 bp away from PAM
+#'  \item alignment - alignment between gRNA and off-target, 
+#'  e.g., ......G..C.......... means that this off-target aligns with gRNA 
+#'  except that G and C are mismatches
+#'  \item NGG - whether this off-target contains canonical PAM (1 for yes and 
+#'  0 for no)
+#'  \item mean.neighbor.distance.mismatch - mean distance between neighboring 
+#'  mismatches
 #' }
 #' @author Lihua Julie Zhu
 #' @seealso offTargetAnalysis

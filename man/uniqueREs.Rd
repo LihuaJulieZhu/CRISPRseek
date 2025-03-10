@@ -27,12 +27,12 @@ uniqueREs(
 \item{BSgenomeName}{BSgenome object. Please refer to available.genomes in
 BSgenome package. For example, 
 \itemize{
-\item{BSgenome.Hsapiens.UCSC.hg19} - {for hg19}
-\item{BSgenome.Mmusculus.UCSC.mm10} - {for mm10}
-\item{BSgenome.Celegans.UCSC.ce6} - {for ce6}
-\item{BSgenome.Rnorvegicus.UCSC.rn5} - {for rn5}
-\item{BSgenome.Drerio.UCSC.danRer7} - {for Zv9}
-\item{BSgenome.Dmelanogaster.UCSC.dm3} - {for dm3}
+ \item BSgenome.Hsapiens.UCSC.hg19 - for hg19
+ \item BSgenome.Mmusculus.UCSC.mm10 - for mm10
+ \item BSgenome.Celegans.UCSC.ce6 - for ce6
+ \item BSgenome.Rnorvegicus.UCSC.rn5 - for rn5
+ \item BSgenome.Drerio.UCSC.danRer7 - for Zv9
+ \item BSgenome.Dmelanogaster.UCSC.dm3 - for dm3
 }}
 }
 \value{
@@ -43,12 +43,6 @@ each gRNA.
 For each identified gRNA, output restriction enzymes that recognize only the
 gRNA cleavage sites.
 }
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
-}
 \examples{
 
     library("BSgenome.Hsapiens.UCSC.hg19")
@@ -57,9 +51,6 @@ gRNA cleavage sites.
     uniqueREs(results$REcutDetails, results$summary, results$offtarget,
 	scanUpstream = 50,
         scanDownstream = 50, BSgenomeName = Hsapiens)
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \author{
 Lihua Julie Zhu

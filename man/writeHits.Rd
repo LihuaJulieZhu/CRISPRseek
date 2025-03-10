@@ -86,12 +86,6 @@ results are saved in the file specified by file
 write the hits of sequence search from a sequence instead of BSgenome to a
 file, internal function used by searchHits
 }
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
-}
 \examples{
 
  if(interactive())

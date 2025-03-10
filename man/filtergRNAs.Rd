@@ -45,12 +45,6 @@ annotated with restriction enzyme cut details}
 \description{
 Filter gRNAs containing restriction enzyme cut site
 }
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
-}
 \examples{
 
 all.gRNAs <- findgRNAs(
@@ -70,9 +64,6 @@ gRNAs.RE <- filtergRNAs(
 gRNAs  <- gRNAs.RE$gRNAs.withRE
 restriction.enzyme.cut.sites <- gRNAs.RE$gRNAREcutDetails
 
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \seealso{
 offTargetAnalysis

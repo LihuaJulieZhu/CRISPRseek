@@ -6,8 +6,6 @@
 #' filterOfftarget, calculating gRNA cleavage efficiency, and predict gRNA
 #' efficacy, indels and their frequencies.
 #'
-#' %% ~~ If necessary, more details than the description above ~~
-#'
 #' @param inputFilePath Path to an input sequence file or a `DNAStringSet` 
 #' object containing sequences to be searched for potential gRNAs.
 #' @param format Defaults to "fasta". Format of the input file, "fasta", 
@@ -285,7 +283,6 @@
 #' \item{OfftargetAnalysis.xlsx}{ - Detailed information on off-targets}
 #' \item{REcutDetails.xlsx}{ - Restriction enzyme cut sites for each gRNA}
 #' \item{pairedgRNAs.xlsx}{ - Potential paired gRNAs}
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu, Kai Hu
 #' @seealso CRISPRseek
 #' @references Patrick D Hsu, David A Scott, Joshua A Weinstein, F Ann Ran,

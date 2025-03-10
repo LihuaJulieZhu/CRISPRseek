@@ -6,8 +6,6 @@
 #' write the hits of sequence search from a sequence instead of BSgenome to a
 #' file, internal function used by searchHits
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
-#' 
 #' @param gRNA DNAString object with gRNA sequence with PAM appended
 #' immediately after,e.g., ACGTACGTACGTACTGACGTCGG with 20bp gRNA sequence plus
 #' 3bp PAM sequence CGG
@@ -44,7 +42,6 @@
 #' or you would like to include offtargets with the target base in a larger
 #' editing window.
 #' @return results are saved in the file specified by file
-#' @note %% ~~further notes~~
 #' @author Lihua Julie Zhu
 #' @seealso offTargetAnalysis
 #' @references

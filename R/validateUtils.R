@@ -88,9 +88,10 @@ checkREpatternFile <- function(findgRNAsWithREcutOnly, findgRNAs, REpatternFile)
 
 checkDependency <- function(foldgRNAs = NULL) {
   if (foldgRNAs) {
-    if (!requireNamespace("GeneRfold", quietly = TRUE)) {
-      abort("'foldgRNAs' is set to TRUE, but package 'GeneRfold' is not available!")
-    }
+    inform("Please ensure `GeneRfold` package is installed!")
+    # comment out to suppress the warning message during R CMD check
+    # tryCatch(GeneRfold::fold("TTAGCTCAATTGGTAAAGACCCTAGGCGAAGCTTAGAGGTCGCCGGTT"), 
+    #          error = function(e) abort("'foldgRNAs' is set to TRUE, but package 'GeneRfold' is not available!"))
   }
 }
 

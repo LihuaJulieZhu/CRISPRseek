@@ -70,37 +70,26 @@ editing window.}
 }
 \value{
 a data frame contains 
+
 \itemize{
-\item{IsMismatch.posX} - {indicator variable indicating
-whether this position X is mismatch or not, (1 means yes and 0 means not). X takes on values from 1 to gRNA.size, representing all positions in the guide RNA (gRNA). }
-\item{strand} - {strand of
-the match, + for plus and - for minus strand}
-\item{chrom} - {chromosome of the off
-target}
-\item{chromStart} - {start position of the off target}
-\item{chromEnd} - {end
-position of the off target}
-\item{name} - {gRNA name}
-\item{gRNAPlusPAM} - {gRNA sequence
-with PAM sequence concatenated}
-\item{OffTargetSequence} - {the genomic sequence of
-the off target}
-\item{n.mismatch} - {number of mismatches between the off target and
-the gRNA}
-\item{forViewInUCSC} - {string for viewing in UCSC genome browser, e.g.,
-chr14:31665685-31665707}
-\item{score} - {set to 100, and will be updated in
-getOfftargetScore}
+ \item **IsMismatch.posX** - whether this position X is mismatch or not, 
+(1 means yes and 0 means not). X takes on values from 1 to gRNA.size, 
+representing all positions in the guide RNA (gRNA).
+ \item **strand** - Strand of the match (`+` for plus, `-` for minus).
+ \item **chrom** - Chromosome where the off-target is located.
+ \item **chromStart** - Start position of the off-target site.
+ \item **chromEnd** - End position of the off-target site.
+ \item **name** - gRNA name.
+ \item **gRNAPlusPAM** - gRNA sequence with PAM sequence concatenated.
+ \item **OffTargetSequence** - Genomic sequence of the off-target.
+ \item **n.mismatch** - Number of mismatches between the off-target and the gRNA.
+ \item **forViewInUCSC** - String for viewing in UCSC Genome Browser 
+(e.g., `chr14:31665685-31665707`).
+ \item **score** - Defaulted to 100, and will be updated in `getOfftargetScore()`.
 }
 }
 \description{
 Search for off targets for given gRNAs, sequence and maximum mismatches
-}
-\details{
-%% ~~ If necessary, more details than the description above ~~
-}
-\note{
-%% ~~further notes~~
 }
 \examples{
 
@@ -126,9 +115,6 @@ Search for off targets for given gRNAs, sequence and maximum mismatches
        outfile = "test_searchHits", PAM.location = "5prime",
        PAM.pattern = "^T[A|T]NN", allowed.mismatch.PAM = 0, PAM = "TTTN")
    colnames(hits)
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \seealso{
 offTargetAnalysis
