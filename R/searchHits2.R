@@ -174,7 +174,7 @@
 #' @importFrom IRanges width Views
 #' @importFrom Biostrings alphabetFrequency matchPDict reverseComplement
 #' @importFrom BiocGenerics rep.int
-#' @importFrom GenomeInfoDb seqnames
+#' @importFrom Seqinfo seqnames
 #' @importFrom GenomicRanges intersect setdiff
 #' @importFrom XVector subseq
 #' @importFrom utils read.table

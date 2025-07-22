@@ -136,7 +136,7 @@
 #' @importFrom BiocGenerics unlist cbind
 #' @importFrom BSgenome getSeq
 #' @importFrom S4Vectors merge
-#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom Seqinfo seqlengths
 #' @importFrom openxlsx write.xlsx read.xlsx
 #' @importFrom rlang warn
 #' @export

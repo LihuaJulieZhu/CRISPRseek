@@ -2,7 +2,7 @@
 #' @importFrom BSgenome getSeq
 #' @importFrom IRanges width
 #' @importFrom methods as
-#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom Seqinfo seqlengths
 getExtendedSequence <- function(targets, useBSgenome = TRUE, BSgenomeName, 
      genomeSeq, baseBeforegRNA = 13, baseAfterPAM = 24, forMethod = "Lindel")
 {

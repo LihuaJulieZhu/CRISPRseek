@@ -70,7 +70,7 @@
 #'          orgAnn = org.Hs.egSYMBOL)
 #'     results
 #'     
-#' @importFrom GenomeInfoDb seqlevels 
+#' @importFrom Seqinfo seqlevels 
 #' @importFrom GenomicFeatures exons genes
 #' @importFrom BSgenome seqnames 
 #' @importFrom IRanges IRanges overlapsAny findOverlaps 
@@ -84,7 +84,7 @@ annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE) {
   allExons <- as(exons(txdb, columns="gene_id"),"GRanges")
 
   if (length(grep("Chr",seqnames(allExons))) == 0 && length(grep("Chr", scores$chrom)) > 0) {
-    GenomeInfoDb::seqlevels(allExons) = paste("Chr", GenomeInfoDb::seqlevels(allExons), sep="")
+    Seqinfo::seqlevels(allExons) = paste("Chr", Seqinfo::seqlevels(allExons), sep="")
   }
   
   allExons <- allExons[as.character(seqnames(allExons)) %in%unique(as.character(seqnames(score.RD))), ]
@@ -103,7 +103,7 @@ annotateOffTargets <- function(scores, txdb, orgAnn, ignore.strand = TRUE) {
   allGenes <- suppressMessages(genes(txdb, columns = "gene_id", single.strand.genes.only=TRUE))
 
   if (length(grep("Chr",seqnames(allGenes))) == 0 && length(grep("Chr", scores$chrom)) > 0) {
-    GenomeInfoDb::seqlevels(allGenes) = paste("Chr", GenomeInfoDb::seqlevels(allGenes), sep = "")
+    Seqinfo::seqlevels(allGenes) = paste("Chr", Seqinfo::seqlevels(allGenes), sep = "")
   }
   
   overlapGenes <- findOverlaps(score.RD, allGenes, minoverlap = 1L, type = "any", ignore.strand = FALSE)

@@ -30,7 +30,7 @@
 #'     uniqueREs(results$REcutDetails, results$summary, results$offtarget,
 #' 	scanUpstream = 50,
 #'         scanDownstream = 50, BSgenomeName = Hsapiens)
-#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom Seqinfo seqlengths
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom BiocGenerics cbind unlist
 #' @export
