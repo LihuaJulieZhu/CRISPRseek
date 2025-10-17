@@ -1,5 +1,5 @@
 Package: CRISPRseek
-Version: 1.49.1
+Version: 1.49.2
 Title: Design of guide RNAs in CRISPR genome-editing systems
 Author: 
   Lihua Julie Zhu
@@ -29,4 +29,3 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 NeedsCompilation: no
 VignetteBuilder: knitr
-

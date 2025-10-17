@@ -48,7 +48,7 @@ test_that("test_findgRNAsSpCas9", {
   expect_equal(as.character(gRNAs_truth), as.character(gRNAs))
     
   effi_truth <- readRDS(system.file("extdata", "CRISPRscanEff.RDS", package = "CRISPRseek"))
-  effi <- read.xlsx(efficacyFile)
+  effi <- read.xlsx(efficacyFile, na.strings = "")
   
   expect_equal(effi_truth, effi)
 })

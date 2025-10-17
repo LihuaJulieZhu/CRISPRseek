@@ -22,8 +22,8 @@ test_that("test_targetOffNotFound", {
                                    outputDir = outputDir, 
                                    overwrite = TRUE))
   
-summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"))
+summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"), na.strings = "")
                       
 expect_equal("perfect match not found", summary$top1Hit.onTarget.MMdistance2PAM)
-expect_equal(as.numeric(NA), summary$top5OfftargetTotalScore)
+expect_equal("NA", summary$top5OfftargetTotalScore)
 })

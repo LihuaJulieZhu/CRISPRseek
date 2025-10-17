@@ -9,33 +9,33 @@ test_that("test_offTargetAnalysis", {
   gRNAFilePath <- system.file("extdata", "testHsap_GATA1_ex2_gRNA1.fa", package = "CRISPRseek")
   
   # TEST1: paired search with RE:
-  REcutDetails.pairedSearchRE <- read.xlsx(system.file("extdata/pairedSearch/withRE/REcutDetails.xlsx", package = "CRISPRseek"))
-  pairedgRNAs.pairedSearchRE <- read.xlsx(system.file("extdata/pairedSearch/withRE/pairedgRNAs.xlsx", package = "CRISPRseek"))
-  summary.pairedSearchRE <- read.xlsx(system.file("extdata/pairedSearch/withRE/Summary.xlsx", package = "CRISPRseek"))
-  offtarget.pairedSearchRE  <- read.xlsx(system.file("extdata/pairedSearch/withRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"))
+  REcutDetails.pairedSearchRE <- read.xlsx(system.file("extdata/pairedSearch/withRE/REcutDetails.xlsx", package = "CRISPRseek"), na.strings = "")
+  pairedgRNAs.pairedSearchRE <- read.xlsx(system.file("extdata/pairedSearch/withRE/pairedgRNAs.xlsx", package = "CRISPRseek"), na.strings = "")
+  summary.pairedSearchRE <- read.xlsx(system.file("extdata/pairedSearch/withRE/Summary.xlsx", package = "CRISPRseek"), na.strings = "")
+  offtarget.pairedSearchRE  <- read.xlsx(system.file("extdata/pairedSearch/withRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"), na.strings = "")
   
   # TEST2: paired search without RE:
-  REcutDetails.pairedSearchNoRE <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/REcutDetails.xlsx", package = "CRISPRseek"))
-  pairedgRNAs.pairedSearchNoRE <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/pairedgRNAs.xlsx", package = "CRISPRseek"))
-  summary.pairedSearchNoRE <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/Summary.xlsx", package = "CRISPRseek"))
-  offtarget.pairedSearchNoRE  <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"))
+  REcutDetails.pairedSearchNoRE <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/REcutDetails.xlsx", package = "CRISPRseek"), na.strings = "")
+  pairedgRNAs.pairedSearchNoRE <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/pairedgRNAs.xlsx", package = "CRISPRseek"), na.strings = "")
+  summary.pairedSearchNoRE <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/Summary.xlsx", package = "CRISPRseek"), na.strings = "")
+  offtarget.pairedSearchNoRE  <- read.xlsx(system.file("extdata/pairedSearch/withoutRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"), na.strings = "")
   
   # Unpaired search with RE:
-  REcutDetails.unPairedSearchRE <- read.xlsx(system.file("extdata/unPairedSearch/withRE/REcutDetails.xlsx", package = "CRISPRseek"))
-  pairedgRNAs.unPairedSearchRE <- read.xlsx(system.file("extdata/unPairedSearch/withRE/pairedgRNAs.xlsx", package = "CRISPRseek"))
-  summary.unPairedSearchRE <- read.xlsx(system.file("extdata/unPairedSearch/withRE/Summary.xlsx", package = "CRISPRseek"))
-  offtarget.unPairedSearchRE  <- read.xlsx(system.file("extdata/unPairedSearch/withRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"))
+  REcutDetails.unPairedSearchRE <- read.xlsx(system.file("extdata/unPairedSearch/withRE/REcutDetails.xlsx", package = "CRISPRseek"), na.strings = "")
+  pairedgRNAs.unPairedSearchRE <- read.xlsx(system.file("extdata/unPairedSearch/withRE/pairedgRNAs.xlsx", package = "CRISPRseek"), na.strings = "")
+  summary.unPairedSearchRE <- read.xlsx(system.file("extdata/unPairedSearch/withRE/Summary.xlsx", package = "CRISPRseek"), na.strings = "")
+  offtarget.unPairedSearchRE  <- read.xlsx(system.file("extdata/unPairedSearch/withRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"), na.strings = "")
   
   # Unpaired search without RE:
-  REcutDetails.unPairedSearchNoRE <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/REcutDetails.xlsx", package = "CRISPRseek"))
-  pairedgRNAs.unPairedSearchNoRE <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/pairedgRNAs.xlsx", package = "CRISPRseek"))
-  summary.unPairedSearchNoRE <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/Summary.xlsx", package = "CRISPRseek"))
-  offtarget.unPairedSearchNoRE  <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"))
+  REcutDetails.unPairedSearchNoRE <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/REcutDetails.xlsx", package = "CRISPRseek"), na.strings = "")
+  pairedgRNAs.unPairedSearchNoRE <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/pairedgRNAs.xlsx", package = "CRISPRseek"), na.strings = "")
+  summary.unPairedSearchNoRE <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/Summary.xlsx", package = "CRISPRseek"), na.strings = "")
+  offtarget.unPairedSearchNoRE  <- read.xlsx(system.file("extdata/unPairedSearch/withoutRE/OfftargetAnalysis.xlsx", package = "CRISPRseek"), na.strings = "")
   
   # gRNAs provided search:
-  REcutDetails.gRNAProvided <- read.xlsx(system.file("extdata/gRNAProvidedSearch/REcutDetails.xlsx", package = "CRISPRseek"))
-  summary.gRNAProvided <- read.xlsx(system.file("extdata/gRNAProvidedSearch/Summary.xlsx", package = "CRISPRseek"))
-  offtarget.gRNAProvided  <- read.xlsx(system.file("extdata/gRNAProvidedSearch/OfftargetAnalysis.xlsx", package = "CRISPRseek"))
+  REcutDetails.gRNAProvided <- read.xlsx(system.file("extdata/gRNAProvidedSearch/REcutDetails.xlsx", package = "CRISPRseek"), na.strings = "")
+  summary.gRNAProvided <- read.xlsx(system.file("extdata/gRNAProvidedSearch/Summary.xlsx", package = "CRISPRseek"), na.strings = "")
+  offtarget.gRNAProvided  <- read.xlsx(system.file("extdata/gRNAProvidedSearch/OfftargetAnalysis.xlsx", package = "CRISPRseek"), na.strings = "")
 
   summary.pairedSearchRE <- summary.pairedSearchRE[, 1:22]
   summary.pairedSearchNoRE <- summary.pairedSearchNoRE[, 1:22]
@@ -81,10 +81,11 @@ test_that("test_offTargetAnalysis", {
                       topN = 100,
                       outputDir= outputDir, 
                       overwrite = TRUE)
-    REcutDetails <<- read.xlsx(file.path(outputDir, "REcutDetails.xlsx"))
-    pairedgRNAs <<- read.xlsx(file.path(outputDir, "pairedgRNAs.xlsx"))
-    summary <<- read.xlsx(file.path(outputDir, "Summary.xlsx"))
-    offtarget <<- read.xlsx(file.path(outputDir, "OfftargetAnalysis.xlsx"))
+    REcutDetails <<- read.xlsx(file.path(outputDir, "REcutDetails.xlsx"), na.strings = "")
+    pairedgRNAs <<- read.xlsx(file.path(outputDir, "pairedgRNAs.xlsx"), na.strings = "")
+    summary <<- read.xlsx(file.path(outputDir, "Summary.xlsx"), na.strings = "")
+    offtarget <<- read.xlsx(file.path(outputDir, "OfftargetAnalysis.xlsx"), na.strings = "")
+    offtarget[offtarget == ""] <<- NA
 
     if (!test.gRNAPlusPAM) {
       summary <<- summary[, -exclude.sum.col]
@@ -95,11 +96,6 @@ test_that("test_offTargetAnalysis", {
   # TEST1:
   inform("Testing for paired with RE sites ...")
   helper(isPaired = TRUE, isRE = TRUE)
-  summary.pairedSearchRE$REname <- sapply(summary.pairedSearchRE$REname, function(x) ifelse(is.na(x), "", x))
-  summary.pairedSearchRE$uniqREin100 <- sapply(summary.pairedSearchRE$uniqREin100, function(x) ifelse(is.na(x), "", x))
-  summary.pairedSearchRE$uniqREin200 <- sapply(summary.pairedSearchRE$uniqREin200, function(x) ifelse(is.na(x), "", x))
-  offtarget.pairedSearchRE$symbol <- sapply(offtarget.pairedSearchRE$symbol, function(x) ifelse(is.na(x), "", x))
-  offtarget.pairedSearchRE$mismatch.distance2PAM <- sapply(offtarget.pairedSearchRE$mismatch.distance2PAM, function(x) ifelse(is.na(x), "", x)) # read.xlsx somehow convert "" into NA.
   
   expect_equal(REcutDetails.pairedSearchRE, REcutDetails)
   expect_equal(pairedgRNAs.pairedSearchRE, pairedgRNAs)
@@ -109,11 +105,6 @@ test_that("test_offTargetAnalysis", {
   # TEST2:
   inform("Testing for paired without RE sites ...")
   helper(isPaired = TRUE, isRE = FALSE)
-  summary.pairedSearchNoRE$REname <- sapply(summary.pairedSearchNoRE$REname, function(x) ifelse(is.na(x), "", x))
-  summary.pairedSearchNoRE$uniqREin100 <- sapply(summary.pairedSearchNoRE$uniqREin100, function(x) ifelse(is.na(x), "", x))
-  summary.pairedSearchNoRE$uniqREin200 <- sapply(summary.pairedSearchNoRE$uniqREin200, function(x) ifelse(is.na(x), "", x))
-  offtarget.pairedSearchNoRE$symbol <- sapply(offtarget.pairedSearchNoRE$symbol, function(x) ifelse(is.na(x), "", x))
-  offtarget.pairedSearchNoRE$mismatch.distance2PAM <- sapply(offtarget.pairedSearchNoRE$mismatch.distance2PAM, function(x) ifelse(is.na(x), "", x)) # read.xlsx somehow convert "" into NA.
   
   expect_equal(REcutDetails.pairedSearchNoRE, REcutDetails)
   expect_equal(pairedgRNAs.pairedSearchNoRE, pairedgRNAs)
@@ -123,11 +114,6 @@ test_that("test_offTargetAnalysis", {
   # TEST3:
   inform("Testing for unpaired with RE sites ...")
   helper(isPaired = FALSE, isRE = TRUE)
-  summary.unPairedSearchRE$REname <- sapply(summary.unPairedSearchRE$REname, function(x) ifelse(is.na(x), "", x))
-  summary.unPairedSearchRE$uniqREin100 <- sapply(summary.unPairedSearchRE$uniqREin100, function(x) ifelse(is.na(x), "", x))
-  summary.unPairedSearchRE$uniqREin200 <- sapply(summary.unPairedSearchRE$uniqREin200, function(x) ifelse(is.na(x), "", x))
-  offtarget.unPairedSearchRE$symbol <- sapply(offtarget.unPairedSearchRE$symbol, function(x) ifelse(is.na(x), "", x))
-  offtarget.unPairedSearchRE$mismatch.distance2PAM <- sapply(offtarget.unPairedSearchRE$mismatch.distance2PAM, function(x) ifelse(is.na(x), "", x)) # read.xlsx somehow convert "" into NA.
   
   expect_equal(REcutDetails.unPairedSearchRE, REcutDetails)
   expect_equal(pairedgRNAs.unPairedSearchRE, pairedgRNAs)
@@ -137,13 +123,8 @@ test_that("test_offTargetAnalysis", {
   # TEST4:
   inform("Testing for unpaired without RE sites ...")
   helper(isPaired = FALSE, isRE = FALSE)
-  summary.unPairedSearchNoRE$REname <- sapply(summary.unPairedSearchNoRE$REname, function(x) ifelse(is.na(x), "", x))
-  summary.unPairedSearchNoRE$uniqREin100 <- sapply(summary.unPairedSearchNoRE$uniqREin100, function(x) ifelse(is.na(x), "", x))
-  summary.unPairedSearchNoRE$uniqREin200 <- sapply(summary.unPairedSearchNoRE$uniqREin200, function(x) ifelse(is.na(x), "", x))
-  offtarget.unPairedSearchNoRE$symbol <- sapply(offtarget.unPairedSearchNoRE$symbol, function(x) ifelse(is.na(x), "", x))
-  offtarget.unPairedSearchNoRE$mismatch.distance2PAM <- sapply(offtarget.unPairedSearchNoRE$mismatch.distance2PAM, function(x) ifelse(is.na(x), "", x)) # read.xlsx somehow convert "" into NA.
-  
   expect_equal(REcutDetails.unPairedSearchNoRE, REcutDetails)
+  
   expect_equal(pairedgRNAs.unPairedSearchNoRE, pairedgRNAs)
   expect_equal(summary.unPairedSearchNoRE, summary[names(summary.unPairedSearchNoRE)], tolerance = 0.01)
   expect_equal(offtarget.unPairedSearchNoRE, offtarget[names(offtarget.unPairedSearchNoRE)], tolerance = 0.001)
@@ -165,22 +146,15 @@ test_that("test_offTargetAnalysis", {
                     outputDir = outputDir, 
                     overwrite = TRUE)
     
-  REcutDetails <- read.xlsx(file.path(outputDir, "REcutDetails.xlsx"))
-  summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"))
-  offtarget <- read.xlsx(file.path(outputDir, "OfftargetAnalysis.xlsx"))
+  REcutDetails <- read.xlsx(file.path(outputDir, "REcutDetails.xlsx"), na.strings = "")
+  summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"), na.strings = "")
+  offtarget <- read.xlsx(file.path(outputDir, "OfftargetAnalysis.xlsx"), na.strings = "")
   if (!test.gRNAPlusPAM) {
     summary <- summary[, -exclude.sum.col]
     offtarget <- offtarget[, -exclude.oft.col]
   }
 
   expect_equal(REcutDetails.gRNAProvided, REcutDetails)
-  
-  summary.gRNAProvided$REname <- sapply(summary.gRNAProvided$REname, function(x) ifelse(is.na(x), "", x))
-  summary.gRNAProvided$uniqREin100 <- sapply(summary.gRNAProvided$uniqREin100, function(x) ifelse(is.na(x), "", x))
-  summary.gRNAProvided$uniqREin200 <- sapply(summary.gRNAProvided$uniqREin200, function(x) ifelse(is.na(x), "", x))
-  offtarget.gRNAProvided$symbol <- sapply(offtarget.gRNAProvided$symbol, function(x) ifelse(is.na(x), "", x))
-  offtarget.gRNAProvided$mismatch.distance2PAM <- sapply(offtarget.gRNAProvided$mismatch.distance2PAM, function(x) ifelse(is.na(x), "", x)) # read.xlsx somehow convert "" into NA.
-  
   expect_equal(summary.gRNAProvided, summary[names(summary.gRNAProvided)], tolerance = 0.01)
   expect_equal(offtarget.gRNAProvided, offtarget[names(offtarget.gRNAProvided)], tolerance = 0.001)
 

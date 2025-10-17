@@ -23,10 +23,10 @@ test_that("test_targetOffNotFound5primePAM", {
                                    fetchSequence = FALSE, 
                                    outputDir = outputDir, 
                                    overwrite = TRUE))
-  summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"))
+  summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"), na.strings = "")
 
   expect_equal("perfect match not found", summary$top1Hit.onTarget.MMdistance2PAM)
-  expect_equal(as.numeric(NA), summary$top5OfftargetTotalScore)
+  expect_equal("NA", summary$top5OfftargetTotalScore)
   expect_equal("GTNTTACTGATATTGGTTTTTCC", summary$gRNAsPlusPAM)
   
   inform("2nd test")
@@ -50,7 +50,7 @@ test_that("test_targetOffNotFound5primePAM", {
                                    outputDir = outputDir, 
                                    overwrite = TRUE))
   
-  summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"))
+  summary <- read.xlsx(file.path(outputDir, "Summary.xlsx"), na.strings = "")
   
   expect_equal("perfect match not found", summary$top1Hit.onTarget.MMdistance2PAM)
   expect_equal(3.6, as.numeric(summary$top5OfftargetTotalScore), tolerance = 0.1)
