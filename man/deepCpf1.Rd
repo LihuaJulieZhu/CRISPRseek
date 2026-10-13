@@ -33,9 +33,6 @@ of the scores, but one can still get accurate scoring with only the
 }
 \examples{
 library(keras)
-library(mltools)
-library(dplyr)
-library(data.table)
 
 use_implementation("tensorflow")
 

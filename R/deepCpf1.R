@@ -28,18 +28,12 @@
 #'
 #' @import keras
 #' @importFrom reticulate py_install py_config
-#' @importFrom mltools one_hot
-#' @importFrom dplyr select ends_with mutate_if slice
-#' @importFrom data.table as.data.table
 #' @importFrom stats predict
 #'
 #' @export
 #'
 #' @examples
 #' library(keras)
-#' library(mltools)
-#' library(dplyr)
-#' library(data.table)
 #'
 #' use_implementation("tensorflow")
 #'
@@ -81,17 +75,15 @@ deepCpf1 <- function(extendedSequence = NULL, chrom_acc = NULL){
       in_df <- subset(in_df, in_df[, 2] ==  34)
   }
 
-  SEQ <- as.data.table(strsplit(paste0("ACGT", in_df[,1]),"")) %>%
-    mutate_if(is.character, as.factor) %>%
-    one_hot(dropUnusedLevels = FALSE, dropCols = FALSE) %>%
-    slice(-c(1:4))
-
-
-  SEQ <- array(c(t(select(as.data.frame(SEQ), ends_with("A"))),
-                 t(select(as.data.frame(SEQ), ends_with("C"))),
-                 t(select(as.data.frame(SEQ), ends_with("G"))),
-                 t(select(as.data.frame(SEQ), ends_with("T")))),
-               dim = c(nrow(in_df), 34L, 4L))
+  # One-hot encode A/C/G/T as channels 1-4. Any other base stays all zeros,
+  # which matches the previous mltools::one_hot encoding.
+  bases <- c("A", "C", "G", "T")
+  chars <- base::strsplit(as.character(in_df[, 1]), "", fixed = TRUE)
+  mat <- matrix(base::unlist(chars, use.names = FALSE),
+                nrow = length(chars), byrow = TRUE)
+  SEQ <- array(0, dim = c(nrow(mat), 34L, 4L))
+  for (b in seq_along(bases))
+      SEQ[, , b] <- mat == bases[b]
 
 
   #### MAKE MODELS

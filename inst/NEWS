@@ -1,3 +1,5 @@
+CHANGES IN VERSION 1.53.1
+     o replaced mltools::one_hot in deepCpf1() with an internal A/C/G/T encoder and removed the mltools, dplyr, and data.table dependencies.
 CHANGES IN VERSION 1.44.1
      o added support for bulge detection by integrating Cas-OFFinder.
      o tidied up most codes and modularized offTargetAnalysis().
